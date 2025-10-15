@@ -291,7 +291,7 @@ const Dashboard = () => {
       >
         <div className="flex items-center gap-3">
           <h1 className="text-4xl font-extrabold text-white">
-            HOA Connect System
+           🏘️ HOA Connect System
           </h1>
         </div>
 

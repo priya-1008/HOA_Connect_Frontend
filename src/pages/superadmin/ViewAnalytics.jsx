@@ -50,7 +50,7 @@ const StatCard = ({ title, value, color, darkMode }) => (
   </div>
 );
 
-const Dashboard = () => {
+const Analytics = () => {
   const [communitiesCount, setCommunitiesCount] = useState(0);
   const [hoaAdminsCount, setHoaAdminsCount] = useState(0);
   const [analytics, setAnalytics] = useState({ totalPayments: 0 });
@@ -210,73 +210,10 @@ const Dashboard = () => {
         </aside>
 
         {/* Main Dashboard Content */}
-        <main className="flex-1 p-10 overflow-y-auto">
-          <h1 className="text-4xl font-extrabold mb-10">Super Admin Dashboard</h1>
-
-          {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <StatCard
-              title="Total Communities"
-              value={communitiesCount}
-              color="text-blue-600 dark:text-blue-400"
-              darkMode={darkMode}
-            />
-
-            <StatCard
-              title="HOA Admins Assigned"
-              value={hoaAdminsCount}
-              color="text-purple-600 dark:text-purple-400"
-              darkMode={darkMode}
-            />
-
-            <StatCard
-              title="Total Payments"
-              value={`₹${analytics.totalPayments.toLocaleString()}`}
-              color="text-green-600 dark:text-green-400"
-              darkMode={darkMode}
-            />
-          </div>
-
-          {/* Features */}
-          <div
-            className={`p-8 rounded-xl shadow-lg mb-12 transition-colors duration-300 ${
-              darkMode
-                ? "bg-gray-800 text-white border border-gray-700"
-                : "bg-white border border-gray-200"
-            }`}
-          >
-            <h3 className="text-2xl font-semibold mb-4 border-b pb-2 border-gray-200 dark:border-gray-700">
-              Key Super Admin Features
-            </h3>
-            <ul className="list-disc pl-6 space-y-3 text-lg text-gray-700 dark:text-gray-300">
-              {features.map((feature, idx) => (
-                <li key={idx} className="flex items-start">
-                  <span className="mr-2 text-blue-500">•</span>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Analytics Placeholder */}
-          <div
-            className={`p-8 rounded-xl shadow-lg transition-colors duration-300 ${
-              darkMode
-                ? "bg-gray-800 text-white border border-gray-700"
-                : "bg-white border border-gray-200"
-            }`}
-          >
-            <h3 className="text-2xl font-semibold mb-4 border-b pb-2 border-gray-200 dark:border-gray-700">
-              Global Analytics Overview
-            </h3>
-            <div className="text-gray-500 italic text-center py-20 border-2 rounded-xl border-dashed border-gray-300 dark:border-gray-600 dark:text-gray-400">
-              [Chart Component Integration Placeholder: Use Recharts or Chart.js]
-            </div>
-          </div>
-        </main>
+        
       </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default Analytics;

@@ -68,14 +68,13 @@ import PrivateRoute from './components/PrivateRoute';
 
 // Pages
 import Login from './pages/Login';
-import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import Dashboard from './pages/superadmin/Dashboard';
-import Dashboard1 from './pages/superadmin/Dashboard1';
 import ManageCommunities from './pages/superadmin/ManageCommunities';
 import ManageAdmins from './pages/superadmin/ManageAdmins';
 import PaymentsReport from './pages/superadmin/PaymentsReport';
-// import Reports from './pages/superadmin/Reports';
+import SystemNotification from './pages/superadmin/Notifications';
+import Analytics from './pages/superadmin/ViewAnalytics';
 
 const AppRoutes = () => (
   <Routes>
@@ -101,16 +100,7 @@ const AppRoutes = () => (
       }
     />
 
-    {/* <Route
-      path="/superadmin-dashboard"
-      element={
-        <PrivateRoute requiredRole="superadmin">
-          <Dashboard />
-        </PrivateRoute>
-      }
-    /> */}
-
-
+  
     <Route
       path="/manage-communities"
       element={
@@ -135,14 +125,22 @@ const AppRoutes = () => (
         </PrivateRoute>
       }
     />
-    {/* <Route
-      path="/reports"
+    <Route
+      path="/notifications"
       element={
         <PrivateRoute>
-          <Reports />
+         <SystemNotification />
         </PrivateRoute>
       }
-    /> */}
+    />
+    <Route
+      path="/analytics"
+      element={
+        <PrivateRoute>
+         <Analytics />
+        </PrivateRoute>
+      }
+    />
     {/* Redirect any unknown route to login */}
     <Route path="*" element={<Navigate to="/login" replace />} />
   </Routes>

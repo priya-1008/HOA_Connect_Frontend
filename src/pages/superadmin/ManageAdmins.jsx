@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
-// Heroicons
 import {
   HomeIcon,
   BuildingOffice2Icon,
@@ -15,18 +13,17 @@ import {
   MoonIcon,
 } from "@heroicons/react/24/outline";
 
-// 🧩 NavLink (reusable)
+// 🧩 Reusable NavLink
 const NavLink = ({ icon: Icon, children, isActive, onClick }) => {
-  const baseClasses =
+  const base =
     "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium";
-  const activeClasses = "bg-blue-600 text-white shadow-md hover:bg-blue-700";
-  const inactiveClasses =
+  const active = "bg-blue-600 text-white shadow-md hover:bg-blue-700";
+  const inactive =
     "text-gray-700 hover:bg-blue-200 dark:text-gray-200 dark:hover:bg-gray-700";
-
   return (
     <button
       onClick={onClick}
-      className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
+      className={`${base} ${isActive ? active : inactive}`}
     >
       <Icon className="w-5 h-5" />
       {children}
@@ -44,6 +41,9 @@ const ManageAdmins = ({ darkMode }) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
+    password: "",
+    role: "",
+    phoneNo: "",
     community: "",
   });
 
@@ -56,9 +56,9 @@ const ManageAdmins = ({ darkMode }) => {
     try {
       setLoading(true);
       const config = getAuthConfig();
-      const res = await axios.get("http://localhost:5000/auth/register", config);
+      const res = await axios.get("http://localhost:5000/auth/getadmins", config);
       const data = Array.isArray(res.data)
-        ? res.data.filter((user) => user.role === "admin")
+        ? res.data.filter((u) => u.role === "admin")
         : [];
       setAdmins(data);
     } catch (err) {
@@ -77,18 +77,44 @@ const ManageAdmins = ({ darkMode }) => {
     setFormData((p) => ({ ...p, [name]: value }));
   };
 
+  const validateForm = () => {
+    const { name, email, password, role, phoneNo } = formData;
+    if (!name || !email || !role || !phoneNo) {
+      setError("All fields except community are required!");
+      return false;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setError("Please enter a valid email address");
+      return false;
+    }
+    if (!/^\d{10}$/.test(phoneNo)) {
+      setError("Phone number must be 10 digits");
+      return false;
+    }
+    if (!isEditing && password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return false;
+    }
+    setError("");
+    return true;
+  };
+
   const handleCreate = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     try {
       const config = getAuthConfig();
-      await axios.post(
-        "http://localhost:5000/auth/register-admin",
-        formData,
-        config
-      );
+      await axios.post("http://localhost:5000/auth/register", formData, config);
       fetchAdmins();
-      setFormData({ name: "", email: "", community: "" });
-    } catch (err) {
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        role: "",
+        phoneNo: "",
+        community: "",
+      });
+    } catch {
       setError("Failed to add admin");
     }
   };
@@ -99,12 +125,16 @@ const ManageAdmins = ({ darkMode }) => {
     setFormData({
       name: admin.name,
       email: admin.email,
+      password: "",
+      role: admin.role,
+      phoneNo: admin.phoneNo || "",
       community: admin.community?.name || "",
     });
   };
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
     try {
       const config = getAuthConfig();
       await axios.put(
@@ -115,8 +145,15 @@ const ManageAdmins = ({ darkMode }) => {
       fetchAdmins();
       setIsEditing(false);
       setEditId(null);
-      setFormData({ name: "", email: "", community: "" });
-    } catch (err) {
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+        role: "",
+        phoneNo: "",
+        community: "",
+      });
+    } catch {
       setError("Failed to update admin");
     }
   };
@@ -127,7 +164,7 @@ const ManageAdmins = ({ darkMode }) => {
       const config = getAuthConfig();
       await axios.delete(`http://localhost:5000/auth/delete/${id}`, config);
       fetchAdmins();
-    } catch (err) {
+    } catch {
       setError("Failed to delete admin");
     }
   };
@@ -154,29 +191,69 @@ const ManageAdmins = ({ darkMode }) => {
         {/* 📝 Admin Form */}
         <form
           onSubmit={isEditing ? handleUpdate : handleCreate}
-          className="space-y-4 mb-8"
+          className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
         >
           <div>
-            <label className="block text-sm font-medium mb-1">Name</label>
+            <label className="block text-sm font-medium mb-1">Name </label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-400"
+              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-sm font-medium mb-1">Email </label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-400"
+              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
+            />
+          </div>
+
+          {!isEditing && (
+            <div>
+              <label className="block text-sm font-medium mb-1">Password </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
+              />
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Role </label>
+            <input
+              type="text"
+              name="role"
+              value="admin"
+              onChange={handleChange}
+              required
+              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
+            readOnly/> 
+              
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium mb-1">Phone No </label>
+            <input
+              type="text"
+              name="phoneNo"
+              value={formData.phoneNo}
+              onChange={handleChange}
+              required
+              maxLength="10"
+              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
             />
           </div>
 
@@ -189,16 +266,16 @@ const ManageAdmins = ({ darkMode }) => {
               name="community"
               value={formData.community}
               onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-400"
+              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
             />
           </div>
 
-          <div className="flex gap-3">
+          <div className="col-span-2 flex gap-3 mt-4">
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
             >
-              {isEditing ? "Update Admin" : "Add Admin"}
+              {isEditing ? "Update Admin" : "Add HOA Admin"}
             </button>
             {isEditing && (
               <button
@@ -206,7 +283,14 @@ const ManageAdmins = ({ darkMode }) => {
                 onClick={() => {
                   setIsEditing(false);
                   setEditId(null);
-                  setFormData({ name: "", email: "", community: "" });
+                  setFormData({
+                    name: "",
+                    email: "",
+                    password: "",
+                    role: "",
+                    phoneNo: "",
+                    community: "",
+                  });
                 }}
                 className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
               >
@@ -229,6 +313,8 @@ const ManageAdmins = ({ darkMode }) => {
               <tr>
                 <th className="px-4 py-2 border">Name</th>
                 <th className="px-4 py-2 border">Email</th>
+                <th className="px-4 py-2 border">Role</th>
+                <th className="px-4 py-2 border">Phone No</th>
                 <th className="px-4 py-2 border">Community</th>
                 <th className="px-4 py-2 border">Actions</th>
               </tr>
@@ -236,7 +322,7 @@ const ManageAdmins = ({ darkMode }) => {
             <tbody>
               {admins.length === 0 ? (
                 <tr>
-                  <td colSpan="4" className="text-center py-4">
+                  <td colSpan="6" className="text-center py-4">
                     No admins found.
                   </td>
                 </tr>
@@ -245,6 +331,8 @@ const ManageAdmins = ({ darkMode }) => {
                   <tr key={admin._id}>
                     <td className="px-4 py-2 border">{admin.name}</td>
                     <td className="px-4 py-2 border">{admin.email}</td>
+                    <td className="px-4 py-2 border capitalize">{admin.role}</td>
+                    <td className="px-4 py-2 border">{admin.phoneNo || "—"}</td>
                     <td className="px-4 py-2 border">
                       {admin.community?.name || "—"}
                     </td>
@@ -273,7 +361,7 @@ const ManageAdmins = ({ darkMode }) => {
   );
 };
 
-// 🌐 Dashboard Layout (Same as ManageCommunities)
+// 🌐 Dashboard Layout
 const Dashboard = () => {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
@@ -305,7 +393,7 @@ const Dashboard = () => {
         }`}
       >
         <h1 className="text-4xl font-extrabold text-white">
-          HOA Connect System
+         🏘️ HOA Connect System
         </h1>
         <button
           onClick={() => setDarkMode((p) => !p)}
