@@ -38,11 +38,13 @@ const ManageAdmins = ({ darkMode }) => {
   const [error, setError] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
+  const [communities, setCommunities] = useState([]);
+  const [selectedCommunity, setSelectedCommunity] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "",
+    role: "admin",
     phoneNo: "",
     community: "",
   });
@@ -56,7 +58,10 @@ const ManageAdmins = ({ darkMode }) => {
     try {
       setLoading(true);
       const config = getAuthConfig();
-      const res = await axios.get("http://localhost:5000/auth/getadmins", config);
+      const res = await axios.get(
+        "http://localhost:5000/auth/getadmins",
+        config
+      );
       const data = Array.isArray(res.data)
         ? res.data.filter((u) => u.role === "admin")
         : [];
@@ -68,8 +73,22 @@ const ManageAdmins = ({ darkMode }) => {
     }
   };
 
+  const fetchCommunities = async () => {
+    try {
+      const config = getAuthConfig();
+      const res = await axios.get(
+        "http://localhost:5000/communities/getCommunity",
+        config
+      );
+      setCommunities(res.data);
+    } catch {
+      setError("Failed to load communities");
+    }
+  };
+
   useEffect(() => {
     fetchAdmins();
+    fetchCommunities();
   }, []);
 
   const handleChange = (e) => {
@@ -79,7 +98,7 @@ const ManageAdmins = ({ darkMode }) => {
 
   const validateForm = () => {
     const { name, email, password, role, phoneNo } = formData;
-    if (!name || !email || !role || !phoneNo) {
+    if (!name || !email || !phoneNo) {
       setError("All fields except community are required!");
       return false;
     }
@@ -104,7 +123,17 @@ const ManageAdmins = ({ darkMode }) => {
     if (!validateForm()) return;
     try {
       const config = getAuthConfig();
-      await axios.post("http://localhost:5000/auth/register", formData, config);
+      const payload = {
+        ...formData,
+        role: "admin",
+        community: formData.community || null,
+      };
+      console.log("Payload:", payload);
+      if (!payload.community) delete payload.community;
+      // convert empty string to null or remove it
+      if (!payload.community) payload.community = null;
+      
+      await axios.post("http://localhost:5000/auth/register", payload, config);
       fetchAdmins();
       setFormData({
         name: "",
@@ -185,7 +214,9 @@ const ManageAdmins = ({ darkMode }) => {
         </h2>
 
         {error && (
-          <div className="mb-4 text-red-500 font-medium text-center">{error}</div>
+          <div className="mb-4 text-red-500 font-medium text-center">
+            {error}
+          </div>
         )}
 
         {/* 📝 Admin Form */}
@@ -219,7 +250,9 @@ const ManageAdmins = ({ darkMode }) => {
 
           {!isEditing && (
             <div>
-              <label className="block text-sm font-medium mb-1">Password </label>
+              <label className="block text-sm font-medium mb-1">
+                Password{" "}
+              </label>
               <input
                 type="password"
                 name="password"
@@ -240,8 +273,8 @@ const ManageAdmins = ({ darkMode }) => {
               onChange={handleChange}
               required
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-            readOnly/> 
-              
+              readOnly
+            />
           </div>
 
           <div>
@@ -261,13 +294,26 @@ const ManageAdmins = ({ darkMode }) => {
             <label className="block text-sm font-medium mb-1">
               Assigned Community
             </label>
-            <input
+            {/* <input
               type="text"
               name="community"
               value={formData.community}
               onChange={handleChange}
               className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-            />
+            /> */}
+            <select
+              name="community"
+              value={formData.community}
+              onChange={handleChange}
+              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
+            >
+              <option value="">Select Community</option>
+              {communities.map((c) => (
+                <option key={c._id} value={c._id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
           </div>
 
           <div className="col-span-2 flex gap-3 mt-4">
@@ -331,7 +377,9 @@ const ManageAdmins = ({ darkMode }) => {
                   <tr key={admin._id}>
                     <td className="px-4 py-2 border">{admin.name}</td>
                     <td className="px-4 py-2 border">{admin.email}</td>
-                    <td className="px-4 py-2 border capitalize">{admin.role}</td>
+                    <td className="px-4 py-2 border capitalize">
+                      {admin.role}
+                    </td>
                     <td className="px-4 py-2 border">{admin.phoneNo || "—"}</td>
                     <td className="px-4 py-2 border">
                       {admin.community?.name || "—"}
@@ -349,11 +397,66 @@ const ManageAdmins = ({ darkMode }) => {
                       >
                         Delete
                       </button>
+                      <button
+                        onClick={() => setSelectedCommunity(admin._id)}
+                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
+                      >
+                        Assign
+                      </button>
                     </td>
                   </tr>
                 ))
               )}
             </tbody>
+            {selectedCommunity && (
+              <div className="mt-6 border-t pt-4">
+                <h3 className="font-semibold text-lg mb-2">
+                  Assign Community to Admin
+                </h3>
+                <select
+                  onChange={(e) =>
+                    setFormData((p) => ({ ...p, community: e.target.value }))
+                  }
+                  value={formData.community}
+                  className="p-2 border rounded-md w-64"
+                >
+                  <option value="">Select Community</option>
+                  {communities.map((c) => (
+                    <option key={c._id} value={c._id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  onClick={async () => {
+                    try {
+                      const config = getAuthConfig();
+                      await axios.post(
+                        "http://localhost:5000/communities/assign-admin",
+                        {
+                          adminId: selectedCommunity,
+                          communityId: formData.community,
+                        },
+                        config
+                      );
+                      setSelectedCommunity("");
+                      fetchAdmins();
+                    } catch {
+                      setError("Failed to assign community");
+                    }
+                  }}
+                  className="ml-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+                >
+                  Assign
+                </button>
+                <button
+                  onClick={() => setSelectedCommunity("")}
+                  className="ml-3 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </table>
         )}
       </div>
@@ -393,7 +496,7 @@ const Dashboard = () => {
         }`}
       >
         <h1 className="text-4xl font-extrabold text-white">
-         🏘️ HOA Connect System
+          🏘️ HOA Connect System
         </h1>
         <button
           onClick={() => setDarkMode((p) => !p)}
@@ -411,7 +514,9 @@ const Dashboard = () => {
       <div className="flex flex-1 overflow-hidden">
         <aside
           className={`w-72 flex-shrink-0 flex flex-col shadow-2xl transition-colors duration-300 
-          ${darkMode ? "bg-gray-800 text-white" : "bg-gray-300 border-gray-300"}`}
+          ${
+            darkMode ? "bg-gray-800 text-white" : "bg-gray-300 border-gray-300"
+          }`}
         >
           <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
             <NavLink icon={HomeIcon} onClick={() => navigate("/dashboard")}>
