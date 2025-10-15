@@ -189,10 +189,6 @@ const Dashboard = () => {
               Payments
             </NavLink>
 
-            <NavLink icon={ChartBarIcon} onClick={() => navigate("/analytics")}>
-              Analytics
-            </NavLink>
-
             <NavLink icon={BellIcon} onClick={() => navigate("/notifications")}>
               Notifications
             </NavLink>

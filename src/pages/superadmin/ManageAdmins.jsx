@@ -139,7 +139,7 @@ const ManageAdmins = ({ darkMode }) => {
         name: "",
         email: "",
         password: "",
-        role: "",
+        role: "admin",
         phoneNo: "",
         community: "",
       });

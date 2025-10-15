@@ -43,13 +43,17 @@ export const fetchDashboardData = async () => {
   return api.get("/dashboard/superadmin");
 };
 
-// export const fetchNotifications = async () => {
-//   return api.get(ENDPOINTS.NOTIFICATIONS);
-// };
+export const fetchHOAAdminDashboardData = async () => {
+  return api.get("/admin-dashboard/admin");
+};
 
-// export const fetchAnnouncements = async () => {
-//   return api.get(ENDPOINTS.ANNOUNCEMENTS);
-// };
+export const fetchNotifications = async () => {
+  return api.get(ENDPOINTS.NOTIFICATIONS);
+};
+
+export const fetchAnnouncements = async () => {
+  return api.get(ENDPOINTS.ANNOUNCEMENTS);
+};
 
 export const fetchCommunity = async () => {
   return api.get("/communitities");
