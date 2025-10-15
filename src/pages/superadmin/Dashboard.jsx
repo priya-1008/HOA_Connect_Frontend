@@ -1,95 +1,68 @@
 import React, { useEffect, useState } from "react";
-import { Line } from "react-chartjs-2";
-
-// import Navbar from "../../components/Navbar";
-// import Sidebar from "../../components/Sidebar";
-// import DashboardCard from "../../components/DashboardCard";
-// import LoadingSpinner from "../../components/LoadingSpinner";
-
-import { fetchDashboardData } from "../../api/axios";
-
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-import {
-  Bell,
-  Users,
-  FileText,
-  DollarSign,
-  Home,
-  BarChart2,
-  Settings,
-} from "lucide-react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
-  const [loading, setLoading] = useState(true);
-  const [dashboardData, setDashboardData] = useState({
-    users: 0,
-    posts: 0,
-    comments: 0,
-    analytics: [],
-    notifications: [],
-    announcements: [],
-  });
+  const [communitiesCount, setCommunitiesCount] = useState(0);
+  const [hoaAdminsCount, setHoaAdminsCount] = useState(0);
+  const [analytics, setAnalytics] = useState({ totalPayments: 0 });
+
+  const navigate = useNavigate();
+
+  const features = [
+    "Manage multiple Communities (create, edit, delete)",
+    "Assign or remove HOA Admins for communities",
+    "View all payments & transactions (global reports)",
+    "Generate overall analytics reports",
+    "Send system-wide notifications",
+  ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const dashRes = await fetchDashboardData();
-        // fetchDashboardData(),
-        // fetchNotifications(),
-        // fetchAnnouncements(),
-        // ]);
+    const token = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
 
-        setDashboardData({
-          users: dashRes?.data?.users || 0,
-          posts: dashRes?.data?.posts || 0,
-          comments: dashRes?.data?.comments || 0,
-          analytics: dashRes?.data?.analytics || [],
-          notifications: dashRes?.data?.notifications || [],
-          announcements: dashRes?.data?.announcements || [],
-        });
-      } catch (error) {
-        console.error("Error fetching dashboard info:", error);
-      } finally {
-        setLoading(false);
-      }
+    if (!token || userRole !== "superadmin") {
+      alert("Access Denied. Only Super Admins can view this page.");
+      navigate("/login");
+      return;
+    }
+
+    const config = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     };
 
-    fetchData();
-  }, []);
+    // Fetch total communities
+    axios
+      .get("http://localhost:5000/communities/getCommunity", config)
+      .then((res) => {
+        setCommunitiesCount(Array.isArray(res.data) ? res.data.length : 0);
+      })
+      .catch(() => setCommunitiesCount(0));
 
-  // if (loading) return <LoadingSpinner />;
+    // Fetch HOA admins
+    axios
+      .get("http://localhost:5000/auth/register", config)
+      .then((res) => {
+        const admins = Array.isArray(res.data)
+          ? res.data.filter((user) => user.role === "admin")
+          : [];
+        setHoaAdminsCount(admins.length);
+      })
+      .catch(() => setHoaAdminsCount(0));
 
-  const chartData = {
-    labels: dashboardData.analytics?.map((item) => item.date) || [],
-    datasets: [
-      {
-        label: "Daily Analytics",
-        data: dashboardData.analytics?.map((item) => item.value) || [],
-        borderColor: "rgba(59, 130, 246, 1)",
-        backgroundColor: "rgba(59, 130, 246, 0.2)",
-      },
-    ],
-  };
+    // Fetch total payments
+    axios
+      .get("http://localhost:5000/dashboard/total-payments", config)
+      .then((res) => {
+        const total = res.data?.total || 0;
+        setAnalytics({ totalPayments: total });
+      })
+      .catch(() => {
+        setAnalytics({ totalPayments: 0 });
+      });
+  }, [navigate]);
 
   return (
     <div className="flex h-screen w-screen bg-gray-50 text-gray-800 overflow-hidden">
@@ -98,94 +71,99 @@ const Dashboard = () => {
         <div className="p-6 text-blue-700 text-2xl font-bold border-b border-gray-100">
           HOA Connect
         </div>
-        <nav className="flex-1 p-4 space-y-2">
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg bg-blue-50 text-blue-600 font-medium">
-            <Bell size={18} /> Announcements
+        <nav className="flex-1 p-4 space-y-2 text-left">
+          <button className="w-full text-left px-4 py-2 rounded-lg hover:bg-blue-100 font-medium">
+            Dashboard
           </button>
-
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-gray-100">
-            <Users size={18} /> Residents
+          <button
+            onClick={() => navigate("/manage-communities")}
+            className="w-full text-left px-4 py-2 rounded-lg hover:bg-blue-100"
+          >
+            Communities
           </button>
-
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-gray-100">
-            <FileText size={18} /> Complaints
+          <button
+            onClick={() => navigate("/hoa-admins")}
+            className="w-full text-left px-4 py-2 rounded-lg hover:bg-blue-100"
+          >
+            HOA Admins
           </button>
-
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-gray-100">
-            <DollarSign size={18} /> Payments
+          <button
+            onClick={() => navigate("/payments")}
+            className="w-full text-left px-4 py-2 rounded-lg hover:bg-blue-100"
+          >
+            Payments
           </button>
-
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-gray-100">
-            <Home size={18} /> Amenities
+          <button
+            onClick={() => navigate("/analytics")}
+            className="w-full text-left px-4 py-2 rounded-lg hover:bg-blue-100"
+          >
+            Analytics
           </button>
-
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-gray-100">
-            <BarChart2 size={18} /> Analytics
-          </button>
-
-          <button className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-gray-100">
-            <Settings size={18} /> Settings
+          <button
+            onClick={() => navigate("/notifications")}
+            className="w-full text-left px-4 py-2 rounded-lg hover:bg-blue-100"
+          >
+            Notifications
           </button>
         </nav>
       </aside>
-      {/* Main Dashboard */}
+
+      {/* Main content */}
       <main className="flex-1 p-8 overflow-y-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
-          <button className="bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800">
+          <h1 className="text-3xl font-bold">Super Admin Dashboard</h1>
+          <button
+            onClick={() => {
+              localStorage.clear();
+              navigate("/login");
+            }}
+            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+          >
             Logout
           </button>
         </div>
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-2xl shadow text-center">
-            <p className="text-gray-500 text-sm font-medium">Total Residents</p>
-            <h2 className="text-3xl font-bold text-gray-900 mt-2">
-              {dashboardData.users}
-            </h2>
-          </div>
-          <div className="bg-white p-6 rounded-2xl shadow text-center">
-            <p className="text-gray-500 text-sm font-medium">
-              Pending Complaints
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+          <div className="bg-white p-6 rounded-xl shadow text-center">
+            <p className="text-sm text-gray-500 font-medium">
+              Total Communities
             </p>
-            <h2 className="text-3xl font-bold text-red-500 mt-2">
-              {dashboardData.complaints}
+            <h2 className="text-3xl font-bold text-blue-600 mt-2">
+              {communitiesCount}
             </h2>
           </div>
-          <div className="bg-white p-6 rounded-2xl shadow text-center">
-            <p className="text-gray-500 text-sm font-medium">Total Payments</p>
+          <div className="bg-white p-6 rounded-xl shadow text-center">
+            <p className="text-sm text-gray-500 font-medium">
+              HOA Admins Assigned
+            </p>
+            <h2 className="text-3xl font-bold text-blue-600 mt-2">
+              {hoaAdminsCount}
+            </h2>
+          </div>
+          <div className="bg-white p-6 rounded-xl shadow text-center">
+            <p className="text-sm text-gray-500 font-medium">Total Payments</p>
             <h2 className="text-3xl font-bold text-green-600 mt-2">
-              ₹{dashboardData.payments}
+              ₹{analytics.totalPayments.toLocaleString()}
             </h2>
           </div>
         </div>
 
-        {/* Announcements & Graph */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Announcements */}
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h3 className="text-lg font-semibold mb-4">Announcements</h3>
-            {dashboardData.announcements?.length > 0 ? (
-              <ul className="space-y-3 text-gray-700">
-                {dashboardData.announcements.map((item, index) => (
-                  <li key={index}>📢 {item.title || item.message}</li>
-                ))}
-              </ul>
-            ) : (
-              <p>No announcements available</p>
-            )}
-            <button className="mt-4 bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800">
-              View All
-            </button>
-          </div>
-          {/* Analytics Graph */}
-          <div className="bg-white p-6 rounded-2xl shadow">
-            <h3 className="text-lg font-semibold mb-4">Community Analytics</h3>
-            {dashboardData.analytics?.length > 0 ? (
-              <Line data={chartData} />
-            ) : (
-              <p>No analytics data available</p>
-            )}
+        {/* Features Section */}
+        <div className="bg-white p-6 rounded-xl shadow mb-10">
+          <h3 className="text-xl font-semibold mb-4">Super Admin Features</h3>
+          <ul className="list-disc pl-5 text-gray-700 space-y-2">
+            {features.map((feature, idx) => (
+              <li key={idx}>{feature}</li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Analytics Graph Placeholder */}
+        <div className="bg-white p-6 rounded-xl shadow">
+          <h3 className="text-xl font-semibold mb-4">Analytics Overview</h3>
+          <div className="text-gray-500 italic text-center py-10 border rounded-lg">
+            [Graph Placeholder]
           </div>
         </div>
       </main>

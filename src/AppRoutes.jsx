@@ -80,14 +80,14 @@ import PaymentsReport from './pages/superadmin/PaymentsReport';
 const AppRoutes = () => (
   <Routes>
     {/* Public Route */}
-    <Route path="/login" element={<Login />} />
+    <Route path="/" element={<Login />} />
 
     {/* Private Routes */}
     <Route
-      path="/"
+      path="/dashboard"
       element={
         <PrivateRoute requiredRole="superadmin">
-          <SuperAdminDashboard />
+          <Dashboard />
         </PrivateRoute>
       }
     />
@@ -101,14 +101,15 @@ const AppRoutes = () => (
       }
     />
 
-    <Route
-      path="/"
+    {/* <Route
+      path="/superadmin-dashboard"
       element={
-        <PrivateRoute requiredRole="resident">
-          <SuperAdminDashboard />
+        <PrivateRoute requiredRole="superadmin">
+          <Dashboard />
         </PrivateRoute>
       }
-    />
+    /> */}
+
 
     <Route
       path="/manage-communities"

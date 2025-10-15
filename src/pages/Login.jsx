@@ -224,7 +224,7 @@ const Login = () => {
   return (
     <div className="login-container">
       <aside className="login-sidebar">
-        <div className="login-logo">HOA Connect</div>
+        <div className="text-red-500">HOA Connect</div>
         <div className="login-welcome">
           <h2>Welcome Back</h2>
           <p>Sign in to your Dashboard</p>
@@ -232,7 +232,7 @@ const Login = () => {
       </aside>
       <main className="login-main">
         <div className="login-form-card">
-          <h2 className="login-title">Login Page</h2>
+          <h2 className="text-red-500">Login Page</h2>
           {error && (
             <div className="login-error">{error}</div>
           )}

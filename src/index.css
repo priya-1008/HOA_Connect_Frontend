@@ -1,11 +1,11 @@
 /* @import "tailwindcss"; */
-/* @import "tailwindcss/base";
+@import "tailwindcss/base";
 @import "tailwindcss/components";
-@import "tailwindcss/utilities"; */
-@import "tailwindcss/preflight";
 @import "tailwindcss/utilities";
+/* @import "tailwindcss/preflight";
+@import "tailwindcss/utilities"; */
 
-html, body, #root {
+/* html, body, #root {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -13,12 +13,12 @@ html, body, #root {
   background-color: #f9fafb;
   font-family: 'Inter', system-ui, sans-serif;
   overflow: hidden; /* ✅ Prevent scrollbars & black edges */
-}
+/* } */
 
 /* Optional smoother rendering */
-* {
+/* * {
   box-sizing: border-box;
-}
+}  */
 
 /* :root {
   /* font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
