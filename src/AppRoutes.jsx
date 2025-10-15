@@ -73,11 +73,19 @@ import ManageCommunities from './pages/superadmin/ManageCommunities';
 import ManageAdmins from './pages/superadmin/ManageAdmins';
 import PaymentsReport from './pages/superadmin/PaymentsReport';
 import SystemNotification from './pages/superadmin/Notifications';
-import Analytics from './pages/superadmin/ViewAnalytics';
+
+
 // HOA Admin Pages
 import HOAAdminDashboard from './pages/admin/AdminDashboard';
-
-
+import Communities from './pages/admin/Communities';
+import Residents from './pages/admin/Residents';
+import Announcements from './pages/admin/Announcements';
+import Complaints from './pages/admin/Complaints';
+import Amenities from './pages/admin/Amenities';
+import Documents from './pages/admin/Documents';
+import Meetings from './pages/admin/Meetings';
+import Polls from './pages/admin/Polls';
+import Notification from './pages/admin/SendNotification';
 
 const AppRoutes = () => (
   <Routes>
@@ -125,14 +133,6 @@ const AppRoutes = () => (
         </PrivateRoute>
       }
     />
-    <Route
-      path="/analytics"
-      element={
-        <PrivateRoute>
-         <Analytics />
-        </PrivateRoute>
-      }
-    />
 
     {/*  HOA Admin Routes */}
     <Route
@@ -146,23 +146,23 @@ const AppRoutes = () => (
     <Route
       path="/communities"
       element={
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute >
           <Communities />
         </PrivateRoute>
       }
     />
     <Route
-      path="/manage-residents"
+      path="/residents"
       element={
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute >
           <Residents />
         </PrivateRoute>
       }
     />
     <Route
-      path="/post-announcements"
+      path="/announcements"
       element={
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute >
           <Announcements />
         </PrivateRoute>
       }
@@ -170,7 +170,7 @@ const AppRoutes = () => (
     <Route
       path="/complaints"
       element={
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute >
           <Complaints />
         </PrivateRoute>
       }
@@ -178,7 +178,7 @@ const AppRoutes = () => (
     <Route
       path="/amenities"
       element={
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute >
           <Amenities />
         </PrivateRoute>
       }
@@ -186,7 +186,7 @@ const AppRoutes = () => (
     <Route
       path="/documents"
       element={
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute >
           <Documents />
         </PrivateRoute>
       }
@@ -194,7 +194,7 @@ const AppRoutes = () => (
     <Route
       path="/meetings"
       element={
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute >
           <Meetings />
         </PrivateRoute>
       }
@@ -202,16 +202,16 @@ const AppRoutes = () => (
     <Route
       path="/polls"
       element={
-        <PrivateRoute requiredRole="admin">
+        <PrivateRoute >
           <Polls />
         </PrivateRoute>
       }
     />
     <Route
-      path="/notifications"
+      path="/resident-notification"
       element={
-        <PrivateRoute requiredRole="admin">
-          <Notifications />
+        <PrivateRoute >
+          <Notification />
         </PrivateRoute>
       }
     />
