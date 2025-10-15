@@ -2,41 +2,64 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const ManageCommunities = () => {
+// Heroicons
+import {
+  HomeIcon,
+  BuildingOffice2Icon,
+  UsersIcon,
+  CurrencyDollarIcon,
+  ChartBarIcon,
+  BellIcon,
+  ArrowRightOnRectangleIcon,
+  SunIcon,
+  MoonIcon,
+} from "@heroicons/react/24/outline";
+
+// 🧩 NavLink component
+const NavLink = ({ to, icon: Icon, children, isActive, onClick }) => {
+  const baseClasses =
+    "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium";
+  const activeClasses = "bg-blue-600 text-white shadow-md hover:bg-blue-700";
+  const inactiveClasses =
+    "text-gray-700 hover:bg-blue-200 dark:text-gray-200 dark:hover:bg-gray-700";
+
+  return (
+    <button
+      onClick={onClick ? onClick : () => {}}
+      className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
+    >
+      <Icon className="w-5 h-5" />
+      {children}
+    </button>
+  );
+};
+
+// 🏙️ ManageCommunities inside the main dashboard layout
+const ManageCommunities = ({ darkMode }) => {
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
-  // For create / edit form
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [formData, setFormData] = useState({
-    name: "",
-    location: "",
-    // add other fields your community has
-  });
+  const [formData, setFormData] = useState({ name: "", location: "" });
 
-  const navigate = useNavigate();
-
-  // Utility: get token and config
   const getAuthConfig = () => {
     const token = localStorage.getItem("token");
     return {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
     };
   };
 
-  // Fetch communities
   const fetchCommunities = async () => {
     try {
       setLoading(true);
       const config = getAuthConfig();
-      const res = await axios.get("http://localhost:5000/communities/getCommunity", config);
+      const res = await axios.get(
+        "http://localhost:5000/communities/getCommunity",
+        config
+      );
       setCommunities(res.data || []);
     } catch (err) {
-      console.error("Error fetching communities:", err);
       setError("Failed to load communities");
     } finally {
       setLoading(false);
@@ -47,43 +70,36 @@ const ManageCommunities = () => {
     fetchCommunities();
   }, []);
 
-  // Handle form change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle create new
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
       const config = getAuthConfig();
-      await axios.post("http://localhost:5000/communities/addCommunity", formData, config);
-      // refresh list
+      await axios.post(
+        "http://localhost:5000/communities/addCommunity",
+        formData,
+        config
+      );
       fetchCommunities();
-      // reset form
       setFormData({ name: "", location: "" });
     } catch (err) {
-      console.error("Error creating community:", err);
       setError("Failed to create community");
     }
   };
 
-  // Start editing
   const startEdit = (community) => {
     setIsEditing(true);
-    setEditId(community._id);  // or community.id, depending on schema
+    setEditId(community._id);
     setFormData({
       name: community.name,
       location: community.location,
-      // map other fields
     });
   };
 
-  // Handle update
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -98,68 +114,73 @@ const ManageCommunities = () => {
       setEditId(null);
       setFormData({ name: "", location: "" });
     } catch (err) {
-      console.error("Error updating community:", err);
       setError("Failed to update community");
     }
   };
 
-  // Handle delete
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this community?")) return;
+    if (!window.confirm("Are you sure you want to delete this community?"))
+      return;
     try {
       const config = getAuthConfig();
-      await axios.delete(`http://localhost:5000/communities/deleteCommunity/${id}`, config);
+      await axios.delete(
+        `http://localhost:5000/communities/deleteCommunity/${id}`,
+        config
+      );
       fetchCommunities();
     } catch (err) {
-      console.error("Error deleting community:", err);
       setError("Failed to delete community");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <div className="max-w-4xl mx-auto bg-white shadow rounded-lg p-6">
-        <h2 className="text-2xl font-semibold mb-4">Manage Communities</h2>
+    <div
+      className={`flex-1 overflow-y-auto p-8 transition-colors duration-300 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
+      }`}
+    >
+      <div
+        className={`max-w-5xl mx-auto rounded-xl shadow-lg p-8 transition-colors duration-300 ${
+          darkMode ? "bg-gray-800 border border-gray-700" : "bg-white"
+        }`}
+      >
+        <h2 className="text-3xl font-bold mb-6 text-center">
+          Manage Communities
+        </h2>
 
-        {/* Error */}
         {error && (
-          <div className="mb-4 text-red-600">
-            {error}
-          </div>
+          <div className="mb-4 text-red-500 font-medium text-center">{error}</div>
         )}
 
-        {/* Form */}
+        {/* 📝 Form Section */}
         <form
           onSubmit={isEditing ? handleUpdate : handleCreate}
-          className="mb-6 space-y-4"
+          className="space-y-4 mb-8"
         >
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Name
-            </label>
+            <label className="block text-sm font-medium mb-1">Name</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
               required
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-400"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Location
-            </label>
+            <label className="block text-sm font-medium mb-1">Location</label>
             <textarea
               name="location"
               value={formData.location}
               onChange={handleChange}
-              className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
+              required
+              className="w-full p-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-400"
             />
           </div>
 
-          <div className="flex space-x-2">
+          <div className="flex gap-3">
             <button
               type="submit"
               className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
@@ -174,7 +195,7 @@ const ManageCommunities = () => {
                   setEditId(null);
                   setFormData({ name: "", location: "" });
                 }}
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
               >
                 Cancel
               </button>
@@ -182,12 +203,16 @@ const ManageCommunities = () => {
           </div>
         </form>
 
-        {/* Communities List */}
+        {/* 📋 Table Section */}
         {loading ? (
           <p>Loading communities...</p>
         ) : (
-          <table className="w-full table-auto border-collapse">
-            <thead className="bg-gray-100">
+          <table className="w-full border-collapse border border-gray-300">
+            <thead
+              className={`${
+                darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-black"
+              }`}
+            >
               <tr>
                 <th className="px-4 py-2 border">Name</th>
                 <th className="px-4 py-2 border">Location</th>
@@ -195,33 +220,34 @@ const ManageCommunities = () => {
               </tr>
             </thead>
             <tbody>
-              {communities.length === 0 && (
+              {communities.length === 0 ? (
                 <tr>
-                  <td colSpan="3" className="px-4 py-2 text-center">
+                  <td colSpan="3" className="text-center py-4">
                     No communities found.
                   </td>
                 </tr>
+              ) : (
+                communities.map((comm) => (
+                  <tr key={comm._id}>
+                    <td className="px-4 py-2 border">{comm.name}</td>
+                    <td className="px-4 py-2 border">{comm.location}</td>
+                    <td className="px-4 py-2 border space-x-2">
+                      <button
+                        onClick={() => startEdit(comm)}
+                        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(comm._id)}
+                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
               )}
-              {communities.map((comm) => (
-                <tr key={comm._id || comm.id}>
-                  <td className="px-4 py-2 border">{comm.name}</td>
-                  <td className="px-4 py-2 border">{comm.location}</td>
-                  <td className="px-4 py-2 border space-x-2">
-                    <button
-                      onClick={() => startEdit(comm)}
-                      className="px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(comm._id || comm.id)}
-                      className="px-2 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
             </tbody>
           </table>
         )}
@@ -230,4 +256,111 @@ const ManageCommunities = () => {
   );
 };
 
-export default ManageCommunities;
+// 🌐 Main Dashboard Layout
+const Dashboard = () => {
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem("darkMode");
+    return saved === "true";
+  });
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    navigate("/login");
+  };
+
+  useEffect(() => {
+    localStorage.setItem("darkMode", darkMode);
+    if (darkMode) document.documentElement.classList.add("dark");
+    else document.documentElement.classList.remove("dark");
+  }, [darkMode]);
+
+  return (
+    <div
+      className={`flex flex-col h-screen w-screen transition-colors duration-300 ${
+        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
+      }`}
+    >
+      {/* 🔷 Header */}
+      <header
+        className={`flex items-center justify-between px-10 py-4 shadow-md transition-colors duration-300 ${
+          darkMode
+            ? "bg-gray-900 border-b border-gray-700"
+            : "bg-blue-600 border-b border-blue-400"
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <h1 className="text-4xl font-extrabold text-white">
+            HOA Connect System
+          </h1>
+        </div>
+
+        <button
+          onClick={() => setDarkMode((p) => !p)}
+          className="flex items-center justify-center p-3 rounded-full transition-all text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-md"
+        >
+          {darkMode ? (
+            <SunIcon className="w-6 h-6 text-yellow-400" />
+          ) : (
+            <MoonIcon className="w-6 h-6 text-indigo-600" />
+          )}
+        </button>
+      </header>
+
+      {/* 🔷 Sidebar + Content */}
+      <div className="flex flex-1 overflow-hidden">
+              {/* Sidebar */}
+              <aside
+                className={`w-72 flex-shrink-0 flex flex-col shadow-2xl transition-colors duration-300 
+                ${darkMode ? "bg-gray-800 text-white" : "bg-gray-300 border-gray-300"}`}
+              >
+                <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+                  <NavLink icon={HomeIcon} onClick={() => navigate("/dashboard")}
+                  >
+                    Dashboard
+                  </NavLink>
+                  <NavLink
+                    icon={BuildingOffice2Icon}
+                    onClick={() => navigate("/manage-communities")}>
+                    Communities
+                  </NavLink>
+      
+                  <NavLink icon={UsersIcon} onClick={() => navigate("/manage-admins")}>
+                    HOA Admins
+                  </NavLink>
+      
+                  <NavLink
+                    icon={CurrencyDollarIcon}
+                    onClick={() => navigate("/payments")}
+                  >
+                    Payments
+                  </NavLink>
+      
+                  <NavLink icon={ChartBarIcon} onClick={() => navigate("/analytics")}>
+                    Analytics
+                  </NavLink>
+      
+                  <NavLink icon={BellIcon} onClick={() => navigate("/notifications")}>
+                    Notifications
+                  </NavLink>
+                </nav>
+      
+                <div className="p-4 border-t border-gray-300 dark:border-gray-700 space-y-3">
+                  <button
+                    onClick={handleLogout}
+                    className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-black transition-all font-semibold shadow-md"
+                  >
+                    <ArrowRightOnRectangleIcon className="w-5 h-5" />
+                    Logout
+                  </button>
+                </div>
+              </aside>
+      
+        {/* 🏙️ Communities Content */}
+        <ManageCommunities darkMode={darkMode} />
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
