@@ -77,7 +77,7 @@ import SystemNotification from './pages/superadmin/Notifications';
 
 // HOA Admin Pages
 import HOAAdminDashboard from './pages/admin/AdminDashboard';
-import Communities from './pages/admin/Communities';
+import Payments from './pages/admin/TrackPayment';
 import Residents from './pages/admin/Residents';
 import Announcements from './pages/admin/Announcements';
 import Complaints from './pages/admin/Complaints';
@@ -144,10 +144,10 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/communities"
+      path="/track-payments"
       element={
         <PrivateRoute >
-          <Communities />
+          <Payments />
         </PrivateRoute>
       }
     />

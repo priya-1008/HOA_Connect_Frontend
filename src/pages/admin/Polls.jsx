@@ -93,12 +93,6 @@ const AdminDashboard = () => {
             <HomeIcon className="w-5 h-5" /> Dashboard
           </button>
           <button
-            onClick={() => navigate("/manage-communities")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <BuildingOffice2Icon className="w-5 h-5" /> Communities
-          </button>
-          <button
             onClick={() => navigate("/residents")}
             className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
           >
@@ -120,7 +114,7 @@ const AdminDashboard = () => {
             onClick={() => navigate("/amenities")}
             className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
           >
-            <CalendarDaysIcon className="w-5 h-5" /> Amenities
+            <BuildingOffice2Icon className="w-5 h-5" /> Amenities
           </button>
           <button
             onClick={() => navigate("/documents")}
@@ -133,6 +127,12 @@ const AdminDashboard = () => {
             className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
           >
             <ChatBubbleBottomCenterTextIcon className="w-5 h-5" /> Meetings
+          </button>
+          <button
+            onClick={() => navigate("/track-payments")}
+            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
+          >
+            <CurrencyDollarIcon className="w-5 h-5" /> Payments
           </button>
           <button
             onClick={() => navigate("/resident-notification")}
