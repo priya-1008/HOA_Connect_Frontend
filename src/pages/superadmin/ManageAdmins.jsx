@@ -6,14 +6,15 @@ import {
   BuildingOffice2Icon,
   UsersIcon,
   CurrencyDollarIcon,
-  ChartBarIcon,
   BellIcon,
   ArrowRightOnRectangleIcon,
   SunIcon,
   MoonIcon,
+  PencilSquareIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 
-// 🧩 Reusable NavLink
+// 🧩 Reusable NavLink Component
 const NavLink = ({ icon: Icon, children, isActive, onClick }) => {
   const base =
     "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium";
@@ -39,40 +40,34 @@ const ManageAdmins = ({ darkMode }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editId, setEditId] = useState(null);
   const [communities, setCommunities] = useState([]);
-  const [selectedCommunity, setSelectedCommunity] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
-    role: "admin",
     phoneNo: "",
-    community: "",
+    houseNumber: "",
+    communityId: "",
   });
 
-  const getAuthConfig = () => {
-    const token = localStorage.getItem("token");
-    return { headers: { Authorization: `Bearer ${token}` } };
-  };
+  const getAuthConfig = () => ({
+    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+  });
 
+  // Fetch Admins
   const fetchAdmins = async () => {
     try {
       setLoading(true);
       const config = getAuthConfig();
-      const res = await axios.get(
-        "http://localhost:5000/auth/getadmins",
-        config
-      );
-      const data = Array.isArray(res.data)
-        ? res.data.filter((u) => u.role === "admin")
-        : [];
-      setAdmins(data);
-    } catch (err) {
+      const res = await axios.get("http://localhost:5000/auth/getadmins", config);
+      setAdmins(res.data);
+    } catch {
       setError("Failed to load admins");
     } finally {
       setLoading(false);
     }
   };
 
+  // Fetch Communities
   const fetchCommunities = async () => {
     try {
       const config = getAuthConfig();
@@ -91,63 +86,65 @@ const ManageAdmins = ({ darkMode }) => {
     fetchCommunities();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((p) => ({ ...p, [name]: value }));
-  };
+  const handleChange = (e) =>
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
 
   const validateForm = () => {
-    const { name, email, password, role, phoneNo } = formData;
+    const { name, email, password, phoneNo } = formData;
     if (!name || !email || !phoneNo) {
-      setError("All fields except community are required!");
+      setError("All required fields must be filled!");
       return false;
     }
     if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setError("Please enter a valid email address");
+      setError("Invalid email format!");
       return false;
     }
     if (!/^\d{10}$/.test(phoneNo)) {
-      setError("Phone number must be 10 digits");
+      setError("Phone number must be 10 digits!");
       return false;
     }
     if (!isEditing && password.length < 6) {
-      setError("Password must be at least 6 characters long");
+      setError("Password must be at least 6 characters!");
       return false;
     }
     setError("");
     return true;
   };
 
+  // Add Admin
   const handleCreate = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
     try {
       const config = getAuthConfig();
       const payload = {
-        ...formData,
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
         role: "admin",
-        community: formData.community || null,
+        phoneNo: formData.phoneNo,
+        houseNumber: formData.houseNumber,
+        communityId: formData.communityId,
       };
-      console.log("Payload:", payload);
-      if (!payload.community) delete payload.community;
-      // convert empty string to null or remove it
-      if (!payload.community) payload.community = null;
-      
+
       await axios.post("http://localhost:5000/auth/register", payload, config);
       fetchAdmins();
       setFormData({
         name: "",
         email: "",
         password: "",
-        role: "admin",
         phoneNo: "",
-        community: "",
+        houseNumber: "",
+        communityId: "",
       });
-    } catch {
-      setError("Failed to add admin");
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Failed to add admin");
     }
   };
 
+  // Start Editing
   const startEdit = (admin) => {
     setIsEditing(true);
     setEditId(admin._id);
@@ -155,15 +152,17 @@ const ManageAdmins = ({ darkMode }) => {
       name: admin.name,
       email: admin.email,
       password: "",
-      role: admin.role,
       phoneNo: admin.phoneNo || "",
-      community: admin.community?.name || "",
+      houseNumber: admin.houseNumber || "",
+      communityId: admin.communityId?._id || "",
     });
   };
 
+  // Update Admin
   const handleUpdate = async (e) => {
     e.preventDefault();
     if (!validateForm()) return;
+
     try {
       const config = getAuthConfig();
       await axios.put(
@@ -178,17 +177,18 @@ const ManageAdmins = ({ darkMode }) => {
         name: "",
         email: "",
         password: "",
-        role: "",
         phoneNo: "",
-        community: "",
+        houseNumber: "",
+        communityId: "",
       });
     } catch {
       setError("Failed to update admin");
     }
   };
 
+  // Delete Admin
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this admin?")) return;
+    if (!window.confirm("Delete this admin?")) return;
     try {
       const config = getAuthConfig();
       await axios.delete(`http://localhost:5000/auth/delete/${id}`, config);
@@ -209,7 +209,7 @@ const ManageAdmins = ({ darkMode }) => {
           darkMode ? "bg-gray-800 border border-gray-700" : "bg-white"
         }`}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center">
+        <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 dark:text-blue-300">
           Manage HOA Admins
         </h2>
 
@@ -224,104 +224,69 @@ const ManageAdmins = ({ darkMode }) => {
           onSubmit={isEditing ? handleUpdate : handleCreate}
           className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
         >
-          <div>
-            <label className="block text-sm font-medium mb-1">Name </label>
-            <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Email </label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-            />
-          </div>
-
+          <input
+            type="text"
+            name="name"
+            placeholder="Full Name"
+            value={formData.name}
+            onChange={handleChange}
+            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Email Address"
+            value={formData.email}
+            onChange={handleChange}
+            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+          />
           {!isEditing && (
-            <div>
-              <label className="block text-sm font-medium mb-1">
-                Password{" "}
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-              />
-            </div>
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={formData.password}
+              onChange={handleChange}
+              className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+            />
           )}
+          <input
+            type="text"
+            name="phoneNo"
+            placeholder="Phone Number"
+            maxLength="10"
+            value={formData.phoneNo}
+            onChange={handleChange}
+            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+          />
+          <input
+            type="text"
+            name="houseNumber"
+            placeholder="House Number"
+            value={formData.houseNumber}
+            onChange={handleChange}
+            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+          />
+          <select
+            name="communityId"
+            value={formData.communityId}
+            onChange={handleChange}
+            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+          >
+            <option value="">Select Community</option>
+            {communities.map((c) => (
+              <option key={c._id} value={c._id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Role </label>
-            <input
-              type="text"
-              name="role"
-              value="admin"
-              onChange={handleChange}
-              required
-              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-              readOnly
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Phone No </label>
-            <input
-              type="text"
-              name="phoneNo"
-              value={formData.phoneNo}
-              onChange={handleChange}
-              required
-              maxLength="10"
-              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-1">
-              Assigned Community
-            </label>
-            {/* <input
-              type="text"
-              name="community"
-              value={formData.community}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-            /> */}
-            <select
-              name="community"
-              value={formData.community}
-              onChange={handleChange}
-              className="w-full p-2 border rounded-md focus:ring focus:ring-blue-400"
-            >
-              <option value="">Select Community</option>
-              {communities.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="col-span-2 flex gap-3 mt-4">
+          <div className="col-span-2 flex gap-3 mt-4 justify-center">
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow"
             >
-              {isEditing ? "Update Admin" : "Add HOA Admin"}
+              {isEditing ? "Update Admin" : "Add Admin"}
             </button>
             {isEditing && (
               <button
@@ -333,12 +298,12 @@ const ManageAdmins = ({ darkMode }) => {
                     name: "",
                     email: "",
                     password: "",
-                    role: "",
                     phoneNo: "",
-                    community: "",
+                    houseNumber: "",
+                    communityId: "",
                   });
                 }}
-                className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
+                className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
               >
                 Cancel
               </button>
@@ -346,118 +311,65 @@ const ManageAdmins = ({ darkMode }) => {
           </div>
         </form>
 
-        {/* 📋 Admin Table */}
+        {/* 📋 Admins Table */}
         {loading ? (
-          <p>Loading admins...</p>
+          <p className="text-center">Loading admins...</p>
         ) : (
-          <table className="w-full border-collapse border border-gray-300">
-            <thead
-              className={`${
-                darkMode ? "bg-gray-700 text-white" : "bg-gray-100 text-black"
-              }`}
-            >
-              <tr>
-                <th className="px-4 py-2 border">Name</th>
-                <th className="px-4 py-2 border">Email</th>
-                <th className="px-4 py-2 border">Role</th>
-                <th className="px-4 py-2 border">Phone No</th>
-                <th className="px-4 py-2 border">Community</th>
-                <th className="px-4 py-2 border">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {admins.length === 0 ? (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border border-gray-300 rounded-lg">
+              <thead
+                className={`${
+                  darkMode ? "bg-gray-700 text-white" : "bg-blue-100 text-black"
+                }`}
+              >
                 <tr>
-                  <td colSpan="6" className="text-center py-4">
-                    No admins found.
-                  </td>
+                  <th className="px-4 py-2 border">Name</th>
+                  <th className="px-4 py-2 border">Email</th>
+                  <th className="px-4 py-2 border">Phone</th>
+                  <th className="px-4 py-2 border">House</th>
+                  <th className="px-4 py-2 border">Community</th>
+                  <th className="px-4 py-2 border">Actions</th>
                 </tr>
-              ) : (
-                admins.map((admin) => (
-                  <tr key={admin._id}>
-                    <td className="px-4 py-2 border">{admin.name}</td>
-                    <td className="px-4 py-2 border">{admin.email}</td>
-                    <td className="px-4 py-2 border capitalize">
-                      {admin.role}
-                    </td>
-                    <td className="px-4 py-2 border">{admin.phoneNo || "—"}</td>
-                    <td className="px-4 py-2 border">
-                      {admin.community?.name || "—"}
-                    </td>
-                    <td className="px-4 py-2 border space-x-2">
-                      <button
-                        onClick={() => startEdit(admin)}
-                        className="px-3 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleDelete(admin._id)}
-                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                      >
-                        Delete
-                      </button>
-                      <button
-                        onClick={() => setSelectedCommunity(admin._id)}
-                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                      >
-                        Assign
-                      </button>
+              </thead>
+              <tbody>
+                {admins.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="text-center py-4">
+                      No admins found.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-            {selectedCommunity && (
-              <div className="mt-6 border-t pt-4">
-                <h3 className="font-semibold text-lg mb-2">
-                  Assign Community to Admin
-                </h3>
-                <select
-                  onChange={(e) =>
-                    setFormData((p) => ({ ...p, community: e.target.value }))
-                  }
-                  value={formData.community}
-                  className="p-2 border rounded-md w-64"
-                >
-                  <option value="">Select Community</option>
-                  {communities.map((c) => (
-                    <option key={c._id} value={c._id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  onClick={async () => {
-                    try {
-                      const config = getAuthConfig();
-                      await axios.post(
-                        "http://localhost:5000/communities/assign-admin",
-                        {
-                          adminId: selectedCommunity,
-                          communityId: formData.community,
-                        },
-                        config
-                      );
-                      setSelectedCommunity("");
-                      fetchAdmins();
-                    } catch {
-                      setError("Failed to assign community");
-                    }
-                  }}
-                  className="ml-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-                >
-                  Assign
-                </button>
-                <button
-                  onClick={() => setSelectedCommunity("")}
-                  className="ml-3 px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500"
-                >
-                  Cancel
-                </button>
-              </div>
-            )}
-          </table>
+                ) : (
+                  admins.map((admin) => (
+                    <tr key={admin._id}>
+                      <td className="px-4 py-2 border">{admin.name}</td>
+                      <td className="px-4 py-2 border">{admin.email}</td>
+                      <td className="px-4 py-2 border">{admin.phoneNo}</td>
+                      <td className="px-4 py-2 border">{admin.houseNumber}</td>
+                      <td className="px-4 py-2 border">
+                        {admin.communityId?.name || "—"}
+                      </td>
+                      <td className="px-4 py-2 border flex justify-center gap-3">
+                        <button
+                          onClick={() => startEdit(admin)}
+                          className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center gap-1"
+                          title="Edit Admin"
+                        >
+                          <PencilSquareIcon className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(admin._id)}
+                          className="p-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1"
+                          title="Delete Admin"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
@@ -490,17 +402,13 @@ const Dashboard = () => {
       {/* Header */}
       <header
         className={`flex items-center justify-between px-10 py-4 shadow-md transition-colors duration-300 ${
-          darkMode
-            ? "bg-gray-900 border-b border-gray-700"
-            : "bg-blue-600 border-b border-blue-400"
+          darkMode ? "bg-gray-900" : "bg-blue-600"
         }`}
       >
-        <h1 className="text-4xl font-extrabold text-white">
-          🏘️ HOA Connect System
-        </h1>
+        <h1 className="text-3xl font-bold text-white">🏘️ HOA Connect System</h1>
         <button
-          onClick={() => setDarkMode((p) => !p)}
-          className="flex items-center justify-center p-3 rounded-full transition-all text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-md"
+          onClick={() => setDarkMode((prev) => !prev)}
+          className="p-3 rounded-full bg-white dark:bg-gray-800 shadow hover:scale-110 transition-all"
         >
           {darkMode ? (
             <SunIcon className="w-6 h-6 text-yellow-400" />
@@ -513,12 +421,11 @@ const Dashboard = () => {
       {/* Sidebar + Content */}
       <div className="flex flex-1 overflow-hidden">
         <aside
-          className={`w-72 flex-shrink-0 flex flex-col shadow-2xl transition-colors duration-300 
-          ${
-            darkMode ? "bg-gray-800 text-white" : "bg-gray-300 border-gray-300"
+          className={`w-72 flex-shrink-0 flex flex-col shadow-lg ${
+            darkMode ? "bg-gray-800" : "bg-gray-200"
           }`}
         >
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
             <NavLink icon={HomeIcon} onClick={() => navigate("/dashboard")}>
               Dashboard
             </NavLink>
@@ -541,16 +448,14 @@ const Dashboard = () => {
             >
               Payments
             </NavLink>
-           
             <NavLink icon={BellIcon} onClick={() => navigate("/notifications")}>
               Notifications
             </NavLink>
           </nav>
-
-          <div className="p-4 border-t border-gray-300 dark:border-gray-700 space-y-3">
+          <div className="p-4 border-t dark:border-gray-700">
             <button
               onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-black transition-all font-semibold shadow-md"
+              className="w-full flex items-center justify-center gap-3 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
             >
               <ArrowRightOnRectangleIcon className="w-5 h-5" />
               Logout
@@ -558,7 +463,7 @@ const Dashboard = () => {
           </div>
         </aside>
 
-        {/* 👥 Admin Content */}
+        {/* Main Content */}
         <ManageAdmins darkMode={darkMode} />
       </div>
     </div>
