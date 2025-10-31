@@ -1,36 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import HeaderNavbar from "./HeaderNavbar";
+
 import {
-  HomeIcon,
-  BuildingOffice2Icon,
-  UsersIcon,
-  CurrencyDollarIcon,
-  BellIcon,
-  ArrowRightOnRectangleIcon,
-  SunIcon,
-  MoonIcon,
+  H1Icon,
   PencilSquareIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-
-// 🧩 Reusable NavLink Component
-const NavLink = ({ icon: Icon, children, isActive, onClick }) => {
-  const base =
-    "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium";
-  const active = "bg-blue-600 text-white shadow-md hover:bg-blue-700";
-  const inactive =
-    "text-gray-700 hover:bg-blue-200 dark:text-gray-200 dark:hover:bg-gray-700";
-  return (
-    <button
-      onClick={onClick}
-      className={`${base} ${isActive ? active : inactive}`}
-    >
-      <Icon className="w-5 h-5" />
-      {children}
-    </button>
-  );
-};
 
 // 👥 Manage Admins Component
 const ManageAdmins = ({ darkMode }) => {
@@ -58,7 +35,10 @@ const ManageAdmins = ({ darkMode }) => {
     try {
       setLoading(true);
       const config = getAuthConfig();
-      const res = await axios.get("http://localhost:5000/auth/getadmins", config);
+      const res = await axios.get(
+        "http://localhost:5000/auth/getadmins",
+        config
+      );
       setAdmins(res.data);
     } catch {
       setError("Failed to load admins");
@@ -199,19 +179,21 @@ const ManageAdmins = ({ darkMode }) => {
   };
 
   return (
-    <div
-      className={`flex-1 overflow-y-auto p-8 transition-colors duration-300 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
-      }`}
-    >
-      <div
-        className={`max-w-5xl mx-auto rounded-xl shadow-lg p-8 transition-colors duration-300 ${
-          darkMode ? "bg-gray-800 border border-gray-700" : "bg-white"
-        }`}
+    <main className={`flex-1 overflow-y-auto`}>
+      <section
+        className={`rounded-xl shadow-lg px-6 py-9 transition-colors duration-300
+    ${
+      darkMode
+        ? "bg-gradient-to-br from-teal-900 via-blue-100 to-teal-900 border border-teal-600"
+        : "bg-gradient-to-br from-teal-900 via-blue-100 to-teal-900 border border-teal-600"
+    }`}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 dark:text-blue-300">
+        <h1
+          className={`text-4xl font-bold mb-6 text-center
+          ${darkMode ? "text-teal-900" : "text-gray-900"}`}
+        >
           Manage HOA Admins
-        </h2>
+        </h1>
 
         {error && (
           <div className="mb-4 text-red-500 font-medium text-center">
@@ -230,7 +212,12 @@ const ManageAdmins = ({ darkMode }) => {
             placeholder="Full Name"
             value={formData.name}
             onChange={handleChange}
-            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
+              ${
+                darkMode
+                  ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
+                  : "bg-white text-gray-900  placeholder-gray-750"
+              }`}
           />
           <input
             type="email"
@@ -238,7 +225,12 @@ const ManageAdmins = ({ darkMode }) => {
             placeholder="Email Address"
             value={formData.email}
             onChange={handleChange}
-            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
+              ${
+                darkMode
+                  ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
+                  : "bg-white text-gray-900  placeholder-gray-750"
+              }`}
           />
           {!isEditing && (
             <input
@@ -247,7 +239,12 @@ const ManageAdmins = ({ darkMode }) => {
               placeholder="Password"
               value={formData.password}
               onChange={handleChange}
-              className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+              className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
+                ${
+                  darkMode
+                    ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
+                    : "bg-white text-gray-900  placeholder-gray-750"
+                }`}
             />
           )}
           <input
@@ -257,7 +254,12 @@ const ManageAdmins = ({ darkMode }) => {
             maxLength="10"
             value={formData.phoneNo}
             onChange={handleChange}
-            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
+              ${
+                darkMode
+                  ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
+                  : "bg-white text-gray-900  placeholder-gray-750"
+              }`}
           />
           <input
             type="text"
@@ -265,13 +267,23 @@ const ManageAdmins = ({ darkMode }) => {
             placeholder="House Number"
             value={formData.houseNumber}
             onChange={handleChange}
-            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
+              ${
+                darkMode
+                  ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
+                  : "bg-white text-gray-900  placeholder-gray-750"
+              }`}
           />
           <select
             name="communityId"
             value={formData.communityId}
             onChange={handleChange}
-            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
+              ${
+                darkMode
+                  ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
+                  : "bg-white text-gray-900  placeholder-gray-750"
+              }`}
           >
             <option value="">Select Community</option>
             {communities.map((c) => (
@@ -284,7 +296,7 @@ const ManageAdmins = ({ darkMode }) => {
           <div className="col-span-2 flex gap-3 mt-4 justify-center">
             <button
               type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow"
+              className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 shadow font-semibold"
             >
               {isEditing ? "Update Admin" : "Add Admin"}
             </button>
@@ -303,7 +315,7 @@ const ManageAdmins = ({ darkMode }) => {
                     communityId: "",
                   });
                 }}
-                className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                className="px-6 py-2 bg-teal-300 text-teal-900 rounded-lg hover:bg-teal-400 font-semibold"
               >
                 Cancel
               </button>
@@ -312,81 +324,78 @@ const ManageAdmins = ({ darkMode }) => {
         </form>
 
         {/* 📋 Admins Table */}
-        {loading ? (
-          <p className="text-center">Loading admins...</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-300 rounded-lg">
-              <thead
-                className={`${
-                  darkMode ? "bg-gray-700 text-white" : "bg-blue-100 text-black"
-                }`}
-              >
+        <div className="overflow-x-auto rounded-lg shadow">
+          <table className="min-w-full rounded-lg overflow-hidden">
+            <thead
+              className={`${
+                darkMode
+                  ? "bg-teal-800 text-teal-100"
+                  : "bg-teal-100 text-teal-900"
+              }`}
+            >
+              <tr>
+                <th className="px-4 py-2 border-b-2">Name</th>
+                <th className="px-4 py-2 border-b-2">Email</th>
+                <th className="px-4 py-2 border-b-2">Phone</th>
+                <th className="px-4 py-2 border-b-2">House</th>
+                <th className="px-4 py-2 border-b-2">Community</th>
+                <th className="px-4 py-2 border-b-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {admins.length === 0 ? (
                 <tr>
-                  <th className="px-4 py-2 border">Name</th>
-                  <th className="px-4 py-2 border">Email</th>
-                  <th className="px-4 py-2 border">Phone</th>
-                  <th className="px-4 py-2 border">House</th>
-                  <th className="px-4 py-2 border">Community</th>
-                  <th className="px-4 py-2 border">Actions</th>
+                  <td colSpan="6" className="text-center py-4">
+                    No admins found.
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {admins.length === 0 ? (
-                  <tr>
-                    <td colSpan="6" className="text-center py-4">
-                      No admins found.
+              ) : (
+                admins.map((admin) => (
+                  <tr
+                    key={admin._id}
+                    className={`${
+                      darkMode ? "hover:bg-slate-800" : "hover:bg-teal-50"
+                    } transition`}
+                  >
+                    <td className="px-4 py-2 border-b">{admin.name}</td>
+                    <td className="px-4 py-2 border-b">{admin.email}</td>
+                    <td className="px-4 py-2 border-b">{admin.phoneNo}</td>
+                    <td className="px-4 py-2 border-b">{admin.houseNumber}</td>
+                    <td className="px-4 py-2 border-b">
+                      {admin.communityId?.name || "—"}
+                    </td>
+                    <td className="px-4 py-2 border-b flex justify-center gap-3">
+                      <button
+                        onClick={() => startEdit(admin)}
+                        className="p-2 bg-teal-500 text-white rounded hover:bg-teal-600 flex items-center gap-1"
+                        title="Edit Admin"
+                      >
+                        <PencilSquareIcon className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(admin._id)}
+                        className="p-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1"
+                        title="Delete Admin"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
                     </td>
                   </tr>
-                ) : (
-                  admins.map((admin) => (
-                    <tr key={admin._id}>
-                      <td className="px-4 py-2 border">{admin.name}</td>
-                      <td className="px-4 py-2 border">{admin.email}</td>
-                      <td className="px-4 py-2 border">{admin.phoneNo}</td>
-                      <td className="px-4 py-2 border">{admin.houseNumber}</td>
-                      <td className="px-4 py-2 border">
-                        {admin.communityId?.name || "—"}
-                      </td>
-                      <td className="px-4 py-2 border flex justify-center gap-3">
-                        <button
-                          onClick={() => startEdit(admin)}
-                          className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center gap-1"
-                          title="Edit Admin"
-                        >
-                          <PencilSquareIcon className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(admin._id)}
-                          className="p-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1"
-                          title="Delete Admin"
-                        >
-                          <TrashIcon className="w-5 h-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
   );
 };
 
-// 🌐 Dashboard Layout
+// 🌐 Dashboard Layout Page
 const Dashboard = () => {
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
   );
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
 
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
@@ -394,79 +403,10 @@ const Dashboard = () => {
   }, [darkMode]);
 
   return (
-    <div
-      className={`flex flex-col h-screen w-screen transition-colors duration-300 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
-      }`}
-    >
-      {/* Header */}
-      <header
-        className={`flex items-center justify-between px-10 py-4 shadow-md transition-colors duration-300 ${
-          darkMode ? "bg-gray-900" : "bg-blue-600"
-        }`}
-      >
-        <h1 className="text-3xl font-bold text-white">🏘️ HOA Connect System</h1>
-        <button
-          onClick={() => setDarkMode((prev) => !prev)}
-          className="p-3 rounded-full bg-white dark:bg-gray-800 shadow hover:scale-110 transition-all"
-        >
-          {darkMode ? (
-            <SunIcon className="w-6 h-6 text-yellow-400" />
-          ) : (
-            <MoonIcon className="w-6 h-6 text-indigo-600" />
-          )}
-        </button>
-      </header>
-
-      {/* Sidebar + Content */}
-      <div className="flex flex-1 overflow-hidden">
-        <aside
-          className={`w-72 flex-shrink-0 flex flex-col shadow-lg ${
-            darkMode ? "bg-gray-800" : "bg-gray-200"
-          }`}
-        >
-          <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-            <NavLink icon={HomeIcon} onClick={() => navigate("/dashboard")}>
-              Dashboard
-            </NavLink>
-            <NavLink
-              icon={BuildingOffice2Icon}
-              onClick={() => navigate("/manage-communities")}
-            >
-              Communities
-            </NavLink>
-            <NavLink
-              icon={UsersIcon}
-              isActive={true}
-              onClick={() => navigate("/manage-admins")}
-            >
-              HOA Admins
-            </NavLink>
-            <NavLink
-              icon={CurrencyDollarIcon}
-              onClick={() => navigate("/payments")}
-            >
-              Payments
-            </NavLink>
-            <NavLink icon={BellIcon} onClick={() => navigate("/notifications")}>
-              Notifications
-            </NavLink>
-          </nav>
-          <div className="p-4 border-t dark:border-gray-700">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700"
-            >
-              <ArrowRightOnRectangleIcon className="w-5 h-5" />
-              Logout
-            </button>
-          </div>
-        </aside>
-
-        {/* Main Content */}
-        <ManageAdmins darkMode={darkMode} />
-      </div>
-    </div>
+    <HeaderNavbar darkMode={darkMode} setDarkMode={setDarkMode}>
+      {/* Main content area rendered via children */}
+      <ManageAdmins darkMode={darkMode} />
+    </HeaderNavbar>
   );
 };
 

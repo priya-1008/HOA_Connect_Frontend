@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import HeaderNavbar from "./HeaderNavbar";
 
 // Heroicons
 import {
@@ -35,7 +36,6 @@ const NavLink = ({ icon: Icon, children, isActive, onClick }) => {
   );
 };
 
-// 🏙️ ManageCommunities
 const ManageCommunities = ({ darkMode }) => {
   const [communities, setCommunities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -125,17 +125,15 @@ const ManageCommunities = ({ darkMode }) => {
   };
 
   return (
-    <div
-      className={`flex-1 overflow-y-auto p-8 transition-colors duration-300 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
-      }`}
-    >
-      <div
-        className={`max-w-5xl mx-auto rounded-xl shadow-lg p-8 transition-colors duration-300 ${
-          darkMode ? "bg-gray-800 border border-gray-700" : "bg-white"
-        }`}
+    <main className="flex-1 overflow-y-auto p-8">
+      <section
+        className={`rounded-xl shadow-lg px-6 py-9 transition-colors duration-300
+          ${darkMode
+            ? "bg-gradient-to-br from-teal-900 via-blue-100 to-teal-900 border border-teal-600"
+            : "bg-gradient-to-br from-teal-900 via-blue-100 to-teal-900 border border-teal-600"
+          }`}
       >
-        <h2 className="text-3xl font-bold mb-6 text-center text-blue-600 dark:text-blue-300">
+        <h2 className={`text-4xl font-bold mb-6 text-center ${darkMode ? "text-teal-900" : "text-gray-900"}`}>
           Manage Communities
         </h2>
 
@@ -154,7 +152,11 @@ const ManageCommunities = ({ darkMode }) => {
             placeholder="Community Name"
             value={formData.name}
             onChange={handleChange}
-            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
+              ${darkMode
+                ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-500"
+                : "bg-white text-gray-900 placeholder-gray-500 border-teal-200"
+              }`}
             required
           />
           <textarea
@@ -162,14 +164,18 @@ const ManageCommunities = ({ darkMode }) => {
             placeholder="Location"
             value={formData.location}
             onChange={handleChange}
-            className="p-3 border rounded-md focus:ring-2 focus:ring-blue-400"
+            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
+              ${darkMode
+                ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-500"
+                : "bg-white text-gray-900 placeholder-gray-500 border-teal-200"
+              }`}
             required
           />
 
           <div className="col-span-2 flex gap-3 mt-4 justify-center">
             <button
               type="submit"
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 shadow"
+              className="px-6 py-2 bg-teal-600 text-white rounded-lg hover:bg-teal-700 shadow font-semibold"
             >
               {isEditing ? "Update Community" : "Add Community"}
             </button>
@@ -181,7 +187,7 @@ const ManageCommunities = ({ darkMode }) => {
                   setEditId(null);
                   setFormData({ name: "", location: "" });
                 }}
-                className="px-6 py-2 bg-gray-400 text-white rounded-lg hover:bg-gray-500"
+                className="px-6 py-2 bg-teal-300 text-teal-900 rounded-lg hover:bg-teal-400 font-semibold"
               >
                 Cancel
               </button>
@@ -190,157 +196,76 @@ const ManageCommunities = ({ darkMode }) => {
         </form>
 
         {/* Table Section */}
-        {loading ? (
-          <p className="text-center">Loading communities...</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full border border-gray-300 rounded-lg">
-              <thead
-                className={`${
-                  darkMode ? "bg-gray-700 text-white" : "bg-blue-100 text-black"
-                }`}
-              >
+        <div className="overflow-x-auto rounded-lg shadow">
+          <table className="min-w-full rounded-lg overflow-hidden">
+            <thead
+              className={`${darkMode ? "bg-teal-800 text-teal-100" : "bg-teal-100 text-teal-900"}`}
+            >
+              <tr>
+                <th className="px-4 py-2 border-b-2">Name</th>
+                <th className="px-4 py-2 border-b-2">Location</th>
+                <th className="px-4 py-2 border-b-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {communities.length === 0 ? (
                 <tr>
-                  <th className="px-4 py-2 border">Name</th>
-                  <th className="px-4 py-2 border">Location</th>
-                  <th className="px-4 py-2 border">Actions</th>
+                  <td colSpan="3" className="text-center py-4">
+                    No communities found.
+                  </td>
                 </tr>
-              </thead>
-              <tbody>
-                {communities.length === 0 ? (
-                  <tr>
-                    <td colSpan="3" className="text-center py-4">
-                      No communities found.
+              ) : (
+                communities.map((comm) => (
+                  <tr
+                    key={comm._id}
+                    className={`${darkMode ? "hover:bg-slate-800" : "hover:bg-teal-50"} transition`}
+                  >
+                    <td className="px-4 py-2 border-b">{comm.name}</td>
+                    <td className="px-4 py-2 border-b">{comm.location}</td>
+                    <td className="px-4 py-2 border-b flex justify-center gap-3">
+                      <button
+                        onClick={() => startEdit(comm)}
+                        className="p-2 bg-teal-500 text-white rounded hover:bg-teal-600 flex items-center gap-1"
+                        title="Edit Community"
+                      >
+                        <PencilSquareIcon className="w-5 h-5" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(comm._id)}
+                        className="p-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1"
+                        title="Delete Community"
+                      >
+                        <TrashIcon className="w-5 h-5" />
+                      </button>
                     </td>
                   </tr>
-                ) : (
-                  communities.map((comm) => (
-                    <tr key={comm._id}>
-                      <td className="px-4 py-2 border">{comm.name}</td>
-                      <td className="px-4 py-2 border">{comm.location}</td>
-                      <td className="px-4 py-2 border flex justify-center gap-3">
-                        <button
-                          onClick={() => startEdit(comm)}
-                          className="p-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 flex items-center gap-1" title="Edit Communities"
-                        >
-                          <PencilSquareIcon className="w-5 h-5" />
-                        </button>
-                        
-                        <button
-                          onClick={() => handleDelete(comm._id)}
-                          className="p-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1"
-                          title="Delete Communities"
-                        >
-                          <TrashIcon className="w-5 h-5" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-    </div>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
   );
 };
 
-// 🌐 Main Dashboard Layout
 const Dashboard = () => {
-  const [darkMode, setDarkMode] = useState(() => {
-    const saved = localStorage.getItem("darkMode");
-    return saved === "true";
-  });
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
+  const [darkMode, setDarkMode] = useState(
+    localStorage.getItem("darkMode") === "true"
+  );
 
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
-    if (darkMode) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
+    document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
   return (
-    <div
-      className={`flex flex-col h-screen w-screen transition-colors duration-300 ${
-        darkMode ? "bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
-      }`}
-    >
-      {/* 🔷 Header */}
-      <header
-        className={`flex items-center justify-between px-10 py-4 shadow-md transition-colors duration-300 ${
-          darkMode
-            ? "bg-gray-900 border-b border-gray-700"
-            : "bg-blue-600 border-b border-blue-400"
-        }`}
-      >
-        <h1 className="text-4xl font-extrabold text-white">
-          🏘️ HOA Connect System
-        </h1>
-
-        <button
-          onClick={() => setDarkMode((p) => !p)}
-          className="flex items-center justify-center p-3 rounded-full transition-all text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-md"
-        >
-          {darkMode ? (
-            <SunIcon className="w-6 h-6 text-yellow-400" />
-          ) : (
-            <MoonIcon className="w-6 h-6 text-indigo-600" />
-          )}
-        </button>
-      </header>
-
-      {/* 🔷 Sidebar + Content */}
-      <div className="flex flex-1 overflow-hidden">
-        <aside
-          className={`w-72 flex-shrink-0 flex flex-col shadow-2xl transition-colors duration-300 ${
-            darkMode ? "bg-gray-800 text-white" : "bg-gray-300 border-gray-300"
-          }`}
-        >
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            <NavLink icon={HomeIcon} onClick={() => navigate("/dashboard")}>
-              Dashboard
-            </NavLink>
-            <NavLink
-              icon={BuildingOffice2Icon}
-              onClick={() => navigate("/manage-communities")}
-            >
-              Communities
-            </NavLink>
-            <NavLink icon={UsersIcon} onClick={() => navigate("/manage-admins")}>
-              HOA Admins
-            </NavLink>
-            <NavLink
-              icon={CurrencyDollarIcon}
-              onClick={() => navigate("/payments")}
-            >
-              Payments
-            </NavLink>
-            <NavLink icon={BellIcon} onClick={() => navigate("/notifications")}>
-              Notifications
-            </NavLink>
-          </nav>
-
-          <div className="p-4 border-t border-gray-300 dark:border-gray-700 space-y-3">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-black transition-all font-semibold shadow-md"
-            >
-              <ArrowRightOnRectangleIcon className="w-5 h-5" />
-              Logout
-            </button>
-          </div>
-        </aside>
-
-        <ManageCommunities darkMode={darkMode} />
-      </div>
-    </div>
+    <HeaderNavbar darkMode={darkMode} setDarkMode={setDarkMode}>
+      {/* Main content area rendered via children */}
+      <ManageCommunities darkMode={darkMode} />
+    </HeaderNavbar>
   );
 };
 
 export default Dashboard;
+  
