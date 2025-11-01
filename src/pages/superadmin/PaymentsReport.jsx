@@ -1,31 +1,29 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import HeaderNavbar from "./HeaderNavbar";
 
-// Heroicons
 import {
   HomeIcon,
   BuildingOffice2Icon,
   UsersIcon,
   CurrencyDollarIcon,
-  ChartBarIcon,
   BellIcon,
   ArrowRightOnRectangleIcon,
   SunIcon,
   MoonIcon,
 } from "@heroicons/react/24/outline";
 
-// ✅ Reusable NavLink component
-const NavLink = ({ to, icon: Icon, children, isActive, onClick }) => {
+// 🧩 NavLink for sidebar (if needed elsewhere)
+const NavLink = ({ icon: Icon, children, isActive, onClick }) => {
   const baseClasses =
     "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all font-medium";
   const activeClasses = "bg-blue-600 text-white shadow-md hover:bg-blue-700";
   const inactiveClasses =
     "text-gray-700 hover:bg-blue-200 dark:text-gray-200 dark:hover:bg-gray-700";
-
   return (
     <button
-      onClick={onClick ? onClick : () => {}}
+      onClick={onClick}
       className={`${baseClasses} ${isActive ? activeClasses : inactiveClasses}`}
     >
       <Icon className="w-5 h-5" />
@@ -36,19 +34,18 @@ const NavLink = ({ to, icon: Icon, children, isActive, onClick }) => {
 
 const PaymentsReport = () => {
   const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const [darkMode, setDarkMode] = useState(
     localStorage.getItem("darkMode") === "true"
   );
   const navigate = useNavigate();
 
-  // ✅ Apply dark mode to document root
   useEffect(() => {
     localStorage.setItem("darkMode", darkMode);
-    if (darkMode) document.documentElement.classList.add("dark");
-    else document.documentElement.classList.remove("dark");
+    document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  // ✅ Fetch payments data securely
   useEffect(() => {
     const token = localStorage.getItem("token");
     const userRole = localStorage.getItem("role");
@@ -64,178 +61,121 @@ const PaymentsReport = () => {
     axios
       .get("http://localhost:5000/payments/getAll", config)
       .then((res) => setPayments(res.data || []))
-      .catch((err) => console.error("Error fetching payments:", err));
+      .catch(() => setError("Failed to load payments"))
+      .finally(() => setLoading(false));
   }, [navigate]);
 
   const total = payments?.reduce((sum, p) => sum + (p.amount || 0), 0) || 0;
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
-
-  const handleDarkModeToggle = () => {
-    setDarkMode((prev) => !prev);
-  };
-
   return (
-    <div
-      className={`flex flex-col h-screen w-screen transition-colors duration-300 ${
-        darkMode ? "dark bg-gray-900 text-white" : "bg-gray-50 text-gray-800"
-      }`}
-    >
-      {/* 🔵 Header */}
-      <header
-        className={`flex items-center bg-blue-600 justify-between px-10 py-4 shadow-md transition-colors duration-300 ${
-          darkMode
-            ? "bg-gray-900 text-white border-b border-gray-700"
-            : "bg-blue-600 text-white border-b border-blue-600"
-        }`}
-      >
-        <div className="flex items-center gap-3">
-          <h1 className="text-4xl font-extrabold"> 🏘️ HOA Connect System</h1>
-        </div>
-
-        {/* 🔆 Dark Mode Toggle */}
-        <button
-          onClick={handleDarkModeToggle}
-          className="flex items-center justify-center p-3 rounded-full transition-all text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 shadow-md"
-          aria-label="Toggle Dark Mode"
-        >
-          {darkMode ? (
-            <SunIcon className="w-6 h-6 text-yellow-400" />
-          ) : (
-            <MoonIcon className="w-6 h-6 text-indigo-600" />
-          )}
-        </button>
-      </header>
-
-      {/* 🔵 Main Content: Sidebar + Table */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar */}
-        <aside
-          className={`w-72 flex-shrink-0 flex flex-col shadow-2xl transition-colors duration-300 ${
-            darkMode ? "bg-gray-800 text-white" : "bg-gray-300 border-gray-300"
-          }`}
-        >
-          <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-            <NavLink
-              icon={HomeIcon}
-              onClick={() => navigate("/superadmin-dashboard")}
-            >
-              Dashboard
-            </NavLink>
-
-            <NavLink
-              icon={BuildingOffice2Icon}
-              onClick={() => navigate("/manage-communities")}
-            >
-              Communities
-            </NavLink>
-
-            <NavLink
-              icon={UsersIcon}
-              onClick={() => navigate("/manage-admins")}
-            >
-              HOA Admins
-            </NavLink>
-
-            <NavLink
-              icon={CurrencyDollarIcon}
-              onClick={() => navigate("/payments")}
-              isActive={true}
-            >
-              Payments
-            </NavLink>
-
-            <NavLink icon={BellIcon} onClick={() => navigate("/notifications")}>
-              Notifications
-            </NavLink>
-          </nav>
-
-          {/* Logout */}
-          <div className="p-4 border-t border-gray-300 dark:border-gray-700 space-y-3">
-            <button
-              onClick={handleLogout}
-              className="w-full flex items-center justify-center gap-3 bg-gray-900 text-white py-2 px-4 rounded-lg hover:bg-black transition-all font-semibold shadow-md"
-            >
-              <ArrowRightOnRectangleIcon className="w-5 h-5" />
-              Logout
-            </button>
-          </div>
-        </aside>
-
-        {/* 🔵 Main Payments Report Section */}
-        <main className="flex-1 overflow-y-auto p-8 space-y-6">
-          <h2 className="text-3xl font-bold mb-6">Payments & Reports</h2>
-
-          {/* Total Payments Summary */}
-          <div
-            className={`p-6 rounded-xl shadow-md text-center text-2xl font-semibold ${
+    <HeaderNavbar darkMode={darkMode} setDarkMode={setDarkMode}>
+      <main className="flex-1 overflow-y-auto p-8">
+        <section
+          className={`rounded-xl shadow-lg px-6 py-9 transition-colors duration-300
+            ${
               darkMode
-                ? "bg-gray-800 text-green-400 border border-gray-700"
-                : "bg-white text-green-600 border border-gray-200"
+                ? "bg-gradient-to-br from-teal-900 via-blue-100 to-teal-900 border border-teal-600"
+                : "bg-gradient-to-br from-teal-900 via-blue-100 to-teal-900 border border-teal-600"
+            }`}
+        >
+          <h2
+            className={`text-4xl font-bold mb-6 text-center ${
+              darkMode ? "text-teal-900" : "text-gray-900"
             }`}
           >
-            Total Payments: ₹{total.toLocaleString()}
+            Payments & Reports
+          </h2>
+
+          {error && (
+            <div className="mb-4 text-red-500 font-medium text-center">
+              {error}
+            </div>
+          )}
+
+          {/* Stats Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+            <div
+              className={`p-6 rounded-xl shadow text-center font-semibold ${
+                darkMode
+                  ? "bg-teal-950 text-green-300 border border-teal-800"
+                  : "bg-teal-100 text-green-700 border border-teal-300"
+              }`}
+            >
+              Total Payments <br /> <span className="text-3xl font-bold">₹{total.toLocaleString()}</span>
+            </div>
+            <div
+              className={`p-6 rounded-xl shadow text-center font-semibold ${
+                darkMode
+                  ? "bg-blue-950 text-blue-300 border border-blue-800"
+                  : "bg-blue-100 text-blue-700 border border-blue-300"
+              }`}
+            >
+              Transactions <br /> <span className="text-3xl font-bold">{payments.length}</span>
+            </div>
+            <div
+              className={`p-6 rounded-xl shadow text-center font-semibold ${
+                darkMode
+                  ? "bg-purple-950 text-purple-300 border border-purple-800"
+                  : "bg-purple-100 text-purple-700 border border-purple-300"
+              }`}
+            >
+              Recent Payment <br /> <span className="text-2xl font-bold">
+                {payments.length > 0 ? `₹${payments[0].amount}` : "No records"}
+              </span>
+            </div>
           </div>
 
-          {/* Payments Table */}
-          <div
-            className={`rounded-xl overflow-hidden shadow-lg ${
-              darkMode ? "bg-gray-800" : "bg-white"
-            }`}
-          >
-            <table className="min-w-full text-left">
+          {/* Table Section */}
+          <div className="overflow-x-auto rounded-lg shadow">
+            <table className="min-w-full rounded-lg overflow-hidden">
               <thead
                 className={`${
-                  darkMode ? "bg-gray-700 text-gray-200" : "bg-gray-100"
+                  darkMode
+                    ? "bg-teal-800 text-teal-100"
+                    : "bg-teal-100 text-teal-900"
                 }`}
               >
                 <tr>
-                  <th className="p-4">Resident</th>
-                  <th className="p-4">Community</th>
-                  <th className="p-4">Amount</th>
-                  <th className="p-4">Date</th>
+                  <th className="px-4 py-2 border-b-2">Resident</th>
+                  <th className="px-4 py-2 border-b-2">Community</th>
+                  <th className="px-4 py-2 border-b-2">Amount</th>
+                  <th className="px-4 py-2 border-b-2">Date</th>
                 </tr>
               </thead>
               <tbody>
-                {payments.length > 0 ? (
+                {loading ? (
+                  <tr>
+                    <td colSpan="4" className="py-4 text-center text-gray-500 dark:text-gray-400">Loading...</td>
+                  </tr>
+                ) : payments.length === 0 ? (
+                  <tr>
+                    <td colSpan="4" className="py-4 text-center text-gray-500 dark:text-gray-400">No payment records found.</td>
+                  </tr>
+                ) : (
                   payments.map((p) => (
                     <tr
                       key={p._id}
-                      className={`border-t ${
-                        darkMode
-                          ? "border-gray-700 hover:bg-gray-700"
-                          : "border-gray-200 hover:bg-gray-50"
+                      className={`transition ${
+                        darkMode ? "hover:bg-slate-800" : "hover:bg-teal-50"
                       }`}
                     >
-                      <td className="p-4">{p.resident?.name || "N/A"}</td>
-                      <td className="p-4">{p.community?.name || "N/A"}</td>
-                      <td className="p-4 font-semibold text-green-600 dark:text-green-400">
+                      <td className="px-4 py-2 border-b">{p.resident?.name || "N/A"}</td>
+                      <td className="px-4 py-2 border-b">{p.community?.name || "N/A"}</td>
+                      <td className="px-4 py-2 border-b font-semibold text-green-600 dark:text-green-400">
                         ₹{p.amount}
                       </td>
-                      <td className="p-4">
+                      <td className="px-4 py-2 border-b">
                         {new Date(p.date).toLocaleDateString()}
                       </td>
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan="4"
-                      className="text-center p-6 text-gray-500 dark:text-gray-400"
-                    >
-                      No payment records found.
-                    </td>
-                  </tr>
                 )}
               </tbody>
             </table>
           </div>
-        </main>
-      </div>
-    </div>
+        </section>
+      </main>
+    </HeaderNavbar>
   );
 };
 
