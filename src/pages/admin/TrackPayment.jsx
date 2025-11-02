@@ -1,234 +1,160 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {
-  HomeIcon,
-  BuildingOffice2Icon,
-  UsersIcon,
-  BellIcon,
-  CurrencyDollarIcon,
-  MegaphoneIcon,
-  ClipboardDocumentListIcon,
-  CalendarDaysIcon,
-  FolderIcon,
-  ChatBubbleBottomCenterTextIcon,
-  ArrowRightOnRectangleIcon,
-} from "@heroicons/react/24/outline";
+import HOAHeaderNavbar from "./HOAHeaderNavbar";
 
-const StatCard = ({ title, value, color, icon: Icon }) => (
-  <div className="bg-white/80 backdrop-blur-lg border border-gray-200 rounded-2xl shadow-lg p-6 flex flex-col items-start justify-center hover:scale-[1.02] transition-all duration-300">
-    <div className="flex items-center gap-3 mb-3">
-      <Icon className={`w-6 h-6 ${color}`} />
-      <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
-    </div>
-    <p className={`text-3xl font-extrabold ${color}`}>{value}</p>
-  </div>
-);
-
-const AdminDashboard = () => {
+const Payments = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState({
-    communities: 0,
-    residents: 0,
-    hoaAdmins: 0,
-    complaints: 0,
-    announcements: 0,
-    amenities: 0,
-    totalPayments: 0,
-  });
+  const [payments, setPayments] = useState([]);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [statusUpdate, setStatusUpdate] = useState({}); // id: status
 
-  const handleLogout = () => {
-    localStorage.clear();
-    navigate("/login");
-  };
-
+  // Fetch payments
   useEffect(() => {
     const token = localStorage.getItem("token");
-    if (!token) navigate("/login");
-
-    // Replace these API URLs with your actual ones
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    Promise.all([
-      axios.get("http://localhost:5000/communities/getCommunity", config),
-      axios.get("http://localhost:5000/residents", config),
-      axios.get("http://localhost:5000/auth/register", config),
-      axios.get("http://localhost:5000/complaints", config),
-      axios.get("http://localhost:5000/announcements", config),
-      axios.get("http://localhost:5000/amenities", config),
-      axios.get("http://localhost:5000/dashboard/total-payments", config),
-    ])
-      .then(([comm, resi, users, comp, ann, ame, pay]) => {
-        const hoaAdmins = users.data.filter((u) => u.role === "admin").length;
-        setData({
-          communities: comm.data.length,
-          residents: resi.data.length,
-          hoaAdmins,
-          complaints: comp.data.length,
-          announcements: ann.data.length,
-          amenities: ame.data.length,
-          totalPayments: pay.data.total || 0,
-        });
+    if (!token) return navigate("/login");
+    setLoading(true);
+    axios
+      .get("http://localhost:5000/payments", {
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .catch(() => console.log("Error fetching dashboard data"));
-  }, [navigate]);
+      .then((res) => setPayments(res.data || []))
+      .catch(() => setError("Could not load payments."))
+      .finally(() => setLoading(false));
+  }, [navigate, success]);
+
+  // Handle status input change for a specific payment
+  const handleStatusChange = (id, value) => {
+    setStatusUpdate((prev) => ({ ...prev, [id]: value }));
+    setError("");
+    setSuccess("");
+  };
+
+  // Handle update status
+  const handleUpdateStatus = async (id) => {
+    const token = localStorage.getItem("token");
+    const newStatus = statusUpdate[id];
+    if (!newStatus) {
+      setError("Please select a status.");
+      return;
+    }
+    setLoading(true);
+    try {
+      await axios.put(
+        `http://localhost:5000/payments/${id}`,
+        { status: newStatus },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      setSuccess("Payment status updated.");
+      setStatusUpdate((prev) => ({ ...prev, [id]: "" }));
+    } catch (err) {
+      setError(
+        err?.response?.data?.message || "Could not update payment status."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <div className="flex h-screen bg-gray-50 text-gray-800 overflow-hidden">
-      {/* Sidebar */}
-      <aside className="w-72 bg-gradient-to-b from-blue-700 to-blue-500 text-white flex flex-col">
-        <div className="flex items-center gap-2 p-6 border-b border-blue-400">
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/679/679922.png"
-            alt="HOA Logo"
-            className="w-10 h-10"
-          />
-          <h1 className="text-xl font-bold">HOA Admin Panel</h1>
-        </div>
-
-        <nav className="flex-1 overflow-y-auto p-4 space-y-2">
-          <button
-            onClick={() => navigate("/admin-dashboard")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <HomeIcon className="w-5 h-5" /> Dashboard
-          </button>
-          <button
-            onClick={() => navigate("/residents")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <UsersIcon className="w-5 h-5" /> Residents
-          </button>
-          <button
-            onClick={() => navigate("/announcements")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <MegaphoneIcon className="w-5 h-5" /> Announcements
-          </button>
-          <button
-            onClick={() => navigate("/complaints")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <ClipboardDocumentListIcon className="w-5 h-5" /> Complaints
-          </button>
-          <button
-            onClick={() => navigate("/amenities")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <BuildingOffice2Icon className="w-5 h-5" /> Amenities
-          </button>
-          <button
-            onClick={() => navigate("/documents")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <FolderIcon className="w-5 h-5" /> Documents
-          </button>
-          <button
-            onClick={() => navigate("/meetings")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <ChatBubbleBottomCenterTextIcon className="w-5 h-5" /> Meetings
-          </button>
-          <button
-            onClick={() => navigate("/track-payments")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <CurrencyDollarIcon className="w-5 h-5" /> Payments
-          </button>
-          <button
-            onClick={() => navigate("/resident-notification")}
-            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg hover:bg-blue-400 transition-all"
-          >
-            <BellIcon className="w-5 h-5" /> Notifications
-          </button>
-        </nav>
-
-        <div className="p-4 border-t border-blue-400">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-3 py-2 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition-all"
-          >
-            <ArrowRightOnRectangleIcon className="w-5 h-5" />
-            LOG OUT
-          </button>
-        </div>
-      </aside>
-
-      {/* Main Section */}
-      <main className="flex-1 flex flex-col overflow-y-auto relative">
-        {/* Header Banner */}
-        <div
-          className="relative h-56 bg-cover bg-center flex items-center justify-center text-white"
-          style={{
-            backgroundImage:
-              "url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1200&q=100')",
-          }}
-        >
-          <div className="absolute inset-0 bg-blue-900/60" />
-          <h1 className="relative text-4xl font-extrabold z-10">
-            HOA Admin Dashboard 
-          </h1>
-        </div>
-
-        {/* Stats Section */}
-        <section className="p-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 -mt-10 z-20 relative">
-          <StatCard
-            title="Total Communities"
-            value={data.communities}
-            color="text-blue-600"
-            icon={BuildingOffice2Icon}
-          />
-          <StatCard
-            title="Total Residents"
-            value={data.residents}
-            color="text-green-600"
-            icon={UsersIcon}
-          />
-          <StatCard
-            title="Total HOA Admins"
-            value={data.hoaAdmins}
-            color="text-purple-600"
-            icon={HomeIcon}
-          />
-          <StatCard
-            title="Complaints"
-            value={data.complaints}
-            color="text-red-600"
-            icon={ClipboardDocumentListIcon}
-          />
-          <StatCard
-            title="Announcements"
-            value={data.announcements}
-            color="text-orange-500"
-            icon={MegaphoneIcon}
-          />
-          <StatCard
-            title="Amenities"
-            value={data.amenities}
-            color="text-teal-600"
-            icon={CalendarDaysIcon}
-          />
-          <StatCard
-            title="Total Payments"
-            value={`₹${data.totalPayments.toLocaleString()}`}
-            color="text-emerald-600"
-            icon={CurrencyDollarIcon}
-          />
-        </section>
-
-        {/* Analytics Placeholder */}
-        <section className="px-8 pb-12">
-          <div className="bg-white border border-gray-200 shadow-md rounded-2xl p-8">
-            <h2 className="text-2xl font-semibold mb-4">
-              Global Analytics Overview
+    <HOAHeaderNavbar>
+      <div
+        className="relative min-h-screen overflow-y-auto"
+        style={{
+          backgroundImage: "url('/Society.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+        }}
+      >
+        <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+        <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
+          <section className="
+            w-full mx-auto
+            bg-emerald-100/50 dark:bg-emerald-900/70
+            dark:border-emerald-800
+            backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8
+          ">
+            <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
+              Payments
             </h2>
-            <div className="h-64 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400 italic">
-              [Chart.js / Recharts Placeholder]
+
+            {(error || success) && (
+              <div className={`text-center pb-3 font-semibold text-lg ${error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"}`}>{error || success}</div>
+            )}
+
+            {/* PAYMENTS LIST */}
+            <div className="w-full overflow-x-auto">
+              <table className="min-w-full rounded-xl shadow-md overflow-hidden">
+                <thead>
+                  <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
+                    <th className="p-5 font-semibold">Resident</th>
+                    <th className="p-5 font-semibold">Email</th>
+                    <th className="p-5 font-semibold">Amount</th>
+                    <th className="p-5 font-semibold">Due Date</th>
+                    <th className="p-5 font-semibold">Status</th>
+                    <th className="p-5 font-semibold">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {payments.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl">
+                        No payments found.
+                      </td>
+                    </tr>
+                  )}
+                  {payments.map((payment) => (
+                    <tr
+                      key={payment._id}
+                      className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40 odd:bg-white/30 even:bg-emerald-100/60 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
+                    >
+                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100">
+                        {payment.user?.name}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        {payment.user?.email}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        ₹{payment.amount}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        {payment.dueDate ? new Date(payment.dueDate).toLocaleDateString() : "-"}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        <span className="font-semibold">{payment.status}</span>
+                      </td>
+                      <td className="p-4">
+                        <select
+                          className="mr-2 rounded py-2 px-3 border"
+                          value={statusUpdate[payment._id] || ""}
+                          onChange={(e) => handleStatusChange(payment._id, e.target.value)}
+                        >
+                          <option value="">Update Status</option>
+                          <option value="Paid">Paid</option>
+                          <option value="Unpaid">Unpaid</option>
+                          <option value="Overdue">Overdue</option>
+                        </select>
+                        <button
+                          disabled={loading}
+                          onClick={() => handleUpdateStatus(payment._id)}
+                          className="py-2 px-4 bg-teal-700 hover:bg-teal-800 text-white rounded font-bold transition"
+                        >
+                          {loading ? "Updating..." : "Update"}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
-        </section>
-      </main>
-    </div>
+          </section>
+        </main>
+      </div>
+    </HOAHeaderNavbar>
   );
 };
 
-export default AdminDashboard;
+export default Payments;

@@ -34,7 +34,7 @@ const NAV_LINKS = [
 const SidebarLink = ({ icon: Icon, label, path, isActive, collapsed, onClick, darkMode }) => (
   <button
     onClick={onClick}
-    className={`flex items-center gap-3 px-4 py-2 my-1 rounded-lg w-full font-semibold transition-colors
+    className={` text-lg flex items-center gap-3 px-4 py-2 my-1 rounded-lg w-full font-semibold transition-colors
       ${
         isActive
           ? darkMode
@@ -47,7 +47,7 @@ const SidebarLink = ({ icon: Icon, label, path, isActive, collapsed, onClick, da
       ${collapsed ? "justify-center" : ""}
     `}
   >
-    <Icon className="w-6 h-6" />
+    <Icon className="w-8 h-8" />
     {!collapsed && <span>{label}</span>}
   </button>
 );
@@ -165,7 +165,7 @@ const HOAHeaderNavbar = ({ children }) => {
               className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold shadow justify-center w-full 
                 ${darkMode ? "bg-slate-700 text-white hover:bg-slate-600" : "bg-slate-700 text-white hover:bg-teal-800"}`}
             >
-              <ArrowRightOnRectangleIcon className="w-5 h-5" />
+              <ArrowRightOnRectangleIcon className="w-8 h-8" />
               {!sidebarCollapsed && <span>Logout</span>}
             </button>
           </div>
