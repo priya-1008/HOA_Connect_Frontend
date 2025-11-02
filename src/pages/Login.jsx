@@ -51,85 +51,75 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
-      {/* Left Panel with Image */}
-      <div className="hidden md:flex w-1/2 bg-blue-700 relative">
-        <img
-          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
-          alt="Homeowner Association"
-          className="absolute inset-0 w-full h-full object-cover opacity-90"
-        />
-        <div className="absolute inset-0 bg-blue-900 bg-opacity-40"></div>
-        <div className="relative z-10 flex flex-col justify-center items-center text-center text-white px-10">
-          <h1 className="text-5xl font-extrabold mb-4 drop-shadow-lg">
-            HOA Connect
-          </h1>
-          <p className="text-lg font-light max-w-md leading-relaxed">
-            Manage your community seamlessly — connecting homeowners, admins,
-            and superadmins in one place.
-          </p>
-        </div>
-      </div>
+    <div className="relative min-h-screen flex items-center justify-center">
+      {/* Full-page Background Image */}
+      <img
+        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
+        alt="Homeowner Association"
+        className="absolute inset-0 w-full h-screen object-cover z-0"
+      />
+      {/* Overlay */}
+      <div className="absolute inset-0 w-full h-screen bg-blue-900 bg-opacity-50 z-10"></div>
+      {/* Sign In Card */}
+      <div className="relative z-20 w-full max-w-xl min-h-[600px] mx-auto bg-white rounded-2xl shadow-xl p-12 border border-gray-100 flex flex-col justify-center">
+        <h1 className="text-4xl font-bold text-center text-gray-400 mb-8">
+          HOA CONNECT SYSTEM
+        </h1>
+        <h2 className="text-4xl font-bold text-center text-teal-700 mb-8">
+          Sign In 
+        </h2>
 
-      {/* Right Panel - Login Form */}
-      <div className="w-full md:w-1/2 flex justify-center items-center bg-gray-50 p-8">
-        <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-          <h2 className="text-3xl font-bold text-center text-blue-700 mb-6">
-            Sign In
-          </h2>
+        {error && (
+          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-2 mb-4 rounded-lg text-md text-center">
+            {error}
+          </div>
+        )}
 
-          {error && (
-            <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-2 mb-4 rounded-lg text-sm text-center">
-              {error}
-            </div>
-          )}
+        <form onSubmit={handleLogin} className="space-y-7">
+          <div>
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="admin@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none text-lg"
+              required
+            />
+          </div>
 
-          <form onSubmit={handleLogin} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Email Address
-              </label>
-              <input
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none"
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Password
+            </label>
+            <input
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none text-lg"
+              required
+            />
+          </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none"
-                required
-              />
-            </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-teal-700 text-white py-3 rounded-lg font-semibold hover:bg-teal-800 transition duration-300 shadow-md text-lg"
+          >
+            {loading ? "Signing in..." : "Login"}
+          </button>
+        </form>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-700 text-white py-2.5 rounded-lg font-semibold hover:bg-blue-800 transition duration-300 shadow-md"
-            >
-              {loading ? "Signing in..." : "Login"}
-            </button>
-          </form>
-
-          <p className="text-sm text-center text-gray-500 mt-6">
-            Don’t have an account?{" "}
-            <span className="text-blue-600 font-semibold">
-              Contact your HOA Admin
-            </span>
-            .
-          </p>
-        </div>
+        <p className="text-md text-center text-gray-500 mt-8">
+          Don’t have an account?{" "}
+          <span className="text-blue-600 font-semibold">
+            Contact your HOA Admin
+          </span>
+          .
+        </p>
       </div>
     </div>
   );

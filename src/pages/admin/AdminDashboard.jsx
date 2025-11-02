@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import HOAHeaderNavbar from "./HOAHeaderNavbar";
-
 import {
   HomeIcon,
   BuildingOffice2Icon,
@@ -13,14 +12,14 @@ import {
   ClipboardDocumentListIcon,
   CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
-
+  
 const StatCard = ({ title, value, color, icon: Icon }) => (
-  <div className="bg-white/80 backdrop-blur-lg border border-gray-200 rounded-2xl shadow-lg p-6 flex flex-col items-start justify-center hover:scale-[1.02] transition-all duration-300">
+  <div className="bg-white/50 backdrop-blur-lg border border-gray-300 rounded-2xl shadow-lg p-6 flex flex-col items-start justify-center hover:scale-[1.02] transition-all duration-300">
     <div className="flex items-center gap-3 mb-3">
-      <Icon className={`w-6 h-6 ${color}`} />
-      <h3 className="text-lg font-semibold text-gray-700">{title}</h3>
+      <Icon className={`w-8 h-8 ${color}`} />
+      <h3 className="text-xl font-semibold text-gray-700">{title}</h3>
     </div>
-    <p className={`text-3xl font-extrabold ${color}`}>{value}</p>
+    <p className={`text-4xl font-extrabold ${color}`}>{value}</p>
   </div>
 );
 
@@ -39,7 +38,6 @@ const Dashboard = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
-
     const config = { headers: { Authorization: `Bearer ${token}` } };
     Promise.all([
       axios.get("http://localhost:5000/communities/getCommunity", config),
@@ -68,23 +66,23 @@ const Dashboard = () => {
   return (
     <HOAHeaderNavbar>
       <div
-        className="relative flex-1 flex flex-col min-h-screen overflow-y-auto"
+        className="relative flex flex-col min-h-screen overflow-y-auto"
         style={{
-          backgroundImage: "url('/Society.jpg')", // Correctly reference image from public folder
+          backgroundImage: "url('/Society.jpg')", // Image from public folder
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
       >
         {/* Overlay for readability */}
-        <div className="absolute inset-0 bg-white/0 dark:bg-gray-900/85 pointer-events-none" />
+        <div className="absolute inset-0 bg-white/0 dark:bg-gray-700/85 pointer-events-none" />
         <main className="relative z-10">
           <div className="h-56 flex items-center text-white relative">
-            <h1 className=" p-8 grid text-5xl font-extrabold z-10 drop-shadow-xl text-gray-900 dark:text-teal-100">
-               HOA Admin Dashboard
+            <h1 className="px-8 grid text-5xl font-extrabold z-10 drop-shadow-xl text-slate-700 dark:text-teal-100">
+              HOA Admin Dashboard
             </h1>
           </div>
-          <section className="p-8 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 -mt-10 z-20 relative">
+          <section className="p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 -mt-10 z-20 relative">
             <StatCard
               title="Total Communities"
               value={data.communities}
@@ -96,12 +94,6 @@ const Dashboard = () => {
               value={data.residents}
               color="text-green-600"
               icon={UsersIcon}
-            />
-            <StatCard
-              title="Total HOA Admins"
-              value={data.hoaAdmins}
-              color="text-purple-600"
-              icon={HomeIcon}
             />
             <StatCard
               title="Complaints"
@@ -129,11 +121,11 @@ const Dashboard = () => {
             />
           </section>
           <section className="px-8 pb-12">
-            <div className="bg-white border border-gray-200 shadow-md rounded-2xl p-8">
-              <h2 className="text-2xl font-semibold mb-4">
+            <div className="bg-white/60 border border-gray-200 shadow-md rounded-2xl p-5">
+              <h2 className="text-4xl font-bold mb-4 flex items-center justify-center">
                 Global Analytics Overview
               </h2>
-              <div className="h-64 border-2 border-dashed border-gray-300 rounded-xl flex items-center justify-center text-gray-400 italic">
+              <div className="h-40 border-2 font-semibold border-dashed border-gray-400 rounded-xl flex items-center justify-center text-gray-900 italic">
                 [Chart.js / Recharts Placeholder]
               </div>
             </div>

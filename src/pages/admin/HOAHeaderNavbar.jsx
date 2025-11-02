@@ -8,13 +8,16 @@ import {
   CurrencyDollarIcon,
   MegaphoneIcon,
   ClipboardDocumentListIcon,
-  CalendarDaysIcon,
   FolderIcon,
   ChatBubbleBottomCenterTextIcon,
   ArrowRightOnRectangleIcon,
   SunIcon,
   MoonIcon,
+  Bars3Icon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
+
+const hoaAdminName = "ADMIN";
 
 const NAV_LINKS = [
   { label: "Dashboard", icon: HomeIcon, path: "/admin-dashboard" },
@@ -28,54 +31,32 @@ const NAV_LINKS = [
   { label: "Notifications", icon: BellIcon, path: "/resident-notification" },
 ];
 
-// Modern Topbar NavLink
-const TopNavLink = ({ icon: Icon, label, isActive, onClick }) => {
-  const base =
-    "flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition-colors";
-  const active =
-    "bg-teal-700 text-white shadow hover:bg-teal-800 dark:bg-gradient-to-r dark:from-teal-600 dark:to-teal-500";
-  const inactive =
-    "text-teal-900 dark:text-teal-100 hover:bg-teal-700 hover:text-white hover:bg-slate-800";
-  return (
-    <button
-      onClick={onClick}
-      className={`${base} ${isActive ? active : inactive} whitespace-nowrap`}
-    >
-      <Icon className="w-5 h-5" />
-      <span>{label}</span>
-    </button>
-  );
-};
-
-// Simple, accessible, home SVG icon (no request needed)
-const GradientHomeLogo = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="w-8 h-8"
-    viewBox="0 0 32 32"
-    aria-hidden="true"
+const SidebarLink = ({ icon: Icon, label, path, isActive, collapsed, onClick, darkMode }) => (
+  <button
+    onClick={onClick}
+    className={`flex items-center gap-3 px-4 py-2 my-1 rounded-lg w-full font-semibold transition-colors
+      ${
+        isActive
+          ? darkMode
+            ? "bg-slate-700 text-white"
+            : "bg-teal-700 text-white"
+          : darkMode
+          ? "text-slate-200 hover:bg-slate-600 hover:text-white"
+          : "text-teal-900 hover:bg-teal-700 hover:text-white"
+      }
+      ${collapsed ? "justify-center" : ""}
+    `}
   >
-    <defs>
-      <linearGradient id="hoaHomeGradient" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stopColor="#14b8a6" />    {/* teal-500 */}
-        <stop offset="100%" stopColor="#0e7490" />   {/* teal-700 */}
-      </linearGradient>
-    </defs>
-    <path
-      d="M4 14L16 4L28 14V28A2 2 0 0 1 26 30H6A2 2 0 0 1 4 28V14Z"
-      fill="url(#hoaHomeGradient)"
-      stroke="#094c49"
-      strokeWidth="2"
-    />
-    <rect x="12" y="20" width="8" height="10" rx="2" fill="#fff" />
-  </svg>
+    <Icon className="w-6 h-6" />
+    {!collapsed && <span>{label}</span>}
+  </button>
 );
 
+const HEADER_HEIGHT = 90; // px
 
 const HOAHeaderNavbar = ({ children }) => {
-  const [darkMode, setDarkMode] = useState(
-    localStorage.getItem("darkMode") === "true"
-  );
+  const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -84,73 +65,122 @@ const HOAHeaderNavbar = ({ children }) => {
     document.documentElement.classList.toggle("dark", darkMode);
   }, [darkMode]);
 
-  const handleDarkModeToggle = () => setDarkMode((prev) => !prev);
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) setSidebarCollapsed(true);
+      else setSidebarCollapsed(false);
+    };
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
+  const handleDarkModeToggle = () => setDarkMode((prev) => !prev);
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
   };
 
+  const sidebarWidth = sidebarCollapsed ? 100 : 350;
+
   return (
     <div
-      className={`flex flex-col min-h-screen w-full transition-colors duration-300 ${
-        darkMode ? "bg-slate-950 text-teal-100" : "bg-blue-50 text-slate-900"
-      }`}
+      className={`min-h-screen transition-colors duration-300 ${darkMode ? "bg-slate-900 text-slate-100" : "bg-teal-50 text-slate-900"}`}
+      style={{ height: '100vh', overflow: 'hidden' }}
     >
-      {/* Modern TopHeader */}
+      {/* HEADER */}
       <header
-        className={`flex items-center justify-between px-8 py-3 shadow-lg border-b transition-colors duration-300
-          ${darkMode ? "bg-slate-900 border-slate-800" : "bg-white border-slate-200"}`}
-        style={{
-          zIndex: 40,
-        }}
+        className={`fixed top-0 left-0 right-0 z-40 flex items-center justify-between shadow-lg px-8
+          ${darkMode ? "bg-slate-700" : "bg-teal-700"}
+        `}
+        style={{ height: HEADER_HEIGHT, color: "#fff" }}
       >
-        {/* Logo + Title */}
         <div className="flex items-center gap-3">
-          <GradientHomeLogo darkMode={darkMode} />
-          <span className={`text-2xl font-extrabold tracking-tight 
-            ${darkMode ? "text-teal-400" : "text-teal-700"}`}>
-            HOAConnect 
+          <span className="text-4xl font-extrabold text-white">
+            🏘️ HOA Connect System
           </span>
         </div>
-        {/* Nav Links (scrollable on mobile) */}
-        <nav className="flex-1 flex items-center justify-center min-w-0">
-          <div className="flex gap-1 md:gap-2 overflow-x-auto scrollbar-hide">
-            {NAV_LINKS.map(({ label, icon: Icon, path }) => (
-              <TopNavLink
-                key={path}
-                icon={Icon}
-                label={label}
-                isActive={location.pathname === path}
-                onClick={() => navigate(path)}
-              />
-            ))}
-          </div>
-        </nav>
-        {/* Right: Dark Mode Toggle & Logout */}
-        <div className="flex items-center gap-3">
+        {/* Right side - Welcome and Theme Toggle */}
+        <div className="flex items-center gap-6">
+          <span className="font-bold text-xl text-white">
+            Welcome! {hoaAdminName}
+          </span>
           <button
             onClick={handleDarkModeToggle}
-            className="flex items-center justify-center p-2 rounded-full bg-white dark:bg-slate-800 hover:bg-teal-600 dark:hover:bg-teal-700 shadow transition"
-            aria-label="Toggle Dark Mode"
+            className="flex items-center justify-center rounded-full p-2 hover:bg-white/20 transition"
+            style={{ color: "#fff" }}
+            aria-label="Toggle Theme"
           >
             {darkMode ? (
-              <SunIcon className="w-6 h-6 text-yellow-400" />
+              <SunIcon className="w-8 h-8 text-yellow-300" />
             ) : (
-              <MoonIcon className="w-6 h-6 text-teal-700" />
+              <MoonIcon className="w-8 h-8 text-white" />
             )}
-          </button>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-teal-700 text-white hover:bg-teal-800 font-semibold shadow"
-          >
-            <ArrowRightOnRectangleIcon className="w-5 h-5" /> Logout
           </button>
         </div>
       </header>
-      {/* Main content area */}
-      <div className="flex-1 w-full overflow-y-auto transition-colors duration-300 p-0">
-        {children}
+
+      <div className="flex" style={{ marginTop: HEADER_HEIGHT, height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
+        {/* SIDEBAR */}
+        <aside
+          className={`flex flex-col justify-between shadow-lg transition-all duration-300
+            ${darkMode ? "bg-slate-800 border-r border-slate-700" : "bg-teal-10 border-r border-teal-700"}
+          `}
+          style={{
+            width: sidebarWidth,
+            height: '100%',
+            minHeight: '100%',
+          }}
+        >
+          <div>
+            <div className="flex flex-col items-center py-2">
+              <button
+                onClick={() => setSidebarCollapsed((prev) => !prev)}
+                className={`mb-1 p-2 rounded-full ${
+                  darkMode ? "bg-slate-700 text-white hover:bg-slate-600" : "bg-slate-500 text-teal-900 hover:bg-teal-700 text-white" 
+                } shadow-lg transition-colors`}
+                aria-label="Toggle Sidebar"
+              >
+                {sidebarCollapsed ? <Bars3Icon className="w-6 h-6" /> : <XMarkIcon className="w-6 h-6" />}
+              </button>
+            </div>
+            <nav className="px-4 py-4">
+              {NAV_LINKS.map(({ label, icon: Icon, path }) => (
+                <SidebarLink
+                  key={path}
+                  icon={Icon}
+                  label={label}
+                  path={path}
+                  isActive={location.pathname === path}
+                  collapsed={sidebarCollapsed}
+                  onClick={() => navigate(path)}
+                  darkMode={darkMode}
+                />
+              ))}
+            </nav>
+          </div>
+          <div className="px-2 pb-4">
+            <button
+              onClick={handleLogout}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold shadow justify-center w-full 
+                ${darkMode ? "bg-slate-700 text-white hover:bg-slate-600" : "bg-slate-700 text-white hover:bg-teal-800"}`}
+            >
+              <ArrowRightOnRectangleIcon className="w-5 h-5" />
+              {!sidebarCollapsed && <span>Logout</span>}
+            </button>
+          </div>
+        </aside>
+        {/* MAIN: only this scrolls */}
+        <main style={{
+          marginLeft: 0,
+          width: "100%",
+          height: '100%',
+          overflowY: "auto"
+        }}>
+          <div className="min-h-[calc(100vh-4rem)] w-full transition-colors duration-300">
+            {children}
+          </div>
+        </main>
       </div>
     </div>
   );
