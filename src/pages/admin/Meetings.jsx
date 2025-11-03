@@ -157,11 +157,11 @@ const Meetings = () => {
                 <div className="flex-1 relative">
                   <input
                     type="text"
-                    name="location"
+                    name="Meeting Place"
                     required
                     className="w-full rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
                     style={{ color: "#000000" }}
-                    placeholder="Location"
+                    placeholder="Meeting Place"
                     value={locationInput}
                     onChange={handleLocationInput}
                     autoComplete="off"
