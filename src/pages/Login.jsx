@@ -115,10 +115,10 @@ const Login = () => {
 
         <p className="text-md text-center text-gray-500 mt-8">
           Don’t have an account?{" "}
-          <span className="text-blue-600 font-semibold">
-            Contact your HOA Admin
-          </span>
-          .
+          <button
+            onClick={() => navigate("/add-resident")}
+            className="text-blue-600 font-bold hover:underline"
+          >Register Here </button>
         </p>
       </div>
     </div>
