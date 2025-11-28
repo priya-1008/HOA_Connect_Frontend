@@ -102,9 +102,9 @@ const HeaderNavbar = ({ children }) => {
             />
             <NavLink
               icon={UsersIcon}
-              label="HOA Admins"
-              isActive={window.location.pathname === "/manage-admins"}
-              onClick={() => navigate("/manage-admins")}
+              label="Amenities"
+              isActive={window.location.pathname === "/manage-amenities"}
+              onClick={() => navigate("/manage-amenities")}
             />
             <NavLink
               icon={CurrencyDollarIcon}

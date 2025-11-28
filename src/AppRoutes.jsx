@@ -3,11 +3,11 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 
-// Pages
+// Super Admin Pages
 import Login from './pages/Login';
 import Dashboard from './pages/superadmin/Dashboard';
 import ManageCommunities from './pages/superadmin/ManageCommunities';
-import ManageAdmins from './pages/superadmin/ManageAdmins';
+import ManageAmenities from './pages/superadmin/ManageAmenities';
 import PaymentsReport from './pages/superadmin/PaymentsReport';
 import SystemNotification from './pages/superadmin/Notifications';
 
@@ -60,10 +60,10 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/manage-admins"
+      path="/manage-amenities"
       element={
         <PrivateRoute>
-          <ManageAdmins />
+          <ManageAmenities />
         </PrivateRoute>
       }
     />
@@ -94,7 +94,7 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/view-payments"
+      path="/track-payments"
       element={
         <PrivateRoute>
           <Payments />
