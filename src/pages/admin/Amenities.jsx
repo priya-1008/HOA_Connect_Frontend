@@ -32,46 +32,6 @@ const Amenities = () => {
     setSuccess("");
   };
 
-  // Create amenity
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        "http://localhost:5000/amenities",
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSuccess(res.data.message);
-      setForm({ name: "", description: "", community: "", isActive: true });
-    } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-        "Failed to create amenity."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Delete amenity (admin action)
-  const handleDelete = async (amenityId) => {
-    if (!window.confirm("Delete this amenity?")) return;
-    const token = localStorage.getItem("token");
-    setLoading(true);
-    try {
-      await axios.delete(`http://localhost:5000/amenities/${amenityId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setSuccess("Amenity deleted.");
-    } catch (err) {
-      setError("Could not delete amenity.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <HOAHeaderNavbar>
       <div
@@ -94,90 +54,9 @@ const Amenities = () => {
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Amenities
             </h2>
-            {/* FORM */}
-            <form onSubmit={handleSubmit} className="flex flex-col mb-8 w-full gap-4">
-              {/* First row: Amenity Name + Amenity Description */}
-              <div className="flex flex-col md:flex-row gap-4 w-full">
-                <input
-                  type="text"
-                  name="name"
-                  maxLength={80}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Amenity Name"
-                  onChange={handleChange}
-                  value={form.name}
-                />
-                <input
-                  type="text"
-                  name="description"
-                  maxLength={200}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Amenity Description"
-                  onChange={handleChange}
-                  value={form.description}
-                />
-                <style>{`
-                  input::placeholder {
-                    color: #888888 !important; opacity: 1;
-                  }
-                  .dark input::placeholder {
-                    color: #b6b6b6 !important; opacity: 1;
-                  }
-                `}</style>
-              </div>
-              {/* Second row: Community ID full width */}
-              <input
-                type="text"
-                name="community"
-                required
-                className="rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow w-full"
-                style={{ color: "#000000" }}
-                placeholder="Community ID"
-                onChange={handleChange}
-                value={form.community}
-              />
-              <style>{`
-                input::placeholder {
-                  color: #888888 !important; opacity: 1;
-                }
-                .dark input::placeholder {
-                  color: #b6b6b6 !important; opacity: 1;
-                }
-              `}</style>
-              {/* Third row: Active checkbox right-aligned and large */}
-              <div className="flex md:justify-end justify-start w-full">
-                <label className="flex items-center gap-2 px-2 text-emerald-800 dark:text-emerald-100 text-xl">
-                  <input
-                    type="checkbox"
-                    name="isActive"
-                    checked={form.isActive}
-                    onChange={handleChange}
-                    className="accent-emerald-700 w-6 h-6"
-                    style={{
-                      minWidth: "1.5rem",
-                      minHeight: "1.5rem"
-                    }}
-                  />
-                  Active
-                </label>
-              </div>
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="text-xl py-3 px-4 bg-teal-700 dark:bg-teal-700 hover:bg-teal-800 dark:hover:bg-emerald-900 text-white rounded-lg font-bold text-lg transition w-auto"
-                >
-                  {loading ? "Saving..." : "SUBMIT"}
-                </button>
-              </div>
-            </form>
-            {(error || success) && (
+            {/* {(error || success) && (
               <div className={`text-center pb-3 font-semibold text-lg ${error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"}`}>{error || success}</div>
-            )}
+            )} */}
             {/* AMENITIES LIST */}
             <div className="w-full overflow-x-auto">
               <table className="min-w-full rounded-xl shadow-md overflow-hidden">

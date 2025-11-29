@@ -56,16 +56,16 @@ const Dashboard = () => {
 
         // Fetch HOA admins
         const adminRes = await axios.get(
-          "http://localhost:5000/auth/register",
+          "http://localhost:5000/auth/getadmins",
           config
         );
-        const admins =
-          Array.isArray(adminRes.data) && adminRes.data.filter((u) => u.role === "admin");
-        setHoaAdminsCount(admins.length);
+        // const admins =
+          // Array.isArray(adminRes.data) && adminRes.data.filter((u) => u.role === "admin");
+        setHoaAdminsCount(Array.isArray(adminRes.data) ? adminRes.data.length : 0);
 
         // Fetch total payments
         const paymentRes = await axios.get(
-          "http://localhost:5000/dashboard/total-payments",
+          "http://localhost:5000/superadmin/payments/global",
           config
         );
         setTotalPayments(paymentRes.data?.total || 0);
