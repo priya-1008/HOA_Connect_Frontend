@@ -33,7 +33,7 @@ const SystemNotification = () => {
     () => localStorage.getItem("darkMode") === "true"
   );
 
-  const { data: announcements } = useFetch(ENDPOINTS.NOTIFICATIONS);
+  const { data: announcements } = useFetch("http://localhost:5000/superadmin/getnotifications");
   const navigate = useNavigate();
 
   // dark mode toggle
@@ -65,7 +65,7 @@ const SystemNotification = () => {
 
     // HOA admins count
     axios
-      .get("http://localhost:5000/auth/register", config)
+      .get("http://localhost:5000/auth/getadmins", config)
       .then((res) => {
         const admins = Array.isArray(res.data)
           ? res.data.filter((user) => user.role === "admin")
@@ -76,7 +76,7 @@ const SystemNotification = () => {
 
     // payments analytics
     axios
-      .get("http://localhost:5000/dashboard/payments", config)
+      .get("http://localhost:5000/superadmin/payments/global", config)
       .then((res) => setAnalytics({ totalPayments: res.data?.total || 0 }))
       .catch(() => setAnalytics({ totalPayments: 0 }));
   }, [navigate]);

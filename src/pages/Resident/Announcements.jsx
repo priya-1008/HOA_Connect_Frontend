@@ -17,10 +17,10 @@ const Announcement = () => {
     if (!token) return navigate("/login");
     setLoading(true);
     axios
-      .get("http://localhost:5000/announcements", {
+      .get("http://localhost:5000/resident/getannouncements", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setAnnouncements(res.data))
+      .then((res) => setAnnouncements(res.data.announcements || []))
       .catch(() => setError("Could not load announcements."))
       .finally(() => setLoading(false));
   }, [navigate, success]);
@@ -32,29 +32,7 @@ const Announcement = () => {
     setSuccess("");
   };
 
-  // Submit new announcement
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        "http://localhost:5000/announcements",
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSuccess(res.data.message);
-      setForm({ title: "", description: "" });
-    } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-        "Failed to create announcement."
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  
   return (
     <HOAHeaderNavbar>
       <div
@@ -78,60 +56,9 @@ const Announcement = () => {
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Announcements
             </h2>
-            {/* FORM */}
-            <form onSubmit={handleSubmit} className="flex flex-col mb-8 w-full gap-4">
-              <div className="flex flex-col md:flex-row gap-4 w-full">
-                <input
-                  type="text"
-                  name="title"
-                  maxLength={50}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{
-                    color: "#000000",
-                  }}
-                  placeholder="Title"
-                  onChange={handleChange}
-                  value={form.title}
-                />
-                <textarea
-                  name="description"
-                  maxLength={500}
-                  required
-                  rows={1}
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{
-                    color: "#000000",
-                    resize: "vertical"
-                  }}
-                  placeholder="Description"
-                  onChange={handleChange}
-                  value={form.description}
-                />
-                <style>{`
-                  input::placeholder, textarea::placeholder {
-                    color:094232dc;
-                    opacity: 1;
-                  }
-                  .dark input::placeholder, .dark textarea::placeholder {
-                    color: 094232dc;
-                    opacity: 1;
-                  }
-                `}</style>
-              </div>
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="text-xl py-3 px-4 bg-teal-700 dark:bg-teal-700 hover:bg-teal-800 dark:hover:bg-emerald-900 text-white rounded-lg font-bold text-lg transition w-auto"
-                >
-                  {loading ? "Posting..." : "POST"}
-                </button>
-              </div>
-            </form>
-            {(error || success) && (
+            {/* {(error || success) && (
               <div className={`text-center pb-3 font-semibold text-lg ${error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"}`}>{error || success}</div>
-            )}
+            )} */}
             {/* ANNOUNCEMENT LIST */}
             <div className="w-full overflow-x-auto">
               <table className="min-w-full rounded-xl shadow-md overflow-hidden">

@@ -25,7 +25,7 @@ const Announcement = () => {
     setInitialLoading(true);
     try {
       const res = await axios.get(
-        "http://localhost:5000/announcements/getannouncements",
+        "http://localhost:5000/hoaadmin/getannouncements",
         authConfig
       );
       // controller sends plain array, or {announcements}
@@ -70,7 +70,7 @@ const Announcement = () => {
     setLoading(true);
     try {
       const res = await axios.post(
-        "http://localhost:5000/announcements/addannouncement",
+        "http://localhost:5000/hoaadmin/postannounce",
         form,
         authConfig
       );

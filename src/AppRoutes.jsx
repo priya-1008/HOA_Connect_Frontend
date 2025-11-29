@@ -176,7 +176,7 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/add-resident"
+      path="/register-resident"
       element={
         <PrivateRoute>
           <ResidentRegister />
