@@ -58,9 +58,9 @@ const PaymentsReport = () => {
 
     const config = { headers: { Authorization: `Bearer ${token}` } };
 
-    axios
-      .get("http://localhost:5000/payments/getAll", config)
-      .then((res) => setPayments(res.data || []))
+    axios 
+      .get("http://localhost:5000/superadmin/payments/global", config)
+      .then((res) => setPayments(res.data?.data || []))
       .catch(() => setError("Failed to load payments"))
       .finally(() => setLoading(false));
   }, [navigate]);
@@ -119,7 +119,7 @@ const PaymentsReport = () => {
                   : "bg-purple-100 text-purple-700 border border-purple-300"
               }`}
             >
-              Recent Payment <br /> <span className="text-2xl font-bold">
+              Recent Payment <br /> <span className="text-xl font-bold">
                 {payments.length > 0 ? `₹${payments[0].amount}` : "No records"}
               </span>
             </div>

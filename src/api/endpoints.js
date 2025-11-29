@@ -16,10 +16,10 @@ const BASE_URL = "http://localhost:5000";
 
 const ENDPOINTS = {
   LOGIN: `${BASE_URL}/auth/login`,
-  DASHBOARD: `${BASE_URL}/dashboard`,
-  NOTIFICATIONS: `${BASE_URL}/notifications`,
-  ANNOUNCEMENTS: `${BASE_URL}/announcements`,
-  COMMUNITY: `${BASE_URL}/communities`,
+  DASHBOARD: `${BASE_URL}/dashboard/superadmin`,
+  NOTIFICATIONS: `${BASE_URL}/superadmin/addnotifications`,
+  AMENITIES: `${BASE_URL}/amenities`,
+  COMMUNITY: `${BASE_URL}/superadmin`,
 };
 
 export default ENDPOINTS;

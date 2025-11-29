@@ -1,76 +1,13 @@
-// import React from 'react';
-// import { Routes, Route } from 'react-router-dom';
-// import PrivateRoute from './components/PrivateRoute';
-
-// // Pages
-// import Login from './pages/Login';
-// import Dashboard from './pages/superadmin/Dashboard';
-// import ManageCommunities from './pages/superadmin/ManageCommunities';
-// import ManageAdmins from './pages/superadmin/ManageAdmins';
-// import PaymentsReport from './pages/superadmin/PaymentsReport';
-// // import Reports from './pages/superadmin/Reports';
-
-// const AppRoutes = () => {
-//   return (
-//     <Routes>
-//       {/* Public Route */}
-//       <Route path="/login" element={<Login />} />
-
-//       {/* Private Routes */}
-//       <Route
-//         path="/"
-//         element={
-//           <PrivateRoute>
-//             <Dashboard />
-//           </PrivateRoute>
-//         }
-//       />
-//       <Route
-//         path="/manage-communities"
-//         element={
-//           <PrivateRoute>
-//             <ManageCommunities />
-//           </PrivateRoute>
-//         }
-//       />
-//       <Route
-//         path="/manage-admins"
-//         element={
-//           <PrivateRoute>
-//             <ManageAdmins />
-//           </PrivateRoute>
-//         }
-//       />
-//       <Route
-//         path="/payments"
-//         element={
-//           <PrivateRoute>
-//             <PaymentsReport />
-//           </PrivateRoute>
-//         }
-//       />
-//       <Route
-//         path="/reports"
-//         element={
-//           <PrivateRoute>
-//             <Reports />
-//           </PrivateRoute>
-//         }
-//       />
-//     </Routes>
-//   );
-// };
-
 // export default AppRoutes;
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 
-// Pages
+// Super Admin Pages
 import Login from './pages/Login';
 import Dashboard from './pages/superadmin/Dashboard';
 import ManageCommunities from './pages/superadmin/ManageCommunities';
-import ManageAdmins from './pages/superadmin/ManageAdmins';
+import ManageAmenities from './pages/superadmin/ManageAmenities';
 import PaymentsReport from './pages/superadmin/PaymentsReport';
 import SystemNotification from './pages/superadmin/Notifications';
 
@@ -86,6 +23,19 @@ import Documents from './pages/admin/Documents';
 import Meetings from './pages/admin/Meetings';
 import Polls from './pages/admin/Polls';
 import Notification from './pages/admin/SendNotification';
+
+// Resident Pages 
+import ResidentDashboard from './pages/Resident/ResidentDashboard';
+import AddPayment from './pages/Resident/Payment';
+import DisplayAnnouncement from './pages/Resident/Announcements';
+import UseAmenities from './pages/Resident/Amenities';
+import UseCommunities from './pages/Resident/Communities';
+import AddComplaints  from './pages/Resident/Complaints';
+import AddDocuments  from './pages/Resident/Documents';
+import ViewPolls from './pages/Resident/Polls';
+import ViewNotifications from './pages/Resident/ViewNotification';
+import ResidentRegister from './pages/Resident/Register';
+import AttendMeetings from './pages/Resident/Meetings';
 
 const AppRoutes = () => (
   <Routes>
@@ -110,10 +60,10 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/manage-admins"
+      path="/manage-amenities"
       element={
         <PrivateRoute>
-          <ManageAdmins />
+          <ManageAmenities />
         </PrivateRoute>
       }
     />
@@ -146,7 +96,7 @@ const AppRoutes = () => (
     <Route
       path="/track-payments"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Payments />
         </PrivateRoute>
       }
@@ -154,7 +104,7 @@ const AppRoutes = () => (
     <Route
       path="/residents"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Residents />
         </PrivateRoute>
       }
@@ -162,7 +112,7 @@ const AppRoutes = () => (
     <Route
       path="/announcements"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Announcements />
         </PrivateRoute>
       }
@@ -170,7 +120,7 @@ const AppRoutes = () => (
     <Route
       path="/complaints"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Complaints />
         </PrivateRoute>
       }
@@ -178,7 +128,7 @@ const AppRoutes = () => (
     <Route
       path="/amenities"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Amenities />
         </PrivateRoute>
       }
@@ -186,7 +136,7 @@ const AppRoutes = () => (
     <Route
       path="/documents"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Documents />
         </PrivateRoute>
       }
@@ -194,7 +144,7 @@ const AppRoutes = () => (
     <Route
       path="/meetings"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Meetings />
         </PrivateRoute>
       }
@@ -202,7 +152,7 @@ const AppRoutes = () => (
     <Route
       path="/polls"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Polls />
         </PrivateRoute>
       }
@@ -210,12 +160,103 @@ const AppRoutes = () => (
     <Route
       path="/resident-notification"
       element={
-        <PrivateRoute >
+        <PrivateRoute>
           <Notification />
         </PrivateRoute>
       }
     />
   
+     {/*  HOA Resident Routes */}
+    <Route
+      path="/resident-dashboard"
+      element={
+        <PrivateRoute requiredRole="resident">
+          <ResidentDashboard />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/add-resident"
+      element={
+        <PrivateRoute>
+          <ResidentRegister />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/add-payments"
+      element={
+        <PrivateRoute>
+          <AddPayment />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/view-announcements"
+      element={
+        <PrivateRoute>
+          <DisplayAnnouncement />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/add-complaints"
+      element={
+        <PrivateRoute>
+          <AddComplaints />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/use-amenities"
+      element={
+        <PrivateRoute>
+          <UseAmenities />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/use-communities"
+      element={
+        <PrivateRoute>
+          <UseCommunities />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/add-documents"
+      element={
+        <PrivateRoute>
+          <AddDocuments />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/attend-meetings"
+      element={
+        <PrivateRoute>
+          <AttendMeetings />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/view-polls"
+      element={
+        <PrivateRoute>
+          <ViewPolls />
+        </PrivateRoute>
+      }
+    />
+    <Route
+      path="/view-notification"
+      element={
+        <PrivateRoute>
+          <ViewNotifications />
+        </PrivateRoute>
+      }
+    />
+  
+
     {/* Redirect any unknown route to login */}
     <Route path="*" element={<Navigate to="/" replace />} />
   </Routes>
