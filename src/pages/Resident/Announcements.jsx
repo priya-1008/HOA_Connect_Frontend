@@ -32,7 +32,22 @@ const Announcement = () => {
     setSuccess("");
   };
 
-  
+  // Format date in DD/MM/YYYY, hh:mm:ss AM/PM (12‑hour)
+  const formatDateTime = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    const time = d.toLocaleTimeString("en-US", {
+      hour12: true,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+    return `${day}/${month}/${year}, ${time}`;
+  };
+
   return (
     <HOAHeaderNavbar>
       <div
@@ -46,50 +61,55 @@ const Announcement = () => {
       >
         <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section className="
-            w-full
-            mx-auto
-            bg-emerald-100/50 dark:bg-emerald-900/70
-            dark:border-emerald-800
-            backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8
-          ">
+          <section
+            className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70
+                       dark:border-emerald-800 backdrop-blur-lg rounded-2xl
+                       shadow-xl p-8 my-8"
+          >
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Announcements
             </h2>
-            {/* {(error || success) && (
-              <div className={`text-center pb-3 font-semibold text-lg ${error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"}`}>{error || success}</div>
-            )} */}
-            {/* ANNOUNCEMENT LIST */}
+
             <div className="w-full overflow-x-auto">
-              <table className="min-w-full rounded-xl shadow-md overflow-hidden">
+              <table className="min-w-full border border-gray-300 rounded-xl shadow-md overflow-hidden bg-white/70 dark:bg-emerald-900/60">
                 <thead>
-                  <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
-                    <th className="p-5 font-semibold">Title</th>
-                    <th className="p-5 font-semibold">Description</th>
-                    <th className="p-5 font-semibold">Posted By</th>
-                    <th className="p-5 font-semibold">Date</th>
+                  <tr className="bg-gray-800/90 text-white text-lg">
+                    <th className="p-4 font-semibold text-left w-1/5">Title</th>
+                    <th className="p-4 font-semibold text-left w-2/5">Description</th>
+                    <th className="p-4 font-semibold text-left w-1/5">Posted By</th>
+                    <th className="p-4 font-semibold text-left w-1/5">Date</th>
                   </tr>
                 </thead>
                 <tbody>
                   {announcements.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl">
+                      <td
+                        colSpan={4}
+                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
+                      >
                         No announcements found.
                       </td>
                     </tr>
                   )}
+
                   {announcements.map((a) => (
                     <tr
                       key={a._id}
-                      className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40 odd:bg-white/30 even:bg-emerald-100/60 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
+                      className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40
+                                 odd:bg-white/60 even:bg-emerald-100/60
+                                 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
                     >
-                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100">{a.title}</td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">{a.description}</td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
-                        {a.createdBy ? `${a.createdBy.name} (${a.createdBy.email})` : "N/A"}
+                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100 align-top break-words">
+                        {a.title}
                       </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
-                        {a.createdAt ? new Date(a.createdAt).toLocaleString() : ""}
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top break-words">
+                        {a.description}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top">
+                        {a.createdBy ? a.createdBy.name : "N/A"}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top whitespace-nowrap">
+                        {formatDateTime(a.createdAt)}
                       </td>
                     </tr>
                   ))}
