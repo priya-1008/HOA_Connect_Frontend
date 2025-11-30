@@ -94,10 +94,10 @@ const Amenities = () => {
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Amenities
             </h2>
-            {/* FORM */}
-            <form onSubmit={handleSubmit} className="flex flex-col mb-8 w-full gap-4">
+            {/* FORM
+            <form onSubmit={handleSubmit} className="flex flex-col mb-8 w-full gap-4"> */}
               {/* First row: Amenity Name + Amenity Description */}
-              <div className="flex flex-col md:flex-row gap-4 w-full">
+              {/* <div className="flex flex-col md:flex-row gap-4 w-full">
                 <input
                   type="text"
                   name="name"
@@ -128,9 +128,9 @@ const Amenities = () => {
                     color: #b6b6b6 !important; opacity: 1;
                   }
                 `}</style>
-              </div>
+              </div> */}
               {/* Second row: Community ID full width */}
-              <input
+              {/* <input
                 type="text"
                 name="community"
                 required
@@ -147,9 +147,9 @@ const Amenities = () => {
                 .dark input::placeholder {
                   color: #b6b6b6 !important; opacity: 1;
                 }
-              `}</style>
+              `}</style> */}
               {/* Third row: Active checkbox right-aligned and large */}
-              <div className="flex md:justify-end justify-start w-full">
+              {/* <div className="flex md:justify-end justify-start w-full">
                 <label className="flex items-center gap-2 px-2 text-emerald-800 dark:text-emerald-100 text-xl">
                   <input
                     type="checkbox"
@@ -174,10 +174,10 @@ const Amenities = () => {
                   {loading ? "Saving..." : "SUBMIT"}
                 </button>
               </div>
-            </form>
-            {(error || success) && (
+            </form> */}
+            {/* {(error || success) && (
               <div className={`text-center pb-3 font-semibold text-lg ${error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"}`}>{error || success}</div>
-            )}
+            )} */}
             {/* AMENITIES LIST */}
             <div className="w-full overflow-x-auto">
               <table className="min-w-full rounded-xl shadow-md overflow-hidden">
