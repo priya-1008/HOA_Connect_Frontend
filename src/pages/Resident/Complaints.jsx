@@ -74,9 +74,7 @@ const Complaints = () => {
         setComplaints((prev) => [res.data.complaint, ...prev]);
       }
     } catch (err) {
-      setError(
-        err?.response?.data?.message || "Failed to submit complaint."
-      );
+      setError(err?.response?.data?.message || "Failed to submit complaint.");
     } finally {
       setLoading(false);
     }
@@ -122,7 +120,7 @@ const Complaints = () => {
                   maxLength={500}
                   required
                   rows={1}
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
+                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
                   style={{ color: "#000000", resize: "vertical" }}
                   placeholder="Description"
                   onChange={handleChange}
@@ -130,11 +128,11 @@ const Complaints = () => {
                 />
                 <style>{`
                   input::placeholder, textarea::placeholder {
-                    color: #046c4e;
+                    color: #94a09bff;
                     opacity: 1;
                   }
                   .dark input::placeholder, .dark textarea::placeholder {
-                    color: #38b2ac;
+                    color: #94a09bff;
                     opacity: 1;
                   }
                 `}</style>
@@ -163,57 +161,56 @@ const Complaints = () => {
             )}
 
             {/* COMPLAINTS TABLE */}
-            <div className="w-full overflow-x-auto">
-              <table className="min-w-full border border-gray-300 rounded-xl shadow-md overflow-hidden bg-white/70 dark:bg-emerald-900/60">
-                <thead>
-                  <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-lg">
-                    <th className="p-5 font-semibold text-left w-1/5">
-                      Subject
-                    </th>
-                    <th className="p-5 font-semibold text-left w-2/5">
-                      Description
-                    </th>
-                    <th className="p-5 font-semibold text-left w-1/5">
-                      Status
-                    </th>
-                    <th className="p-5 font-semibold text-left w-1/5">
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {complaints.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
-                      >
-                        No complaints found.
-                      </td>
+            <div className="w-full overflow-x-auto mt-4">
+              <div className="rounded-xl shadow-md border border-gray-300/60 dark:border-gray-700/70 overflow-hidden">
+                <table className="min-w-full table-auto bg-white/70 dark:bg-emerald-950/40">
+                  <thead>
+                    <tr className="bg-gray-800 text-white text-lg">
+                      <th className="p-4 font-semibold text-left">Subject</th>
+                      <th className="p-4 font-semibold text-left">
+                        Description
+                      </th>
+                      <th className="p-4 font-semibold text-left">Status</th>
+                      <th className="p-4 font-semibold text-left">Date</th>
                     </tr>
-                  )}
+                  </thead>
 
-                  {complaints.map((c) => (
-                    <tr
-                      key={c._id}
-                      className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40 odd:bg-white/60 even:bg-emerald-100/60 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
-                    >
-                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100 align-top break-words">
-                        {c.subject}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top break-words">
-                        {c.description}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top">
-                        {c.status || "Pending"}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top whitespace-nowrap">
-                        {formatDateTime(c.createdAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                  <tbody>
+                    {complaints.length === 0 && (
+                      <tr>
+                        <td
+                          colSpan={4}
+                          className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-lg"
+                        >
+                          No complaints found.
+                        </td>
+                      </tr>
+                    )}
+
+                    {complaints.map((c, index) => (
+                      <tr
+                        key={c._id}
+                        className={`text-sm md:text-base transition-colors ${
+                          index % 2 === 0
+                            ? "bg-white/70 dark:bg-emerald-900/40"
+                            : "bg-emerald-100/60 dark:bg-emerald-900/60"
+                        } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
+                      >
+                        <td className="px-4 py-3 font-medium">{c.subject}</td>
+                        <td className="px-4 py-3 font-medium">
+                          {c.description}
+                        </td>
+                        <td className="px-4 py-3 font-medium">
+                          {c.status || "Pending"}
+                        </td>
+                        <td className="px-4 py-3 font-medium">
+                          {formatDateTime(c.createdAt)}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
         </main>

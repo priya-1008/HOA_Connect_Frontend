@@ -15,7 +15,7 @@ const Meetings = () => {
 
     setLoading(true);
     axios
-      .get("http://localhost:5000/resident/meeting", {
+      .get("http://localhost:5000/resident/getmeetingbyresident", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -72,7 +72,7 @@ const Meetings = () => {
               <div className="rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70 overflow-hidden">
                 <table className="min-w-full table-auto bg-white/70 dark:bg-emerald-950/40">
                   <thead>
-                    <tr className="bg-gray-800/90 dark:bg-gray-800/90 text-white text-sm md:text-base">
+                    <tr className="bg-gray-800 text-white text-lg">
                       <th className="p-4 text-left font-semibold">Title</th>
                       <th className="p-4 text-left font-semibold">Agenda</th>
                       <th className="p-4 text-left font-semibold">Location</th>
@@ -101,19 +101,19 @@ const Meetings = () => {
                             : "bg-emerald-100/70 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70 transition-colors`}
                       >
-                        <td className="px-4 py-3 font-medium text-emerald-900 dark:text-emerald-100 whitespace-nowrap">
+                        <td className="px-4 py-3 font-medium">
                           {meeting.title}
                         </td>
 
-                        <td className="px-4 py-3 text-emerald-700 dark:text-emerald-200">
+                        <td className="px-4 py-3 font-medium">
                           {meeting.agenda || meeting.description}
                         </td>
 
-                        <td className="px-4 py-3 text-emerald-700 dark:text-emerald-200 whitespace-nowrap">
+                        <td className="px-4 py-3 font-medium">
                           {meeting.location}
                         </td>
 
-                        <td className="px-4 py-3 text-emerald-700 dark:text-emerald-200 whitespace-nowrap">
+                        <td className="px-4 py-3 font-medium">
                           {meeting.meetingDate
                             ? new Date(meeting.meetingDate).toLocaleString()
                             : ""}

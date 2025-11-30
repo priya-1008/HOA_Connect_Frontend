@@ -136,15 +136,13 @@ const Documents = () => {
               <div className="rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70 overflow-hidden">
                 <table className="min-w-full table-auto bg-white/70 dark:bg-emerald-950/40">
                   <thead>
-                    <tr className="bg-gray-800/90 dark:bg-gray-800/90 text-white text-sm md:text-base">
+                    <tr className="bg-gray-800 text-white text-lg">
                       <th className="p-4 text-left font-semibold">Title</th>
-                      <th className="p-4 text-left font-semibold">
-                        Description
-                      </th>
+                      <th className="p-4 text-left font-semibold">Description</th>
                       <th className="p-4 text-left font-semibold">File Type</th>
-                      <th className="p-4 text-left font-semibold">
+                      {/* <th className="p-4 text-left font-semibold">
                         Uploaded By
-                      </th>
+                      </th> */}
                       <th className="p-4 text-center font-semibold">Actions</th>
                     </tr>
                   </thead>
@@ -169,20 +167,14 @@ const Documents = () => {
                             : "bg-emerald-100/70 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70 transition-colors`}
                       >
-                        <td className="px-4 py-3 font-medium text-emerald-900 dark:text-emerald-100 whitespace-nowrap">
-                          {doc.title}
-                        </td>
-                        <td className="px-4 py-3 text-emerald-700 dark:text-emerald-200">
-                          {doc.description}
-                        </td>
-                        <td className="px-4 py-3 text-emerald-700 dark:text-emerald-200 whitespace-nowrap">
-                          {doc.fileType}
-                        </td>
-                        <td className="px-4 py-3 text-emerald-700 dark:text-emerald-200 whitespace-nowrap">
+                        <td className="px-4 py-3 font-medium">{doc.title}</td>
+                        <td className="px-4 py-3 font-medium">{doc.description}</td>
+                        <td className="px-4 py-3 font-medium">{doc.fileType}</td>
+                        {/* <td className="px-4 py-3 font-medium">
                           {doc.uploadedBy
                             ? `${doc.uploadedBy.name} (${doc.uploadedBy.email})`
                             : "Community Admin"}
-                        </td>
+                        </td> */}
                         <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => handleDownload(doc)}

@@ -220,7 +220,7 @@ const ResidentPayment = () => {
 
             {/* FULL WIDTH TABLE */}
             <div className="flex flex-col gap-4 text-center mb-8">
-              <h2 className="text-4xl font-extrabold text-center mb-7 text-emerald-900 dark:text-emerald-100">
+              <h2 className="text-3xl font-extrabold text-center mb-7 text-emerald-900 dark:text-emerald-100">
               Payments History
             </h2>
               <table className="min-w-full border border-gray-300 rounded-xl overflow-hidden bg-white/80 shadow-md">
@@ -251,14 +251,14 @@ const ResidentPayment = () => {
                       key={p._id}
                       className="odd:bg-white even:bg-emerald-100/40"
                     >
-                      <td className="p-4">{p.transactionId}</td>
-                      <td className="p-4">₹{p.amount}</td>
-                      <td className="p-4">{p.billType}</td>
-                      <td className="p-4">{p.status}</td>
-                      <td className="p-4">
+                      <td className="px-4 py-3 font-medium">{p.transactionId}</td>
+                      <td className="px-4 py-3 font-medium">₹{p.amount}</td>
+                      <td className="px-4 py-3 font-medium">{p.billType}</td>
+                      <td className="px-4 py-3 font-medium">{p.status}</td>
+                      <td className="px-4 py-3 font-medium">
                         {new Date(p.transactionDate).toLocaleDateString()}
                       </td>
-                      <td className="p-4 text-center">
+                      <td className="px-4 py-3 font-medium text-center">
                         {p.status === "completed" ? (
                           <button
                             onClick={() => downloadReceipt(p.transactionId)}
