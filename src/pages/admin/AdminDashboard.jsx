@@ -12,7 +12,7 @@ import {
   ClipboardDocumentListIcon,
   CalendarDaysIcon,
 } from "@heroicons/react/24/outline";
-  
+
 const StatCard = ({ title, value, color, icon: Icon }) => (
   <div className="bg-white/50 backdrop-blur-lg border border-gray-300 rounded-2xl shadow-lg p-6 flex flex-col items-start justify-center hover:scale-[1.02] transition-all duration-300">
     <div className="flex items-center gap-3 mb-3">
@@ -38,23 +38,15 @@ const Dashboard = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    Promise.all([
-      axios.get("http://localhost:5000/hoaadmin/analytics", config),
-    ])
-      .then(([comm, resi, users, comp, ann, ame, pay]) => {
-        const hoaAdmins = users.data.filter((u) => u.role === "admin").length;
-        setData({
-          communities: comm.data.length,
-          residents: resi.data.length,
-          hoaAdmins,
-          complaints: comp.data.length,
-          announcements: ann.data.length,
-          amenities: ame.data.length,
-          totalPayments: pay.data.total || 0,
-        });
+
+    axios
+      .get("http://localhost:5000/hoaadmin/dashboard", {
+        headers: { Authorization: `Bearer ${token}` },
       })
-      .catch(() => console.log("Error fetching dashboard data"));
+      .then((res) => {
+        setData(res.data.data);
+      })
+      .catch(() => console.log("Error fetching analytics"));
   }, [navigate]);
 
   return (
