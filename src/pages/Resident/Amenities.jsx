@@ -98,10 +98,10 @@ const Amenities = () => {
               <table className="min-w-full rounded-xl shadow-md bg-white/60 dark:bg-emerald-950/40">
                 <thead>
                   <tr className="bg-gray-800 text-white text-lg">
-                    <th className="p-4 text-left">Name</th>
-                    <th className="p-4 text-left">Description</th>
-                    <th className="p-4 text-left">Maintenance</th>
-                    <th className="p-4 text-center">Action</th>
+                    <th className="p-4 font-semibold text-left">Name</th>
+                    <th className="p-4 font-semibold text-left">Description</th>
+                    <th className="p-4 font-semibold text-left">Maintenance</th>
+                    <th className="p-4 font-semibold text-center">Action</th>
                   </tr>
                 </thead>
 
@@ -120,8 +120,8 @@ const Amenities = () => {
                       className={`${index % 2 === 0 ? "bg-white/70 dark:bg-emerald-900/40" : "bg-emerald-100/70 dark:bg-emerald-900/60"} hover:bg-emerald-200/60`}
                     >
                       <td className="px-4 py-3 font-medium">{a.name}</td>
-                      <td className="px-4 py-3">{a.description}</td>
-                      <td className="px-4 py-3 capitalize">{a.maintenanceStatus || "available"}</td>
+                      <td className="px-4 py-3 font-medium">{a.description}</td>
+                      <td className="px-4 py-3 font-medium capitalize">{a.maintenanceStatus || "available"}</td>
 
                       <td className="px-4 py-3 text-center">
                         <button

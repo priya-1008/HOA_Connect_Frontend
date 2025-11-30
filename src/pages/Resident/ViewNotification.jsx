@@ -74,11 +74,11 @@ const Notifications = () => {
             <div className="w-full overflow-x-auto">
               <table className="min-w-full rounded-xl shadow-md overflow-hidden">
                 <thead>
-                  <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
-                    <th className="p-5 font-semibold">Title</th>
-                    <th className="p-5 font-semibold">Message</th>
-                    <th className="p-5 font-semibold">Created By</th>
-                    <th className="p-5 font-semibold">Date & Time</th>
+                  <tr className="bg-gray-800 text-white text-lg">
+                    <th className="p-4 font-semibold text-left">Title</th>
+                    <th className="p-4 font-semibold text-left">Message</th>
+                    <th className="p-4 font-semibold text-left">Created By</th>
+                    <th className="p-4 font-semibold text-left">Date & Time</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -92,21 +92,21 @@ const Notifications = () => {
                       </td>
                     </tr>
                   )}
-                  {notifications.map((n) => (
+                  {notifications.map((n,index) => (
                     <tr
                       key={n._id}
-                      className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40 odd:bg-white/30 even:bg-emerald-100/60 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
+                      className={`${
+                        index % 2 === 0
+                          ? "bg-white/70 dark:bg-emerald-900/40"
+                          : "bg-emerald-100/70 dark:bg-emerald-900/60"
+                      } hover:bg-emerald-200/60`}
                     >
-                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100">
-                        {n.title}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
-                        {n.message}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                      <td className="px-4 py-3 font-medium text-left">{n.title}</td>
+                      <td className="px-4 py-3 font-medium text-left">{n.message}</td>
+                      <td className="px-4 py-3 font-medium text-left">
                         {n.createdBy?.name || n.createdBy?.email || n.createdBy}
                       </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                      <td className="px-4 py-3 font-medium text-left">
                         {n.createdAt
                           ? new Date(n.createdAt).toLocaleString()
                           : "-"}

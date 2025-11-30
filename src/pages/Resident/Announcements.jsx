@@ -73,10 +73,14 @@ const Announcement = () => {
             <div className="w-full overflow-x-auto">
               <table className="min-w-full border border-gray-300 rounded-xl shadow-md overflow-hidden bg-white/70 dark:bg-emerald-900/60">
                 <thead>
-                  <tr className="bg-gray-800/90 text-white text-lg">
+                  <tr className="bg-gray-800 text-white text-lg">
                     <th className="p-4 font-semibold text-left w-1/5">Title</th>
-                    <th className="p-4 font-semibold text-left w-2/5">Description</th>
-                    <th className="p-4 font-semibold text-left w-1/5">Posted By</th>
+                    <th className="p-4 font-semibold text-left w-2/5">
+                      Description
+                    </th>
+                    <th className="p-4 font-semibold text-left w-1/5">
+                      Posted By
+                    </th>
                     <th className="p-4 font-semibold text-left w-1/5">Date</th>
                   </tr>
                 </thead>
@@ -92,23 +96,21 @@ const Announcement = () => {
                     </tr>
                   )}
 
-                  {announcements.map((a) => (
+                  {announcements.map((a, index) => (
                     <tr
                       key={a._id}
-                      className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40
-                                 odd:bg-white/60 even:bg-emerald-100/60
-                                 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
+                      className={`${
+                        index % 2 === 0
+                          ? "bg-white/70 dark:bg-emerald-900/40"
+                          : "bg-emerald-100/70 dark:bg-emerald-900/60"
+                      } hover:bg-emerald-200/60`}
                     >
-                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100 align-top break-words">
-                        {a.title}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top break-words">
-                        {a.description}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top">
+                      <td className="px-4 py-3 font-medium">{a.title}</td>
+                      <td className="px-4 py-3 font-medium">{a.description}</td>
+                      <td className="px-4 py-3 font-medium">
                         {a.createdBy ? a.createdBy.name : "N/A"}
                       </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200 align-top whitespace-nowrap">
+                      <td className="px-4 py-3 font-medium">
                         {formatDateTime(a.createdAt)}
                       </td>
                     </tr>
