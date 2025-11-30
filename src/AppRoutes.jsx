@@ -157,7 +157,7 @@ const AppRoutes = () => (
       }
     />
     <Route
-      path="/resident-notification"
+      path="/notification"
       element={
         <PrivateRoute>
           <Notification />

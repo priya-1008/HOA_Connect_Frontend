@@ -48,10 +48,7 @@ const Documents = () => {
   // Download document with Authorization header
   const handleDownload = async (doc) => {
     const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+    if (!token) return navigate("/login");
 
     try {
       setDownloadLoadingId(doc._id);
@@ -60,24 +57,29 @@ const Documents = () => {
         `http://localhost:5000/resident/downloaddocument/${doc._id}`,
         {
           headers: { Authorization: `Bearer ${token}` },
-          responseType: "blob", // important for files
+          responseType: "blob",
         }
       );
 
-      // Create blob URL and trigger browser download
-      const blob = new Blob([res.data]);
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
+      // Create blob URL
+      const fileURL = window.URL.createObjectURL(new Blob([res.data]));
 
-      // use document title + extension if backend sets Content-Disposition,
-      // otherwise fall back to title
+      // Create invisible download link
+      const link = document.createElement("a");
+      link.href = fileURL;
+
+      // Auto-detect filename from backend or fallback
       const defaultName = doc.title || "document";
       link.download = defaultName;
+
+      // Trigger click without new tab
+      link.style.display = "none";
       document.body.appendChild(link);
       link.click();
+
+      // Cleanup
       link.remove();
-      window.URL.revokeObjectURL(url);
+      window.URL.revokeObjectURL(fileURL);
     } catch (err) {
       setError("Failed to download document.");
     } finally {
@@ -139,15 +141,11 @@ const Documents = () => {
                       <th className="p-4 text-left font-semibold">
                         Description
                       </th>
-                      <th className="p-4 text-left font-semibold">
-                        File Type
-                      </th>
+                      <th className="p-4 text-left font-semibold">File Type</th>
                       <th className="p-4 text-left font-semibold">
                         Uploaded By
                       </th>
-                      <th className="p-4 text-center font-semibold">
-                        Actions
-                      </th>
+                      <th className="p-4 text-center font-semibold">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
