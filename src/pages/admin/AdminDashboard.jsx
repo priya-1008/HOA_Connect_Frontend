@@ -40,13 +40,7 @@ const Dashboard = () => {
     if (!token) navigate("/login");
     const config = { headers: { Authorization: `Bearer ${token}` } };
     Promise.all([
-      axios.get("http://localhost:5000/communities/getCommunity", config),
-      axios.get("http://localhost:5000/residents", config),
-      axios.get("http://localhost:5000/auth/register", config),
-      axios.get("http://localhost:5000/complaints", config),
-      axios.get("http://localhost:5000/announcements", config),
-      axios.get("http://localhost:5000/amenities", config),
-      axios.get("http://localhost:5000/dashboard/total-payments", config),
+      axios.get("http://localhost:5000/hoaadmin/analytics", config),
     ])
       .then(([comm, resi, users, comp, ann, ame, pay]) => {
         const hoaAdmins = users.data.filter((u) => u.role === "admin").length;

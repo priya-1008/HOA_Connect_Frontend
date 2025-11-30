@@ -15,6 +15,7 @@ import {
   MoonIcon,
   Bars3Icon,
   XMarkIcon,
+  ChartBarIcon,
 } from "@heroicons/react/24/outline";
 
 const hoaAdminName = "ADMIN";
@@ -29,6 +30,7 @@ const NAV_LINKS = [
   { label: "Meetings", icon: ChatBubbleBottomCenterTextIcon, path: "/meetings" },
   { label: "Payments", icon: CurrencyDollarIcon, path: "/track-payments" },
   { label: "Notifications", icon: BellIcon, path: "/resident-notification" },
+  { label: "Polls", icon:  ChartBarIcon, path: "/polls" },
 ];
 
 const SidebarLink = ({ icon: Icon, label, path, isActive, collapsed, onClick, darkMode }) => (

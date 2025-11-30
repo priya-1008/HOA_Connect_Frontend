@@ -190,7 +190,7 @@ const Meetings = () => {
                   {meetings.map((meeting, index) => (
                     <tr
                       key={meeting._id || index}
-                      className="odd:bg-emerald-50/80 even:bg-white/80 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60 hover:bg-emerald-200/50 dark:hover:bg-emerald-800/60 transition-colors"
+                      className="odd:bg-emerald-200/40 even:bg-white/80 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60 hover:bg-emerald-200/50 dark:hover:bg-emerald-800/60 transition-colors"
                     >
                       <td className="px-6 py-4 align-middle text-sm md:text-base font-medium text-emerald-900 dark:text-emerald-100">
                         {meeting.title}
