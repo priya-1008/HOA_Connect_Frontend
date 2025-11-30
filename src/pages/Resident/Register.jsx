@@ -81,6 +81,7 @@ const Register = () => {
         phoneNo: form.phoneNo,
         houseNumber: form.houseNumber,
         communityId: form.communityId,
+        role: "resident",
       };
 
       const response = await axios.post(
