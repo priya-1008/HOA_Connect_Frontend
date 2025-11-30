@@ -133,9 +133,9 @@ const Payments = () => {
                           onChange={(e) => handleStatusChange(payment._id, e.target.value)}
                         >
                           <option value="">Update Status</option>
-                          <option value="Paid">Paid</option>
-                          <option value="Unpaid">Unpaid</option>
-                          <option value="Overdue">Overdue</option>
+                          <option value="completed">Completed</option>
+                          <option value="failed">Failed</option>
+                          <option value="pending">Pending</option>
                         </select>
                         <button
                           disabled={loading}
