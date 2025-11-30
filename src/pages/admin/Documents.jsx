@@ -18,7 +18,7 @@ const Documents = () => {
     if (!token) return navigate("/login");
     setLoading(true);
     axios
-      .get("http://localhost:5000/documents", {
+      .get("http://localhost:5000/hoaadmin/getdocuments", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setDocuments(res.data.documents || []))
@@ -53,7 +53,7 @@ const Documents = () => {
 
     try {
       const res = await axios.post(
-        "http://localhost:5000/documents/upload",
+        "http://localhost:5000/hoaadmin/upload",
         data,
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -76,7 +76,7 @@ const Documents = () => {
     const token = localStorage.getItem("token");
     setLoading(true);
     try {
-      await axios.delete(`http://localhost:5000/documents/${id}`, {
+      await axios.delete(`http://localhost:5000/hoaadmin/deletedocument/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setSuccess("Document deleted.");
