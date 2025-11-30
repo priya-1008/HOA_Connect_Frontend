@@ -27,10 +27,10 @@ const Notifications = () => {
     if (!token) return navigate("/login");
     setLoading(true);
     axios
-      .get("http://localhost:5000/notifications/all", {
+      .get("http://localhost:5000/resident/getnotification", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setNotifications(res.data?.data || []))
+      .then((res) => setNotifications(res.data?.notifications || []))
       .catch(() => setError("Could not load notifications."))
       .finally(() => setLoading(false));
   }, [navigate, success]);
@@ -77,7 +77,6 @@ const Notifications = () => {
                   <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
                     <th className="p-5 font-semibold">Title</th>
                     <th className="p-5 font-semibold">Message</th>
-                    <th className="p-5 font-semibold">Channels</th>
                     <th className="p-5 font-semibold">Created By</th>
                     <th className="p-5 font-semibold">Date & Time</th>
                   </tr>
@@ -103,9 +102,6 @@ const Notifications = () => {
                       </td>
                       <td className="p-4 text-emerald-700 dark:text-emerald-200">
                         {n.message}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
-                        {(n.channels || []).join(", ")}
                       </td>
                       <td className="p-4 text-emerald-700 dark:text-emerald-200">
                         {n.createdBy?.name || n.createdBy?.email || n.createdBy}

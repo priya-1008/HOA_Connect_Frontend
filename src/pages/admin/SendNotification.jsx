@@ -3,19 +3,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import HOAHeaderNavbar from "./HOAHeaderNavbar";
 
-const channelOptions = [
-  { value: "email", label: "Email" },
-  { value: "sms", label: "SMS" },
-  { value: "whatsapp", label: "WhatsApp" },
-];
-
 const Notifications = () => {
   const navigate = useNavigate();
   const [notifications, setNotifications] = useState([]);
   const [form, setForm] = useState({
     title: "",
     message: "",
-    channels: [],
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -27,10 +20,10 @@ const Notifications = () => {
     if (!token) return navigate("/login");
     setLoading(true);
     axios
-      .get("http://localhost:5000/notifications/all", {
+      .get("http://localhost:5000/hoaadmin/getnotification", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setNotifications(res.data?.data || []))
+      .then((res) => setNotifications(res.data?.notifications || []))
       .catch(() => setError("Could not load notifications."))
       .finally(() => setLoading(false));
   }, [navigate, success]);
@@ -56,24 +49,19 @@ const Notifications = () => {
   // Submit notification
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!form.channels.length) {
-      setError("Select at least one channel.");
-      return;
-    }
     const token = localStorage.getItem("token");
     setLoading(true);
     try {
       await axios.post(
-        "http://localhost:5000/notifications/send",
+        "http://localhost:5000/hoaadmin/sendnotification",
         {
           title: form.title,
           message: form.message,
-          channels: form.channels,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
       setSuccess("Notification sent successfully!");
-      setForm({ title: "", message: "", channels: [] });
+      setForm({ title: "", message: "" });
     } catch (err) {
       setError(err?.response?.data?.message || "Could not send notification.");
     } finally {
@@ -143,33 +131,6 @@ const Notifications = () => {
                   }
                 `}</style>
               </div>
-              {/* Channels */}
-              <div className="flex flex-col gap-2 md:flex-row md:items-center w-full">
-                <span className="font-semibold text-lg text-emerald-900 dark:text-emerald-100 mr-4">
-                  Channels:
-                </span>
-                {channelOptions.map((ch) => (
-                  <label key={ch.value} className="mx-2 flex items-center">
-                    <input
-                      type="checkbox"
-                      name="channels"
-                      value={ch.value}
-                      checked={form.channels.includes(ch.value)}
-                      onChange={handleChange}
-                      className="mr-2"
-                      style={{
-                        width: "1.4em",
-                        height: "1.4em",
-                        minWidth: "1.4em",
-                        minHeight: "1.4em",
-                      }}
-                    />
-                    <span className="text-emerald-900 dark:text-emerald-200">
-                      {ch.label}
-                    </span>
-                  </label>
-                ))}
-              </div>
               {/* Submit Button */}
               <div className="flex justify-center">
                 <button
@@ -199,7 +160,6 @@ const Notifications = () => {
                   <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
                     <th className="p-5 font-semibold">Title</th>
                     <th className="p-5 font-semibold">Message</th>
-                    <th className="p-5 font-semibold">Channels</th>
                     <th className="p-5 font-semibold">Created By</th>
                     <th className="p-5 font-semibold">Date & Time</th>
                   </tr>
@@ -225,9 +185,6 @@ const Notifications = () => {
                       </td>
                       <td className="p-4 text-emerald-700 dark:text-emerald-200">
                         {n.message}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
-                        {(n.channels || []).join(", ")}
                       </td>
                       <td className="p-4 text-emerald-700 dark:text-emerald-200">
                         {n.createdBy?.name || n.createdBy?.email || n.createdBy}

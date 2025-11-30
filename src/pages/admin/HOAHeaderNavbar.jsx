@@ -29,7 +29,7 @@ const NAV_LINKS = [
   { label: "Documents", icon: FolderIcon, path: "/documents" },
   { label: "Meetings", icon: ChatBubbleBottomCenterTextIcon, path: "/meetings" },
   { label: "Payments", icon: CurrencyDollarIcon, path: "/track-payments" },
-  { label: "Notifications", icon: BellIcon, path: "/resident-notification" },
+  { label: "Notifications", icon: BellIcon, path: "/notification" },
   { label: "Polls", icon:  ChartBarIcon, path: "/polls" },
 ];
 
