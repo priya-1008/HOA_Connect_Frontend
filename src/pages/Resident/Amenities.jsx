@@ -6,69 +6,61 @@ import HOAHeaderNavbar from "./HOAHeaderNavbar";
 const Amenities = () => {
   const navigate = useNavigate();
   const [amenities, setAmenities] = useState([]);
-  const [form, setForm] = useState({ name: "", description: "", community: "", isActive: true });
+  const [selectedAmenity, setSelectedAmenity] = useState(null);
+  const [bookingDate, setBookingDate] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
+  const [bookingLoading, setBookingLoading] = useState(false);
 
-  // Fetch amenities on mount or when a new amenity is created
+  // Fetch all amenities created by admin
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/login");
+
     setLoading(true);
     axios
-      .get("http://localhost:5000/amenities", {
+      .get("http://localhost:5000/resident/amenitylist", {
         headers: { Authorization: `Bearer ${token}` },
       })
-      .then((res) => setAmenities(res.data.amenities || []))
+      .then((res) => {
+        setAmenities(res.data.amenities || []);
+      })
       .catch(() => setError("Could not load amenities."))
       .finally(() => setLoading(false));
   }, [navigate, success]);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
-    setError("");
-    setSuccess("");
-  };
-
-  // Create amenity
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-    setLoading(true);
-    try {
-      const res = await axios.post(
-        "http://localhost:5000/amenities",
-        form,
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setSuccess(res.data.message);
-      setForm({ name: "", description: "", community: "", isActive: true });
-    } catch (err) {
-      setError(
-        err?.response?.data?.message ||
-        "Failed to create amenity."
-      );
-    } finally {
-      setLoading(false);
+  // Book amenity
+  const handleBookAmenity = async () => {
+    if (!selectedAmenity) return;
+    if (!bookingDate) {
+      setError("Please select a booking date.");
+      return;
     }
-  };
 
-  // Delete amenity (admin action)
-  const handleDelete = async (amenityId) => {
-    if (!window.confirm("Delete this amenity?")) return;
     const token = localStorage.getItem("token");
-    setLoading(true);
+    if (!token) return navigate("/login");
+
     try {
-      await axios.delete(`http://localhost:5000/amenities/${amenityId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setSuccess("Amenity deleted.");
+      setBookingLoading(true);
+      const res = await axios.post(
+        "http://localhost:5000/resident/bookamenity",
+        {
+          amenityId: selectedAmenity._id,
+          bookingDate,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setSuccess(res.data.message || "Amenity booked successfully");
+      setSelectedAmenity(null);
+      setBookingDate("");
     } catch (err) {
-      setError("Could not delete amenity.");
+      setError(err.response?.data?.message || "Booking failed");
     } finally {
-      setLoading(false);
+      setBookingLoading(false);
     }
   };
 
@@ -85,138 +77,99 @@ const Amenities = () => {
       >
         <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section className="
+          <section
+            className="
             w-full mx-auto
             bg-emerald-100/50 dark:bg-emerald-900/70
             dark:border-emerald-800
             backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8
-          ">
+          "
+          >
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Amenities
             </h2>
-            {/* FORM
-            <form onSubmit={handleSubmit} className="flex flex-col mb-8 w-full gap-4"> */}
-              {/* First row: Amenity Name + Amenity Description */}
-              {/* <div className="flex flex-col md:flex-row gap-4 w-full">
-                <input
-                  type="text"
-                  name="name"
-                  maxLength={80}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Amenity Name"
-                  onChange={handleChange}
-                  value={form.name}
-                />
-                <input
-                  type="text"
-                  name="description"
-                  maxLength={200}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Amenity Description"
-                  onChange={handleChange}
-                  value={form.description}
-                />
-                <style>{`
-                  input::placeholder {
-                    color: #888888 !important; opacity: 1;
-                  }
-                  .dark input::placeholder {
-                    color: #b6b6b6 !important; opacity: 1;
-                  }
-                `}</style>
-              </div> */}
-              {/* Second row: Community ID full width */}
-              {/* <input
-                type="text"
-                name="community"
-                required
-                className="rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow w-full"
-                style={{ color: "#000000" }}
-                placeholder="Community ID"
-                onChange={handleChange}
-                value={form.community}
-              />
-              <style>{`
-                input::placeholder {
-                  color: #888888 !important; opacity: 1;
-                }
-                .dark input::placeholder {
-                  color: #b6b6b6 !important; opacity: 1;
-                }
-              `}</style> */}
-              {/* Third row: Active checkbox right-aligned and large */}
-              {/* <div className="flex md:justify-end justify-start w-full">
-                <label className="flex items-center gap-2 px-2 text-emerald-800 dark:text-emerald-100 text-xl">
-                  <input
-                    type="checkbox"
-                    name="isActive"
-                    checked={form.isActive}
-                    onChange={handleChange}
-                    className="accent-emerald-700 w-6 h-6"
-                    style={{
-                      minWidth: "1.5rem",
-                      minHeight: "1.5rem"
-                    }}
-                  />
-                  Active
-                </label>
+
+            {(error || success) && (
+              <div
+                className={`text-center pb-3 font-semibold text-lg ${
+                  error
+                    ? "text-red-600"
+                    : "text-emerald-700 dark:text-emerald-200"
+                }`}
+              >
+                {error || success}
               </div>
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="text-xl py-3 px-4 bg-teal-700 dark:bg-teal-700 hover:bg-teal-800 dark:hover:bg-emerald-900 text-white rounded-lg font-bold text-lg transition w-auto"
-                >
-                  {loading ? "Saving..." : "SUBMIT"}
-                </button>
-              </div>
-            </form> */}
-            {/* {(error || success) && (
-              <div className={`text-center pb-3 font-semibold text-lg ${error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"}`}>{error || success}</div>
-            )} */}
-            {/* AMENITIES LIST */}
+            )}
+
+            {loading && (
+              <p className="text-center text-emerald-900 dark:text-emerald-100 font-medium mb-4">
+                Loading amenities...
+              </p>
+            )}
+
+            {/* AMENITIES TABLE */}
             <div className="w-full overflow-x-auto">
-              <table className="min-w-full rounded-xl shadow-md overflow-hidden">
+              <table className="min-w-full rounded-xl shadow-md overflow-hidden bg-white/60 dark:bg-emerald-950/40">
                 <thead>
-                  <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
-                    <th className="p-5 font-semibold">Name</th>
-                    <th className="p-5 font-semibold">Description</th>
-                    <th className="p-5 font-semibold">Community</th>
-                    <th className="p-5 font-semibold">Active</th>
-                    <th className="p-5 font-semibold">Actions</th>
+                  <tr className="bg-gray-800/90 dark:bg-gray-800/90 text-white text-base md:text-lg">
+                    <th className="p-4 font-semibold text-left">Name</th>
+                    <th className="p-4 font-semibold text-left">Description</th>
+                    <th className="p-4 font-semibold text-left">
+                      Maintenance Status
+                    </th>
+                    <th className="p-4 font-semibold text-center">Actions</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {amenities.length === 0 && (
+                  {amenities.length === 0 && !loading && (
                     <tr>
-                      <td colSpan={5} className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl">
+                      <td
+                        colSpan={5}
+                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-lg"
+                      >
                         No amenities found.
                       </td>
                     </tr>
                   )}
-                  {amenities.map((a) => (
+
+                  {amenities.map((a, index) => (
                     <tr
                       key={a._id}
-                      className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40 odd:bg-white/30 even:bg-emerald-100/60 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
+                      className={`text-sm md:text-base ${
+                        index % 2 === 0
+                          ? "bg-white/70 dark:bg-emerald-900/40"
+                          : "bg-emerald-100/70 dark:bg-emerald-900/60"
+                      } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70 transition-colors`}
                     >
-                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100">{a.name}</td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">{a.description}</td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">{a.community?.name || a.community}</td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
-                        <span className={`font-bold ${a.isActive ? "text-green-700" : "text-red-600"}`}>
-                          {a.isActive ? "Yes" : "No"}
-                        </span>
+                      <td className="px-4 py-3 font-medium text-emerald-900 dark:text-emerald-100">
+                        {a.name}
                       </td>
-                      <td className="p-4">
+                      <td className="px-4 py-3 text-emerald-700 dark:text-emerald-200">
+                        {a.description}
+                      </td>
+                      <td className="px-4 py-3 text-emerald-700 dark:text-emerald-200 capitalize">
+                        {a.maintenanceStatus}
+                      </td>
+
+                      <td className="px-4 py-3 text-center">
                         <button
-                          onClick={() => handleDelete(a._id)}
-                          className="py-1 px-4 bg-red-600 hover:bg-red-800 text-white rounded font-bold transition"
+                          onClick={() => {
+                            setSelectedAmenity(a);
+                            setError("");
+                            setSuccess("");
+                          }}
+                          disabled={a.maintenanceStatus !== "available"}
+                          className={`py-1.5 px-4 rounded font-semibold text-sm md:text-base transition 
+                          ${
+                            a.maintenanceStatus === "available"
+                              ? "bg-blue-600 hover:bg-blue-700 text-white"
+                              : "bg-gray-400 cursor-not-allowed text-white"
+                          }`}
                         >
-                          Delete
+                          {a.maintenanceStatus === "available"
+                            ? "Book"
+                            : "Unavailable"}
                         </button>
                       </td>
                     </tr>
@@ -225,6 +178,52 @@ const Amenities = () => {
               </table>
             </div>
           </section>
+
+          {/* BOOKING MODAL */}
+          {selectedAmenity && (
+            <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 px-4">
+              <div className="bg-white dark:bg-emerald-900 rounded-xl shadow-xl p-6 w-full max-w-md">
+                <h3 className="text-2xl font-bold text-center mb-4 text-emerald-900 dark:text-emerald-100">
+                  Book Amenity
+                </h3>
+
+                <p className="mb-2 text-emerald-800 dark:text-emerald-200 font-medium">
+                  Amenity:{" "}
+                  <span className="font-bold">{selectedAmenity.name}</span>
+                </p>
+
+                <label className="block text-emerald-900 dark:text-emerald-100 font-semibold mb-1">
+                  Booking Date:
+                </label>
+                <input
+                  type="date"
+                  value={bookingDate}
+                  onChange={(e) => setBookingDate(e.target.value)}
+                  className="w-full p-2 rounded border border-gray-300 dark:border-gray-700 dark:bg-emerald-800 text-gray-900 dark:text-white"
+                />
+
+                <div className="flex justify-between mt-5">
+                  <button
+                    className="px-5 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-semibold"
+                    onClick={() => {
+                      setSelectedAmenity(null);
+                      setBookingDate("");
+                    }}
+                  >
+                    Cancel
+                  </button>
+
+                  <button
+                    className="px-5 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-semibold"
+                    onClick={handleBookAmenity}
+                    disabled={bookingLoading}
+                  >
+                    {bookingLoading ? "Booking..." : "Book Now"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </main>
       </div>
     </HOAHeaderNavbar>
