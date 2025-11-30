@@ -29,7 +29,6 @@ import ResidentDashboard from './pages/Resident/ResidentDashboard';
 import AddPayment from './pages/Resident/Payment';
 import DisplayAnnouncement from './pages/Resident/Announcements';
 import UseAmenities from './pages/Resident/Amenities';
-import UseCommunities from './pages/Resident/Communities';
 import AddComplaints  from './pages/Resident/Complaints';
 import AddDocuments  from './pages/Resident/Documents';
 import ViewPolls from './pages/Resident/Polls';
@@ -212,14 +211,6 @@ const AppRoutes = () => (
       element={
         <PrivateRoute>
           <UseAmenities />
-        </PrivateRoute>
-      }
-    />
-    <Route
-      path="/use-communities"
-      element={
-        <PrivateRoute>
-          <UseCommunities />
         </PrivateRoute>
       }
     />

@@ -18,7 +18,7 @@ const Documents = () => {
     if (!token) return navigate("/login");
     setLoading(true);
     axios
-      .get("http://localhost:5000/documents", {
+      .get("http://localhost:5000/resident/documents", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setDocuments(res.data.documents || []))
@@ -62,8 +62,7 @@ const Documents = () => {
       setFile(null);
     } catch (err) {
       setError(
-        err?.response?.data?.message ||
-        "Failed to upload document."
+        err?.response?.data?.message || "Failed to upload document."
       );
     } finally {
       setLoading(false);
@@ -87,6 +86,16 @@ const Documents = () => {
     }
   };
 
+  // Download document (opens browser download)
+  const handleDownload = (id) => {
+    const token = localStorage.getItem("token");
+    // Backend download route: GET /documents/:id/download
+    window.open(
+      `http://localhost:5000/resident/downloaddocument`,
+      "_blank"
+    );
+  };
+
   return (
     <HOAHeaderNavbar>
       <div
@@ -100,73 +109,69 @@ const Documents = () => {
       >
         <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section className="
+          <section
+            className="
             w-full mx-auto
             bg-emerald-100/50 dark:bg-emerald-900/70
             dark:border-emerald-800
             backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8
-          ">
+          "
+          >
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Documents
             </h2>
-            {/* FORM */}
-            <form onSubmit={handleSubmit} className="flex flex-col mb-8 w-full gap-4" encType="multipart/form-data">
-              {/* First row: Title + Description */}
+
+            {(error || success) && (
+              <div
+                className={`text-center pb-3 font-semibold text-lg ${
+                  error
+                    ? "text-red-600"
+                    : "text-emerald-700 dark:text-emerald-200"
+                }`}
+              >
+                {error || success}
+              </div>
+            )}
+
+            {/* UPLOAD FORM (if you want it visible here) */}
+            <form
+              onSubmit={handleSubmit}
+              className="mb-6 flex flex-col md:flex-row gap-4 items-center justify-between bg-white/40 dark:bg-emerald-900/50 p-4 rounded-xl"
+            >
               <div className="flex flex-col md:flex-row gap-4 w-full">
                 <input
                   type="text"
                   name="title"
-                  maxLength={80}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Document Title"
-                  onChange={handleChange}
+                  placeholder="Title"
                   value={form.title}
+                  onChange={handleChange}
+                  className="flex-1 p-2 rounded border border-emerald-400 focus:outline-none"
+                  required
                 />
                 <input
                   type="text"
                   name="description"
-                  maxLength={300}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Document Description"
-                  onChange={handleChange}
+                  placeholder="Description"
                   value={form.description}
+                  onChange={handleChange}
+                  className="flex-1 p-2 rounded border border-emerald-400 focus:outline-none"
                 />
-                <style>{`
-                  input::placeholder {
-                    color: #888888 !important; opacity: 1;
-                  }
-                  .dark input::placeholder {
-                    color: #b6b6b6 !important; opacity: 1;
-                  }
-                `}</style>
+                <input
+                  type="file"
+                  onChange={handleChange}
+                  className="flex-1"
+                  required
+                />
               </div>
-              {/* Second row: File upload full width */}
-              <input
-                type="file"
-                name="file"
-                accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
-                required
-                className="rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow w-full"
-                onChange={handleChange}
-              />
-              {/* Third row: Submit */}
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="text-xl py-3 px-4 bg-teal-700 dark:bg-teal-700 hover:bg-teal-800 dark:hover:bg-emerald-900 text-white rounded-lg font-bold text-lg transition w-auto"
-                >
-                  {loading ? "Uploading..." : "UPLOAD"}
-                </button>
-              </div>
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-2 md:mt-0 py-2 px-6 bg-emerald-700 hover:bg-emerald-800 text-white rounded font-bold transition disabled:opacity-60"
+              >
+                {loading ? "Uploading..." : "Upload"}
+              </button>
             </form>
-            {(error || success) && (
-              <div className={`text-center pb-3 font-semibold text-lg ${error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"}`}>{error || success}</div>
-            )}
+
             {/* DOCUMENTS LIST */}
             <div className="w-full overflow-x-auto">
               <table className="min-w-full rounded-xl shadow-md overflow-hidden">
@@ -182,7 +187,10 @@ const Documents = () => {
                 <tbody>
                   {documents.length === 0 && (
                     <tr>
-                      <td colSpan={5} className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl">
+                      <td
+                        colSpan={5}
+                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
+                      >
                         No documents found.
                       </td>
                     </tr>
@@ -192,16 +200,24 @@ const Documents = () => {
                       key={doc._id}
                       className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40 odd:bg-white/30 even:bg-emerald-100/60 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
                     >
-                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100">{doc.title}</td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">{doc.description}</td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">{doc.fileType}</td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">{doc.user?.name} ({doc.user?.email})</td>
-                      <td className="p-4">
+                      <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100">
+                        {doc.title}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        {doc.description}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        {doc.fileType}
+                      </td>
+                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        {doc.user?.name} ({doc.user?.email})
+                      </td>
+                      <td className="p-4 space-x-3">
                         <button
-                          onClick={() => handleDelete(doc._id)}
-                          className="py-1 px-4 bg-red-600 hover:bg-red-800 text-white rounded font-bold transition"
+                          onClick={() => handleDownload(doc._id)}
+                          className="py-1 px-4 bg-blue-600 hover:bg-blue-800 text-white rounded font-bold transition"
                         >
-                          Delete
+                          Download
                         </button>
                       </td>
                     </tr>

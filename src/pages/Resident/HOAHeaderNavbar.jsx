@@ -26,7 +26,6 @@ const NAV_LINKS = [
   { label: "Complaints", icon: ClipboardDocumentListIcon, path: "/add-complaints" },
   { label: "Amenities", icon: BuildingOffice2Icon, path: "/use-amenities" },
   { label: "Documents", icon: FolderIcon, path: "/add-documents" },
-  { label: "Communities", icon: BellIcon, path: "/use-communities" },
   { label: "Meetings", icon: ChatBubbleBottomCenterTextIcon, path: "/attend-meetings" },
   { label: "Payments", icon: CurrencyDollarIcon, path: "/add-payments" },
   { label: "Notifications", icon: BellIcon, path: "/view-notification" },
