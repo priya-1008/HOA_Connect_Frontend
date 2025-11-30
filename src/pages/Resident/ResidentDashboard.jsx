@@ -3,14 +3,12 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import HOAHeaderNavbar from "./HOAHeaderNavbar";
 import {
-  HomeIcon,
-  BuildingOffice2Icon,
   UsersIcon,
-  BellIcon,
-  CurrencyDollarIcon,
   MegaphoneIcon,
   ClipboardDocumentListIcon,
   CalendarDaysIcon,
+  BellIcon,
+  ChartPieIcon,
 } from "@heroicons/react/24/outline";
 
 const StatCard = ({ title, value, color, icon: Icon }) => (
@@ -26,40 +24,22 @@ const StatCard = ({ title, value, color, icon: Icon }) => (
 const Dashboard = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
-    communities: 0,
-    residents: 0,
-    hoaAdmins: 0,
+    notifications: 0,
     complaints: 0,
     announcements: 0,
     amenities: 0,
-    totalPayments: 0,
+    polls: 0,
   });
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
-    const config = { headers: { Authorization: `Bearer ${token}` } };
-    Promise.all([
-      axios.get("http://localhost:5000/communities/getCommunity", config),
-      axios.get("http://localhost:5000/residents", config),
-      axios.get("http://localhost:5000/auth/register", config),
-      axios.get("http://localhost:5000/complaints", config),
-      axios.get("http://localhost:5000/announcements", config),
-      axios.get("http://localhost:5000/amenities", config),
-      axios.get("http://localhost:5000/dashboard/total-payments", config),
-    ])
-      .then(([comm, resi, users, comp, ann, ame, pay]) => {
-        const hoaAdmins = users.data.filter((u) => u.role === "admin").length;
-        setData({
-          communities: comm.data.length,
-          residents: resi.data.length,
-          hoaAdmins,
-          complaints: comp.data.length,
-          announcements: ann.data.length,
-          amenities: ame.data.length,
-          totalPayments: pay.data.total || 0,
-        });
+
+    axios
+      .get("http://localhost:5000/resident/dashboard/counts", {
+        headers: { Authorization: `Bearer ${token}` },
       })
+      .then((res) => setData(res.data))
       .catch(() => console.log("Error fetching dashboard data"));
   }, [navigate]);
 
@@ -68,26 +48,27 @@ const Dashboard = () => {
       <div
         className="relative flex flex-col min-h-screen overflow-y-auto"
         style={{
-          backgroundImage: "url('/Society.jpg')", // Image from public folder
+          backgroundImage: "url('/Society.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
         }}
       >
-        {/* Overlay for readability */}
         <div className="absolute inset-0 bg-white/0 dark:bg-gray-700/85 pointer-events-none" />
+
         <main className="relative z-10">
           <div className="h-56 flex items-center text-white relative">
-            <h1 className="px-8 grid text-5xl font-extrabold z-10 drop-shadow-xl text-slate-700 dark:text-teal-100">
+            <h1 className="px-8 text-5xl font-extrabold z-10 drop-shadow-xl text-slate-700 dark:text-teal-100">
               Resident Dashboard
             </h1>
           </div>
+
           <section className="p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 -mt-10 z-20 relative">
             <StatCard
               title="New Notifications"
-              value={data.residents}
+              value={data.notifications}
               color="text-purple-700"
-              icon={UsersIcon}
+              icon={BellIcon}
             />
             <StatCard
               title="Total Complaints"
@@ -96,28 +77,22 @@ const Dashboard = () => {
               icon={ClipboardDocumentListIcon}
             />
             <StatCard
-              title="Total Payments"
-              value={`₹${data.totalPayments.toLocaleString()}`}
-              color="text-emerald-600"
-              icon={CurrencyDollarIcon}
-            />
-            <StatCard
               title="New Announcements"
               value={data.announcements}
               color="text-orange-500"
               icon={MegaphoneIcon}
             />
             <StatCard
-              title="Book Amenities"
+              title="Amenities"
               value={data.amenities}
               color="text-teal-600"
               icon={CalendarDaysIcon}
             />
             <StatCard
-              title="Book Communities"
-              value={data.communities}
+              title="New Polls"
+              value={data.polls}
               color="text-blue-600"
-              icon={BuildingOffice2Icon}
+              icon={ChartPieIcon}
             />
           </section>
         </main>

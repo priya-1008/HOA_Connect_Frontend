@@ -61,23 +61,16 @@ const Documents = () => {
         }
       );
 
-      // Create blob URL
       const fileURL = window.URL.createObjectURL(new Blob([res.data]));
 
-      // Create invisible download link
       const link = document.createElement("a");
       link.href = fileURL;
 
-      // Auto-detect filename from backend or fallback
-      const defaultName = doc.title || "document";
-      link.download = defaultName;
+      const ext = doc.filePath.split(".").pop(); // extract extension
+      link.download = `${doc.title}.${ext}`; // correct filename + extension
 
-      // Trigger click without new tab
-      link.style.display = "none";
       document.body.appendChild(link);
       link.click();
-
-      // Cleanup
       link.remove();
       window.URL.revokeObjectURL(fileURL);
     } catch (err) {
@@ -137,12 +130,10 @@ const Documents = () => {
                 <table className="min-w-full table-auto bg-white/70 dark:bg-emerald-950/40">
                   <thead>
                     <tr className="bg-gray-800 text-white text-lg">
-                      <th className="p-4 text-left font-semibold">Title</th>
-                      <th className="p-4 text-left font-semibold">Description</th>
-                      <th className="p-4 text-left font-semibold">File Type</th>
-                      {/* <th className="p-4 text-left font-semibold">
-                        Uploaded By
-                      </th> */}
+                      <th className="p-4 text-center font-semibold">Title</th>
+                      <th className="p-4 text-center font-semibold">
+                        Description
+                      </th>
                       <th className="p-4 text-center font-semibold">Actions</th>
                     </tr>
                   </thead>
@@ -150,7 +141,7 @@ const Documents = () => {
                     {documents.length === 0 && !loading && (
                       <tr>
                         <td
-                          colSpan={5}
+                          colSpan={3} // updated
                           className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-lg"
                         >
                           No documents found.
@@ -167,14 +158,10 @@ const Documents = () => {
                             : "bg-emerald-100/70 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70 transition-colors`}
                       >
-                        <td className="px-4 py-3 font-medium">{doc.title}</td>
-                        <td className="px-4 py-3 font-medium">{doc.description}</td>
-                        <td className="px-4 py-3 font-medium">{doc.fileType}</td>
-                        {/* <td className="px-4 py-3 font-medium">
-                          {doc.uploadedBy
-                            ? `${doc.uploadedBy.name} (${doc.uploadedBy.email})`
-                            : "Community Admin"}
-                        </td> */}
+                        <td className="text-center px-4 py-3 font-medium">{doc.title}</td>
+                        <td className="text-center px-4 py-3 font-medium">
+                          {doc.description}
+                        </td>
                         <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => handleDownload(doc)}
