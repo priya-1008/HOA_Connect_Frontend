@@ -17,7 +17,7 @@ const Payments = () => {
     if (!token) return navigate("/login");
     setLoading(true);
     axios
-      .get("http://localhost:5000/track-payments", {
+      .get("http://localhost:5000/hoaadmin/getpayments", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setPayments(res.data || []))
@@ -43,7 +43,7 @@ const Payments = () => {
     setLoading(true);
     try {
       await axios.put(
-        `http://localhost:5000/payments/${id}`,
+        `http://localhost:5000/hoaadmin/updatepaymentstatus/${id}`,
         { status: newStatus },
         { headers: { Authorization: `Bearer ${token}` } }
       );

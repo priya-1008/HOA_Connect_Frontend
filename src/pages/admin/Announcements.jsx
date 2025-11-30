@@ -14,12 +14,10 @@ const Announcement = () => {
 
   const token = localStorage.getItem("token");
 
-  // Helper for auth header
   const authConfig = {
     headers: { Authorization: `Bearer ${token}` },
   };
 
-  // Fetch announcements (current admin's community)
   const fetchAnnouncements = useCallback(async () => {
     if (!token) return;
     setInitialLoading(true);
@@ -28,7 +26,6 @@ const Announcement = () => {
         "http://localhost:5000/hoaadmin/getannouncements",
         authConfig
       );
-      // controller sends plain array, or {announcements}
       const list = Array.isArray(res.data)
         ? res.data
         : res.data?.announcements || [];
@@ -53,14 +50,12 @@ const Announcement = () => {
     fetchAnnouncements();
   }, [token, navigate, fetchAnnouncements]);
 
-  // Handle form input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
     setSuccess("");
   };
 
-  // Submit new announcement
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!token) {
@@ -76,7 +71,6 @@ const Announcement = () => {
       );
       setSuccess(res.data.message || "Announcement created");
       setForm({ title: "", description: "" });
-      // refresh list after successful create
       await fetchAnnouncements();
     } catch (err) {
       console.error(err);
@@ -176,17 +170,25 @@ const Announcement = () => {
             )}
 
             {/* ANNOUNCEMENT LIST */}
-            <div className="w-full overflow-x-auto">
-              <table className="min-w-full rounded-xl shadow-md overflow-hidden">
+            <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">
+              <table className="min-w-full text-sm md:text-base table-fixed">
                 <thead>
-                  <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
-                    <th className="p-5 font-semibold">Title</th>
-                    <th className="p-5 font-semibold">Description</th>
-                    <th className="p-5 font-semibold">Posted By</th>
-                    <th className="p-5 font-semibold">Date</th>
+                  <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-base md:text-lg">
+                    <th className="p-4 font-semibold text-left w-2/12">
+                      Title
+                    </th>
+                    <th className="p-4 font-semibold text-left w-5/12">
+                      Description
+                    </th>
+                    <th className="p-4 font-semibold text-center w-3/12">
+                      Posted By
+                    </th>
+                    <th className="p-4 font-semibold text-center w-2/12">
+                      Date
+                    </th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="align-top">
                   {initialLoading ? (
                     <tr>
                       <td
@@ -209,20 +211,20 @@ const Announcement = () => {
                     announcements.map((a) => (
                       <tr
                         key={a._id}
-                        className="transition hover:bg-emerald-200/40 dark:hover:bg-emerald-900/40 odd:bg-white/30 even:bg-emerald-100/60 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60"
+                        className="transition hover:bg-emerald-200/50 dark:hover:bg-emerald-900/50 odd:bg-white/70 even:bg-emerald-100/70 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60 border-b border-gray-200/70 dark:border-gray-700/60"
                       >
-                        <td className="p-4 font-medium text-emerald-900 dark:text-emerald-100">
+                        <td className="p-4 font-semibold text-emerald-900 dark:text-emerald-100 break-words">
                           {a.title}
                         </td>
-                        <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        <td className="p-4 text-emerald-800 dark:text-emerald-200 break-words whitespace-pre-wrap">
                           {a.description}
                         </td>
-                        <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        <td className="p-4 text-emerald-800 dark:text-emerald-200 text-center break-words">
                           {a.createdBy
                             ? `${a.createdBy.name} (${a.createdBy.email})`
                             : "N/A"}
                         </td>
-                        <td className="p-4 text-emerald-700 dark:text-emerald-200">
+                        <td className="p-4 text-emerald-800 dark:text-emerald-200 text-center whitespace-nowrap">
                           {a.createdAt
                             ? new Date(a.createdAt).toLocaleString()
                             : ""}
