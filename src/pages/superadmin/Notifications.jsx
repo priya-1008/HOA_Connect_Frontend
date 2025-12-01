@@ -33,7 +33,9 @@ const SystemNotification = () => {
     () => localStorage.getItem("darkMode") === "true"
   );
 
-  const { data: announcements } = useFetch("http://localhost:5000/superadmin/getnotifications");
+  const { data: announcements } = useFetch(
+    "http://localhost:5000/superadmin/getnotifications"
+  );
   const navigate = useNavigate();
 
   // dark mode toggle
@@ -54,33 +56,7 @@ const SystemNotification = () => {
     }
 
     const config = { headers: { Authorization: `Bearer ${token}` } };
-
-    // communities count
-    axios
-      .get("http://localhost:5000/communities/getCommunity", config)
-      .then((res) =>
-        setCommunitiesCount(Array.isArray(res.data) ? res.data.length : 0)
-      )
-      .catch(() => setCommunitiesCount(0));
-
-    // HOA admins count
-    axios
-      .get("http://localhost:5000/auth/getadmins", config)
-      .then((res) => {
-        const admins = Array.isArray(res.data)
-          ? res.data.filter((user) => user.role === "admin")
-          : [];
-        setHoaAdminsCount(admins.length);
-      })
-      .catch(() => setHoaAdminsCount(0));
-
-    // payments analytics
-    axios
-      .get("http://localhost:5000/superadmin/payments/global", config)
-      .then((res) => setAnalytics({ totalPayments: res.data?.total || 0 }))
-      .catch(() => setAnalytics({ totalPayments: 0 }));
-  }, [navigate]);
-
+  });
   const sendNotification = async (e) => {
     e.preventDefault();
     if (!title.trim() || !message.trim()) {
@@ -116,28 +92,6 @@ const SystemNotification = () => {
   return (
     <HeaderNavbar darkMode={darkMode} setDarkMode={setDarkMode}>
       <main className="flex-1 overflow-y-auto space-y-10 p-4 md:p-6">
-        {/* Stats Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatCard
-            title="Total Communities"
-            value={communitiesCount}
-            color="text-teal-600"
-            darkMode={darkMode}
-          />
-          <StatCard
-            title="Total HOA Admins"
-            value={hoaAdminsCount}
-            color="text-teal-600"
-            darkMode={darkMode}
-          />
-          <StatCard
-            title="Total Payments"
-            value={`$${analytics.totalPayments}`}
-            color="text-teal-600"
-            darkMode={darkMode}
-          />
-        </div>
-
         {/* Notifications Panel */}
         <section
           className={`rounded-xl shadow-xl p-6 md:p-8 transition-colors ${
@@ -146,8 +100,7 @@ const SystemNotification = () => {
               : "bg-gradient-to-br from-teal-900 via-blue-100 to-teal-900 border border-teal-600"
           }`}
         >
-          <h2 className="text-3xl font-bold mb-4 flex items-center gap-2 text-gray-900">
-            <BellIcon className="w-8 h-8" />
+          <h2 className="text-4xl font-bold mb-4 text-center stext-center gap-2 text-gray-900">
             System Notifications
           </h2>
 
@@ -188,8 +141,7 @@ const SystemNotification = () => {
                 Send
               </button>
             </div>
-          </form>
-
+          </form>       
           {/* List of Notifications */}
           <div
             className={`p-4 rounded-lg mt-4 shadow ${
@@ -216,7 +168,9 @@ const SystemNotification = () => {
                       <span className="text-xl">📢</span>
                       <span
                         className={
-                          darkMode ? "text-gray-100 font-semibold" : "text-gray-900 font-semibold"
+                          darkMode
+                            ? "text-gray-100 font-semibold"
+                            : "text-gray-900 font-semibold"
                         }
                       >
                         {n.title}
@@ -225,7 +179,9 @@ const SystemNotification = () => {
                     {n.message && (
                       <span
                         className={
-                          darkMode ? "text-gray-200 text-sm pl-7" : "text-gray-700 text-sm pl-7"
+                          darkMode
+                            ? "text-gray-200 text-sm pl-7"
+                            : "text-gray-700 text-sm pl-7"
                         }
                       >
                         {n.message}

@@ -107,12 +107,6 @@ const HeaderNavbar = ({ children }) => {
               onClick={() => navigate("/manage-amenities")}
             />
             <NavLink
-              icon={CurrencyDollarIcon}
-              label="Payments"
-              isActive={window.location.pathname === "/payments"}
-              onClick={() => navigate("/payments")}
-            />
-            <NavLink
               icon={BellIcon}
               label="Notifications"
               isActive={window.location.pathname === "/notifications"}
