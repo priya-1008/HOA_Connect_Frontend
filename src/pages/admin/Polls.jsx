@@ -22,6 +22,7 @@ const Polls = () => {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/login");
     setLoading(true);
+
     axios
       .get("http://localhost:5000/hoaadmin/getpolls", {
         headers: { Authorization: `Bearer ${token}` },
@@ -31,22 +32,22 @@ const Polls = () => {
       .finally(() => setLoading(false));
   }, [navigate, success]);
 
-  // Handle form input change
+  // Input change
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     setError("");
     setSuccess("");
   };
 
-  // Create poll
+  // Submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { question, option1, option2, option3, option4 } = form;
 
-    // Collect non-empty options into array (min 2)
     const options = [option1, option2, option3, option4].filter(
       (o) => o && o.trim() !== ""
     );
+
     if (!question.trim()) {
       setError("Question is required.");
       return;
@@ -63,10 +64,9 @@ const Polls = () => {
       await axios.post(
         "http://localhost:5000/hoaadmin/addpoll",
         { question, options },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: { Authorization: `Bearer ${token}` } }
       );
+
       setSuccess("Poll created successfully.");
       setForm({
         question: "",
@@ -90,140 +90,115 @@ const Polls = () => {
           backgroundImage: "url('/Society.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+        {/* DARK OVERLAY */}
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none" />
+
+        {/* MAIN CONTENT */}
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section
-            className="
-            w-full mx-auto
-            bg-emerald-100/50 dark:bg-emerald-900/70
-            dark:border-emerald-800
-            backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8
-          "
-          >
+          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
+
+            {/* HEADER */}
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Polls
             </h2>
 
-            {/* FORM */}
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col mb-8 w-full gap-4"
-            >
-              {/* Question */}
-              <div className="w-full">
-                <input
-                  type="text"
-                  name="question"
-                  maxLength={100}
-                  required
-                  className="w-full rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Poll Question"
-                  onChange={handleChange}
-                  value={form.question}
-                />
-              </div>
-
-              {/* Options row 1 */}
-              <div className="flex flex-col md:flex-row gap-4 w-full">
-                <input
-                  type="text"
-                  name="option1"
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Option 1"
-                  onChange={handleChange}
-                  value={form.option1}
-                />
-                <input
-                  type="text"
-                  name="option2"
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Option 2"
-                  onChange={handleChange}
-                  value={form.option2}
-                />
-              </div>
-
-              {/* Options row 2 (optional) */}
-              <div className="flex flex-col md:flex-row gap-4 w-full">
-                <input
-                  type="text"
-                  name="option3"
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Option 3 (optional)"
-                  onChange={handleChange}
-                  value={form.option3}
-                />
-                <input
-                  type="text"
-                  name="option4"
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
-                  placeholder="Option 4 (optional)"
-                  onChange={handleChange}
-                  value={form.option4}
-                />
-              </div>
-
-              <style>{`
-                input::placeholder {
-                  color: #888888 !important; opacity: 1;
-                }
-                .dark input::placeholder {
-                  color: #b6b6b6 !important; opacity: 1;
-                }
-              `}</style>
-
-              {/* Submit */}
-              <div className="flex justify-center">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="text-xl py-3 px-4 bg-teal-700 dark:bg-teal-700 hover:bg-teal-800 dark:hover:bg-emerald-900 text-white rounded-lg font-bold text-lg transition w-auto"
-                >
-                  {loading ? "Saving..." : "CREATE POLL"}
-                </button>
-              </div>
-            </form>
-
+            {/* ERROR / SUCCESS */}
             {(error || success) && (
               <div
                 className={`text-center pb-3 font-semibold text-lg ${
-                  error
-                    ? "text-red-600"
-                    : "text-emerald-700 dark:text-emerald-200"
+                  error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"
                 }`}
               >
                 {error || success}
               </div>
             )}
 
-            {/* POLLS LIST */}
-            <div className="w-full overflow-x-auto">
-              <table className="min-w-full rounded-xl shadow-md overflow-hidden table-auto">
+            {/* POLL FORM */}
+            <form onSubmit={handleSubmit} className="mb-8 w-full">
+
+              {/* QUESTION */}
+              <input
+                type="text"
+                name="question"
+                required
+                maxLength={100}
+                placeholder="Poll Question"
+                value={form.question}
+                onChange={handleChange}
+                className="w-full mb-4 rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/40 dark:text-emerald-100 shadow"
+              />
+
+              {/* OPTIONS ROW 1 */}
+              <div className="flex flex-col md:flex-row gap-4 w-full mb-4">
+                <input
+                  type="text"
+                  name="option1"
+                  required
+                  placeholder="Option 1"
+                  value={form.option1}
+                  onChange={handleChange}
+                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/40 dark:text-emerald-100 shadow"
+                />
+
+                <input
+                  type="text"
+                  name="option2"
+                  required
+                  placeholder="Option 2"
+                  value={form.option2}
+                  onChange={handleChange}
+                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/40 dark:text-emerald-100 shadow"
+                />
+              </div>
+
+              {/* OPTIONS ROW 2 (optional) */}
+              <div className="flex flex-col md:flex-row gap-4 w-full mb-4">
+                <input
+                  type="text"
+                  name="option3"
+                  placeholder="Option 3 (optional)"
+                  value={form.option3}
+                  onChange={handleChange}
+                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/40 dark:text-emerald-100 shadow"
+                />
+
+                <input
+                  type="text"
+                  name="option4"
+                  placeholder="Option 4 (optional)"
+                  value={form.option4}
+                  onChange={handleChange}
+                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/40 dark:text-emerald-100 shadow"
+                />
+              </div>
+
+              {/* SUBMIT BUTTON */}
+              <div className="flex justify-center mt-6">
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="text-xl py-3 px-6 bg-teal-700 hover:bg-teal-800 text-white rounded-lg font-bold transition disabled:opacity-70"
+                >
+                  {loading ? "Saving..." : "CREATE POLL"}
+                </button>
+              </div>
+            </form>
+
+            {/* POLLS TABLE */}
+            <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">
+              <table className="min-w-full table-fixed text-sm md:text-base">
                 <thead>
-                  <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-lg">
-                    <th className="p-4 font-semibold text-left w-2/5">
-                      Question
-                    </th>
-                    <th className="p-4 font-semibold text-left w-2/5">
-                      Options
-                    </th>
-                    <th className="p-4 font-semibold text-center w-1/5">
-                      Created At
-                    </th>
+                  <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-base md:text-lg">
+                    <th className="p-4 text-left font-bold w-4/12">Question</th>
+                    <th className="p-4 text-left font-bold w-5/12">Options</th>
+                    <th className="p-4 text-left font-bold w-3/12">Created At</th>
                   </tr>
                 </thead>
+
                 <tbody>
-                  {polls.length === 0 && (
+                  {polls.length === 0 ? (
                     <tr>
                       <td
                         colSpan={3}
@@ -232,37 +207,45 @@ const Polls = () => {
                         No polls found.
                       </td>
                     </tr>
+                  ) : (
+                    polls.map((poll, index) => (
+                      <tr
+                        key={poll._id}
+                        className={`transition-colors ${
+                          index % 2 === 0
+                            ? "bg-white dark:bg-emerald-900/40"
+                            : "bg-emerald-100/50 dark:bg-emerald-900/60"
+                        } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
+                      >
+                        <td className="px-4 py-3 font-semibold">
+                          {poll.question}
+                        </td>
+
+                        <td className="px-4 py-3">
+                          <ul className="list-disc list-inside space-y-1">
+                            {poll.options?.map((opt) => (
+                              <li key={opt._id}>
+                                {opt.text}{" "}
+                                <span className="text-sm text-gray-600 dark:text-gray-300">
+                                  ({opt.votes} votes)
+                                </span>
+                              </li>
+                            ))}
+                          </ul>
+                        </td>
+
+                        <td className="px-4 py-3">
+                          {poll.createdAt
+                            ? new Date(poll.createdAt).toLocaleString()
+                            : "-"}
+                        </td>
+                      </tr>
+                    ))
                   )}
-                  {polls.map((poll) => (
-                    <tr
-                      key={poll._id}
-                      className="transition hover:bg-emerald-200/50 dark:hover:bg-emerald-900/50 odd:bg-white/70 even:bg-emerald-100/70 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60 border-b border-gray-200/70 dark:border-gray-700/60"
-                    >
-                      <td className="px-4 py-3 align-top font-medium text-emerald-900 dark:text-emerald-100">
-                        {poll.question}
-                      </td>
-                      <td className="px-4 py-3 align-top text-emerald-700 dark:text-emerald-200">
-                        <ul className="list-disc list-inside space-y-1">
-                          {poll.options?.map((opt) => (
-                            <li key={opt._id}>
-                              {opt.text}
-                              <span className="text-sm text-gray-600 dark:text-gray-300 ml-1">
-                                ({opt.votes} votes)
-                              </span>
-                            </li>
-                          ))}
-                        </ul>
-                      </td>
-                      <td className="px-4 py-3 text-center text-emerald-700 dark:text-emerald-200 whitespace-nowrap">
-                        {poll.createdAt
-                          ? new Date(poll.createdAt).toLocaleString()
-                          : "-"}
-                      </td>
-                    </tr>
-                  ))}
                 </tbody>
               </table>
             </div>
+
           </section>
         </main>
       </div>

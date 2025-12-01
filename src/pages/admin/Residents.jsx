@@ -115,7 +115,7 @@ const Residents = () => {
                       <td className="px-4 py-3 font-medium">
                         <button
                           onClick={() => handleDelete(r._id)}
-                          className="bg-green-800 hover:bg-green-900 text-white py-2 px-4 rounded-lg font-semibold shadow-md transition"
+                          className="bg-green-800 hover:bg-red-700 text-white py-2 px-4 rounded-lg font-semibold shadow-md transition"
                         >
                           Delete
                         </button>
