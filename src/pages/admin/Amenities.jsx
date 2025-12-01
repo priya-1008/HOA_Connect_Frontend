@@ -13,7 +13,6 @@ const Amenities = () => {
 
   const token = localStorage.getItem("token");
 
-  // Fetch amenities for logged-in HOA admin's community
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -31,7 +30,6 @@ const Amenities = () => {
           }
         );
 
-        // Backend: res.status(200).json(amenities);
         const list = Array.isArray(res.data)
           ? res.data
           : Array.isArray(res.data?.amenities)
@@ -42,7 +40,8 @@ const Amenities = () => {
       } catch (err) {
         console.error("Error fetching amenities:", err.response || err);
         setError(
-          err?.response?.data?.message || "Could not load amenities for this community."
+          err?.response?.data?.message ||
+            "Could not load amenities for this community."
         );
         setAmenities([]);
       } finally {
@@ -53,7 +52,6 @@ const Amenities = () => {
     fetchAmenities();
   }, [navigate, token, success]);
 
-  // Delete amenity handler (optional, if you wired /deleteamenity/:id)
   const handleDelete = async (id) => {
     if (!token) {
       navigate("/login");
@@ -62,20 +60,17 @@ const Amenities = () => {
     setError("");
     setSuccess("");
     setDeletingId(id);
+
     try {
-      await axios.delete(
-        `http://localhost:5000/hoaadmin/deleteamenity/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await axios.delete(`http://localhost:5000/hoaadmin/deleteamenity/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
       setAmenities((prev) => prev.filter((a) => a._id !== id));
       setSuccess("Amenity deleted successfully.");
     } catch (err) {
       console.error("Error deleting amenity:", err.response || err);
-      setError(
-        err?.response?.data?.message || "Failed to delete amenity."
-      );
+      setError(err?.response?.data?.message || "Failed to delete amenity.");
     } finally {
       setDeletingId(null);
     }
@@ -93,8 +88,9 @@ const Amenities = () => {
         }}
       >
         <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 dark:border-emerald-800 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
+          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Amenities
             </h2>
@@ -111,31 +107,29 @@ const Amenities = () => {
               </div>
             )}
 
-            {/* AMENITIES LIST */}
-            <div className="w-full overflow-x-auto">
-              <div className="rounded-xl shadow-md border border-gray-300/60 dark:border-gray-700/70 overflow-hidden">
-              <table className="min-w-full table-auto bg-white/70 dark:bg-emerald-950/40">
+            {/* TABLE */}
+            <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">
+              <table className="min-w-full text-sm md:text-base table-fixed">
                 <thead>
-                  <tr className="bg-gray-800 text-white text-lg">
-                    <th className="p-4 font-semibold text-left">
-                      Name
-                    </th>
-                    <th className="p-4 font-semibold text-left">
+                  <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-base md:text-lg">
+                    <th className="p-4 font-bold text-left w-3/12">Name</th>
+                    <th className="p-4 font-bold text-left w-5/12">
                       Description
                     </th>
-                    <th className="p-4 font-semibold text-center w-1/12">
+                    <th className="p-4 font-bold text-center w-2/12">
                       Active
                     </th>
-                    <th className="p-4 font-semibold text-center w-2/12">
+                    <th className="p-4 font-bold text-center w-2/12">
                       Actions
                     </th>
                   </tr>
                 </thead>
+
                 <tbody className="align-top">
                   {loading ? (
                     <tr>
                       <td
-                        colSpan={5}
+                        colSpan={4}
                         className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
                       >
                         Loading...
@@ -145,37 +139,44 @@ const Amenities = () => {
                     <tr>
                       <td
                         colSpan={4}
-                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-lg"
+                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
                       >
                         No amenities found.
                       </td>
                     </tr>
                   ) : (
-                    amenities.map((a) => (
+                    amenities.map((a, index) => (
                       <tr
                         key={a._id}
-                        className="transition hover:bg-emerald-200/50 dark:hover:bg-emerald-900/50 odd:bg-white/70 even:bg-emerald-100/70 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60 border-b border-gray-200/70 dark:border-gray-700/60"
+                        className={`text-sm md:text-base transition-colors ${
+                          index % 2 === 0
+                            ? "bg-white/100 dark:bg-emerald-900/40"
+                            : "bg-emerald-100/50 dark:bg-emerald-900/60"
+                        } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="p-4 font-semibold text-emerald-900 dark:text-emerald-80 break-words">
+                        <td className="px-4 py-3 font-medium break-words">
                           {a.name}
                         </td>
-                        <td className="p-4 text-emerald-800 dark:text-emerald-200 break-words whitespace-pre-wrap">
+
+                        <td className="px-4 py-3 font-medium break-words whitespace-pre-wrap">
                           {a.description}
                         </td>
-                        <td className="p-4 text-center">
+
+                        <td className="px-4 py-3 text-center font-bold">
                           <span
-                            className={`font-bold ${
+                            className={
                               a.isActive ? "text-green-700" : "text-red-600"
-                            }`}
+                            }
                           >
                             {a.isActive ? "Yes" : "No"}
                           </span>
                         </td>
-                        <td className="p-4 text-center">
+
+                        <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => handleDelete(a._id)}
                             disabled={deletingId === a._id}
-                            className="py-1 px-4 bg-green-800 hover:bg-green-900 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded font-bold transition"
+                            className="px-4 py-2 bg-green-900 hover:bg-red-700 text-white rounded-lg font-semibold disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             {deletingId === a._id ? "Deleting..." : "Delete"}
                           </button>
@@ -185,7 +186,6 @@ const Amenities = () => {
                   )}
                 </tbody>
               </table>
-              </div>
             </div>
           </section>
         </main>

@@ -1,3 +1,4 @@
+/* --- SAME IMPORTS & LOGIC --- */
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -93,18 +94,15 @@ const Announcement = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-       <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none transition-all duration-300" />
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 dark:border-emerald-800 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
+          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Announcements
             </h2>
 
             {/* FORM */}
-            <form
-              onSubmit={handleSubmit}
-              className="flex flex-col mb-8 w-full gap-4"
-            >
+            <form onSubmit={handleSubmit} className="flex flex-col mb-8 w-full gap-4">
               <div className="flex flex-col md:flex-row gap-4 w-full">
                 <input
                   type="text"
@@ -112,7 +110,6 @@ const Announcement = () => {
                   maxLength={50}
                   required
                   className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000" }}
                   placeholder="Title"
                   onChange={handleChange}
                   value={form.title}
@@ -123,27 +120,16 @@ const Announcement = () => {
                   required
                   rows={1}
                   className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
-                  style={{ color: "#000000", resize: "vertical" }}
                   placeholder="Description"
                   onChange={handleChange}
                   value={form.description}
                 />
-                <style>{`
-                  input::placeholder, textarea::placeholder {
-                    color: #094232dc;
-                    opacity: 1;
-                  }
-                  .dark input::placeholder, .dark textarea::placeholder {
-                    color: #094232dc;
-                    opacity: 1;
-                  }
-                `}</style>
               </div>
               <div className="flex justify-center">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="text-xl py-3 px-4 bg-teal-700 dark:bg-teal-700 hover:bg-teal-800 dark:hover:bg-emerald-900 text-white rounded-lg font-bold transition w-auto"
+                  className="text-xl py-3 px-4 bg-teal-700 hover:bg-teal-800 dark:bg-teal-700 dark:hover:bg-emerald-900 text-white rounded-lg font-bold transition"
                 >
                   {loading ? "Posting..." : "POST"}
                 </button>
@@ -162,71 +148,60 @@ const Announcement = () => {
               </div>
             )}
 
-            {/* ANNOUNCEMENT LIST */}
-            <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">
-              <table className="min-w-full text-sm md:text-base table-fixed">
-                <thead>
-                  <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-base md:text-lg">
-                    <th className="p-4 font-semibold text-left w-2/12">
-                      Title
-                    </th>
-                    <th className="p-4 font-semibold text-left w-5/12">
-                      Description
-                    </th>
-                    <th className="p-4 font-semibold text-center w-3/12">
-                      Posted By
-                    </th>
-                    <th className="p-4 font-semibold text-center w-2/12">
-                      Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="align-top">
-                  {initialLoading ? (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
-                      >
-                        Loading...
-                      </td>
+            {/* ⭐ UPDATED TABLE (MATCHING RESIDENTS PAGE CSS) ⭐ */}
+            <div className="w-full overflow-x-auto">
+              <div className="rounded-xl shadow-md border border-gray-300/60 dark:border-gray-700/70 overflow-hidden">
+                <table className="min-w-full table-auto bg-white/70 dark:bg-emerald-950/40">
+                  <thead>
+                    <tr className="bg-gray-800 text-white text-lg">
+                      <th className="p-4 font-semibold text-left">Title</th>
+                      <th className="p-4 font-semibold text-left">Description</th>
+                      <th className="p-4 font-semibold text-left">Posted By</th>
+                      <th className="p-4 font-semibold text-left">Date</th>
                     </tr>
-                  ) : announcements.length === 0 ? (
-                    <tr>
-                      <td
-                        colSpan={4}
-                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
-                      >
-                        No announcements found.
-                      </td>
-                    </tr>
-                  ) : (
-                    announcements.map((a) => (
-                      <tr
-                        key={a._id}
-                        className="transition hover:bg-emerald-200/50 dark:hover:bg-emerald-900/50 odd:bg-white/70 even:bg-emerald-100/70 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60 border-b border-gray-200/70 dark:border-gray-700/60"
-                      >
-                        <td className="p-4 font-semibold text-emerald-900 dark:text-emerald-100 break-words">
-                          {a.title}
-                        </td>
-                        <td className="p-4 text-emerald-800 dark:text-emerald-200 break-words whitespace-pre-wrap">
-                          {a.description}
-                        </td>
-                        <td className="p-4 text-emerald-800 dark:text-emerald-200 text-center break-words">
-                          {a.createdBy
-                            ? `${a.createdBy.name} (${a.createdBy.email})`
-                            : "N/A"}
-                        </td>
-                        <td className="p-4 text-emerald-800 dark:text-emerald-200 text-center whitespace-nowrap">
-                          {a.createdAt
-                            ? new Date(a.createdAt).toLocaleString()
-                            : ""}
+                  </thead>
+
+                  <tbody>
+                    {initialLoading ? (
+                      <tr>
+                        <td colSpan={4} className="text-center py-6 text-emerald-900 dark:text-emerald-100 italic text-lg">
+                          Loading...
                         </td>
                       </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+                    ) : announcements.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="text-center py-6 text-emerald-900 dark:text-emerald-100 italic text-lg">
+                          No announcements found.
+                        </td>
+                      </tr>
+                    ) : (
+                      announcements.map((a, idx) => (
+                        <tr
+                          key={a._id}
+                          className={`text-sm md:text-base transition-colors ${
+                            idx % 2 === 0
+                              ? "bg-white/70 dark:bg-emerald-900/40"
+                              : "bg-emerald-100/60 dark:bg-emerald-900/60"
+                          } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
+                        >
+                          <td className="px-4 py-3 font-medium">{a.title}</td>
+                          <td className="px-4 py-3 font-medium">{a.description}</td>
+                          <td className="px-4 py-3 font-medium">
+                            {a.createdBy
+                              ? `${a.createdBy.name} (${a.createdBy.email})`
+                              : "N/A"}
+                          </td>
+                          <td className="px-4 py-3">
+                            {a.createdAt
+                              ? new Date(a.createdAt).toLocaleString()
+                              : ""}
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </section>
         </main>

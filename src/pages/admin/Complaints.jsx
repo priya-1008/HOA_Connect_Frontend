@@ -9,7 +9,7 @@ const Complaints = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const [updatingId, setUpdatingId] = useState(null); // which row is updating
+  const [updatingId, setUpdatingId] = useState(null);
 
   const token = localStorage.getItem("token");
 
@@ -17,7 +17,6 @@ const Complaints = () => {
     headers: { Authorization: `Bearer ${token}` },
   };
 
-  // Fetch complaints
   const fetchComplaints = useCallback(async () => {
     if (!token) return navigate("/login");
     setLoading(true);
@@ -45,7 +44,6 @@ const Complaints = () => {
     fetchComplaints();
   }, [token, navigate, fetchComplaints]);
 
-  // Handle status change
   const handleStatusChange = async (complaintId, newStatus) => {
     if (!token) return navigate("/login");
 
@@ -60,7 +58,6 @@ const Complaints = () => {
         authConfig
       );
 
-      // Update state locally without full refetch
       const updated = res.data?.complaint || null;
       setComplaints((prev) =>
         prev.map((c) => (c._id === complaintId ? { ...c, ...updated } : c))
@@ -87,7 +84,8 @@ const Complaints = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
           <section
             className="
@@ -113,23 +111,17 @@ const Complaints = () => {
               </div>
             )}
 
-            {/* COMPLAINTS LIST */}
+            {/* TABLE */}
             <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">
               <table className="min-w-full text-sm md:text-base table-fixed">
                 <thead>
                   <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-base md:text-lg">
-                    <th className="p-4 font-semibold text-left w-2/12">
-                      Subject
-                    </th>
-                    <th className="p-4 font-semibold text-left w-5/12">
+                    <th className="p-4 font-bold text-left w-2/12">Subject</th>
+                    <th className="p-4 font-bold text-left w-5/12">
                       Description
                     </th>
-                    <th className="p-4 font-semibold text-center w-2/12">
-                      Status
-                    </th>
-                    <th className="p-4 font-semibold text-center w-3/12">
-                      Date
-                    </th>
+                    <th className="p-4 font-bold text-center w-2/12">Status</th>
+                    <th className="p-4 font-bold text-center w-3/12">Date</th>
                   </tr>
                 </thead>
                 <tbody className="align-top">
@@ -152,32 +144,36 @@ const Complaints = () => {
                       </td>
                     </tr>
                   ) : (
-                    complaints.map((c) => (
+                    complaints.map((c, index) => (
                       <tr
                         key={c._id}
-                        className="transition hover:bg-emerald-200/50 dark:hover:bg-emerald-900/50 odd:bg-white/70 even:bg-emerald-100/70 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60 border-b border-gray-200/70 dark:border-gray-700/60"
+                        className={`text-sm md:text-base transition-colors ${
+                          index % 2 === 0
+                            ? "bg-white/100 dark:bg-emerald-900/40"
+                            : "bg-emerald-100/50 dark:bg-emerald-900/60"
+                        } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="p-4 font-semibold text-emerald-900 dark:text-emerald-100 break-words">
-                          {c.subject}
-                        </td>
-                        <td className="p-4 text-emerald-800 dark:text-emerald-200 break-words whitespace-pre-wrap">
+                        <td className="px-4 py-3 font-medium text-left">{c.subject}</td>
+                        <td className="px-4 py-3 font-medium break-words">
                           {c.description}
                         </td>
-                        <td className="p-4 text-center">
+                        <td className="px-4 py-3 font-medium text-left">
                           <select
                             value={c.status || "Pending"}
                             onChange={(e) =>
                               handleStatusChange(c._id, e.target.value)
                             }
                             disabled={updatingId === c._id}
-                            className="w-full max-w-xs bg-white dark:bg-emerald-950/40 text-emerald-900 dark:text-emerald-100 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer"
-                          >
+                            className="w-full max-w-xs bg-white dark:bg-emerald-950/40 px-4 py-3 font-medium
+                              border border-gray-300 dark:border-gray-60 rounded-lg px-3 py-2 text-sm md:text-base
+                              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer" >
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Resolved">Resolved</option>
                           </select>
                         </td>
-                        <td className="p-4 text-emerald-800 dark:text-emerald-200 text-center whitespace-nowrap">
+
+                        <td className="p-4 y-3 font-medium text-center">
                           {c.createdAt
                             ? new Date(c.createdAt).toLocaleString()
                             : ""}
