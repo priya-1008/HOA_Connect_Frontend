@@ -90,12 +90,11 @@ const Payments = () => {
               <table className="min-w-full rounded-xl shadow-md overflow-hidden">
                 <thead>
                   <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
-                    <th className="p-5 font-semibold">Resident</th>
-                    <th className="p-5 font-semibold">Email</th>
-                    <th className="p-5 font-semibold">Amount</th>
-                    <th className="p-5 font-semibold">Due Date</th>
-                    <th className="p-5 font-semibold">Status</th>
-                    <th className="p-5 font-semibold">Actions</th>
+                    <th className="p-5 font-semibold text-left">Resident</th>
+                    <th className="p-5 font-semibold text-left">Email</th>
+                    <th className="p-5 font-semibold text-left">Amount</th>
+                    <th className="p-5 font-semibold text-left">Status</th>
+                    <th className="p-5 font-semibold text-left">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -119,9 +118,6 @@ const Payments = () => {
                       </td>
                       <td className="p-4 text-emerald-700 dark:text-emerald-200">
                         ₹{payment.amount}
-                      </td>
-                      <td className="p-4 text-emerald-700 dark:text-emerald-200">
-                        {payment.dueDate ? new Date(payment.dueDate).toLocaleDateString() : "-"}
                       </td>
                       <td className="p-4 text-emerald-700 dark:text-emerald-200">
                         <span className="font-semibold">{payment.status}</span>

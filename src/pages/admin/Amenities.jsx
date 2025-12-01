@@ -129,9 +129,6 @@ const Amenities = () => {
                     <th className="p-4 font-semibold text-left w-4/12">
                       Description
                     </th>
-                    <th className="p-4 font-semibold text-left w-3/12">
-                      Community
-                    </th>
                     <th className="p-4 font-semibold text-center w-1/12">
                       Active
                     </th>
@@ -170,9 +167,6 @@ const Amenities = () => {
                         </td>
                         <td className="p-4 text-emerald-800 dark:text-emerald-200 break-words whitespace-pre-wrap">
                           {a.description}
-                        </td>
-                        <td className="p-4 text-emerald-800 dark:text-emerald-200 break-words">
-                          {a.community?.name || a.community}
                         </td>
                         <td className="p-4 text-center">
                           <span
