@@ -61,11 +61,11 @@ const Dashboard = () => {
         }}
       >
         {/* Overlay for readability */}
-        <div className="absolute inset-0 bg-white/0 dark:bg-gray-700/85 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-gray-700/85 pointer-events-none" />
         <main className="relative z-10">
-          <div className="h-56 flex items-center text-white relative">
-            <h1 className="px-8 grid text-5xl font-extrabold z-10 drop-shadow-xl text-slate-700 dark:text-teal-100">
-              HOA Admin Dashboard
+          <div className="h-[300px] flex items-center justify-center text-center relative">
+            <h1 className="text-5xl font-bold text-white drop-shadow-xl dark:text-teal-100">
+              Admin Dashboard
             </h1>
           </div>
           <section className="p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 -mt-10 z-20 relative">
