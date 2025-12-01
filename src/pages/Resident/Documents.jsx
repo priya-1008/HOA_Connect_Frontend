@@ -91,16 +91,12 @@ const Documents = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+        <div className="absolute inset-0 bg-black/40" />
 
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
           <section
-            className="
-              w-full mx-auto
-              bg-emerald-100/50 dark:bg-emerald-900/70
-              dark:border-emerald-800
-              backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8
-            "
+            className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 dark:border-emerald-800
+                    backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8"
           >
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Documents
@@ -166,7 +162,7 @@ const Documents = () => {
                           <button
                             onClick={() => handleDownload(doc)}
                             disabled={downloadLoadingId === doc._id}
-                            className="inline-flex items-center justify-center py-1.5 px-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 text-white rounded font-semibold text-sm md:text-base transition"
+                            className="inline-flex items-center justify-center py-1.5 px-4 bg-green-800 hover:bg-green-900 disabled:opacity-70 text-white rounded font-semibold text-sm md:text-base transition"
                           >
                             {downloadLoadingId === doc._id
                               ? "Downloading..."

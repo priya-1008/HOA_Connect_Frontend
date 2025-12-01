@@ -71,7 +71,7 @@ const Polls = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none" />
 
         <main className="relative z-10 p-6 min-h-screen w-full flex flex-col items-center">
           <section

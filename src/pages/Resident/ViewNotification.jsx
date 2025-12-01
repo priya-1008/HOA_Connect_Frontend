@@ -46,7 +46,7 @@ const Notifications = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none transition-all duration-300" />
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
           <section
             className="

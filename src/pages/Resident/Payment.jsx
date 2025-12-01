@@ -137,26 +137,28 @@ const ResidentPayment = () => {
   return (
     <HOAHeaderNavbar>
       <div
-        className="relative min-h-screen"
+        className="relative min-h-screen overflow-y-auto"
         style={{
           backgroundImage: "url('/Society.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+        <div className="absolute inset-0 bg-black/40" />
 
-        <main className="relative z-10 py-10 flex flex-col items-center">
-
+        <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
           {/* PAYMENT FORM — Bigger Width */}
-          <div className="w-full max-w-3xl bg-white/50 dark:bg-emerald-800/70 backdrop-blur-xl p-10 rounded-2xl shadow-xl mb-10">
+          <div
+            className="w-full max-w-3xl bg-emerald-100/50 dark:bg-emerald-900/70 dark:border-emerald-800
+                    backdrop-blur-lg p-10 rounded-2xl shadow-xl mb-10"
+          >
             <h2 className="text-4xl font-extrabold text-center mb-7 text-emerald-900 dark:text-white">
               Payments
             </h2>
 
             {!showGateway && (
               <div className="flex flex-col gap-4 mb-8">
-
                 <input
                   type="number"
                   name="amount"
@@ -203,23 +205,33 @@ const ResidentPayment = () => {
           </div>
 
           {/* PAYMENT SUMMARY + PAYMENT HISTORY */}
-          <section className="w-full bg-white/50 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8">
-
+          <section
+            className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 dark:border-emerald-800
+                    backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8"
+          >
             {showGateway && transaction && (
               <div className="max-w-lg mx-auto bg-white dark:bg-emerald-800 rounded-xl shadow-lg p-6 mb-8">
                 <h3 className="text-3xl font-bold text-center text-emerald-900 dark:text-emerald-100 mb-6">
                   Payment Summary
                 </h3>
 
-                <p><strong>Amount:</strong> ₹{form.amount}</p>
-                <p><strong>Bill Type:</strong> {form.billType}</p>
-                <p><strong>Payment Method:</strong> {form.method}</p>
-                <p><strong>Transaction ID:</strong> {transaction.transactionId}</p>
+                <p>
+                  <strong>Amount:</strong> ₹{form.amount}
+                </p>
+                <p>
+                  <strong>Bill Type:</strong> {form.billType}
+                </p>
+                <p>
+                  <strong>Payment Method:</strong> {form.method}
+                </p>
+                <p>
+                  <strong>Transaction ID:</strong> {transaction.transactionId}
+                </p>
 
                 <div className="flex flex-col gap-3 mt-6">
                   <button
                     onClick={completePayment}
-                    className="py-3 bg-green-700 hover:bg-green-800 text-white rounded-lg font-bold"
+                    className="py-3 bg-green-800 hover:bg-green-900 text-white rounded-lg font-bold"
                   >
                     Pay Now
                   </button>
@@ -253,7 +265,9 @@ const ResidentPayment = () => {
               <table className="w-full border border-gray-300 rounded-xl overflow-hidden bg-white/50 shadow-md">
                 <thead>
                   <tr className="bg-gray-800 text-white text-lg">
-                    <th className="p-4 y-3 font-medium text-left">Transaction ID</th>
+                    <th className="p-4 y-3 font-medium text-left">
+                      Transaction ID
+                    </th>
                     <th className="p-4 y-3 font-medium text-left">Amount</th>
                     <th className="p-4 y-3 font-medium text-left">Bill Type</th>
                     <th className="p-4 y-3 font-medium text-left">Status</th>
@@ -272,17 +286,22 @@ const ResidentPayment = () => {
                   )}
 
                   {payments.map((p) => (
-                    <tr key={p._id} className="odd:bg-white even:bg-emerald-100/40">
+                    <tr
+                      key={p._id}
+                      className="odd:bg-white even:bg-emerald-100/40"
+                    >
                       <td className="px-4 py-3">{p.transactionId}</td>
                       <td className="px-4 py-3">₹{p.amount}</td>
                       <td className="px-4 py-3">{p.billType}</td>
                       <td className="px-4 py-3">{p.status}</td>
-                      <td className="px-4 py-3">{formatDateTime(p.transactionDate)}</td>
+                      <td className="px-4 py-3">
+                        {formatDateTime(p.transactionDate)}
+                      </td>
                       <td className="px-4 py-3 text-center">
                         {p.status === "completed" ? (
                           <button
                             onClick={() => downloadReceipt(p.transactionId)}
-                            className="bg-blue-700 hover:bg-blue-800 text-white px-3 py-1 rounded"
+                            className="bg-green-800 hover:bg-green-900 text-white px-3 py-1 rounded"
                           >
                             Download
                           </button>

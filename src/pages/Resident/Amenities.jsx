@@ -91,23 +91,28 @@ const Amenities = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/70" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/70" />
 
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
           <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
-
             <h2 className="text-4xl font-extrabold mb-7 text-center text-emerald-900 dark:text-emerald-100">
               Amenities
             </h2>
 
             {(error || success) && (
-              <div className={`text-center pb-3 font-semibold text-lg ${error ? "text-red-600" : "text-emerald-700"}`}>
+              <div
+                className={`text-center pb-3 font-semibold text-lg ${
+                  error ? "text-red-600" : "text-emerald-700"
+                }`}
+              >
                 {error || success}
               </div>
             )}
 
             {loading && (
-              <p className="text-center text-emerald-900 dark:text-emerald-100">Loading amenities...</p>
+              <p className="text-center text-emerald-900 dark:text-emerald-100">
+                Loading amenities...
+              </p>
             )}
 
             <div className="w-full overflow-x-auto">
@@ -124,7 +129,10 @@ const Amenities = () => {
                 <tbody>
                   {!loading && amenities.length === 0 && (
                     <tr>
-                      <td colSpan={4} className="text-center py-6 italic font-bold">
+                      <td
+                        colSpan={4}
+                        className="text-center py-6 italic font-bold"
+                      >
                         No amenities found.
                       </td>
                     </tr>
@@ -133,11 +141,17 @@ const Amenities = () => {
                   {amenities.map((a, index) => (
                     <tr
                       key={a._id}
-                      className={`${index % 2 === 0 ? "bg-white/70 dark:bg-emerald-900/40" : "bg-emerald-100/70 dark:bg-emerald-900/60"} hover:bg-emerald-200/60`}
+                      className={`${
+                        index % 2 === 0
+                          ? "bg-white/70 dark:bg-emerald-900/40"
+                          : "bg-emerald-100/70 dark:bg-emerald-900/60"
+                      } hover:bg-emerald-200/60`}
                     >
                       <td className="px-4 py-3 font-medium">{a.name}</td>
                       <td className="px-4 py-3 font-medium">{a.description}</td>
-                      <td className="px-4 py-3 font-medium capitalize">{a.maintenanceStatus || "available"}</td>
+                      <td className="px-4 py-3 font-medium capitalize">
+                        {a.maintenanceStatus || "available"}
+                      </td>
 
                       <td className="px-4 py-3 text-center">
                         <button
@@ -149,11 +163,13 @@ const Amenities = () => {
                           disabled={a.maintenanceStatus !== "available"}
                           className={`px-4 py-2 rounded text-white font-semibold ${
                             a.maintenanceStatus === "available"
-                              ? "bg-blue-600 hover:bg-blue-700"
+                              ? "bg-green-800 hover:bg-green-900"
                               : "bg-gray-400 cursor-not-allowed"
                           }`}
                         >
-                          {a.maintenanceStatus === "available" ? "Book" : "Unavailable"}
+                          {a.maintenanceStatus === "available"
+                            ? "Book"
+                            : "Unavailable"}
                         </button>
                       </td>
                     </tr>
@@ -164,8 +180,8 @@ const Amenities = () => {
           </section>
 
           {/* ★★★★★ NEW SECTION: SHOW MY BOOKINGS TABLE ★★★★★ */}
-          <section className="w-full mx-auto bg-white/70 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8 mb-10">
-            <h3 className="text-3xl font-bold text-center text-emerald-900 dark:text-emerald-100 mb-5">
+          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8 mb-10">
+            <h3 className="text-3xl font-extrabold text-center text-emerald-900 dark:text-emerald-100 mb-7">
               My Booked Amenities
             </h3>
 
@@ -182,7 +198,10 @@ const Amenities = () => {
                 <tbody>
                   {myBookings.length === 0 && (
                     <tr>
-                      <td colSpan={3} className="text-center py-6 italic font-semibold">
+                      <td
+                        colSpan={3}
+                        className="text-center py-6 italic font-semibold"
+                      >
                         No booked amenities found.
                       </td>
                     </tr>
@@ -191,11 +210,19 @@ const Amenities = () => {
                   {myBookings.map((b, i) => (
                     <tr
                       key={b._id}
-                      className={`${i % 2 === 0 ? "bg-white/70 dark:bg-emerald-900/40" : "bg-emerald-100/70 dark:bg-emerald-900/60"}`}
+                      className={`${
+                        i % 2 === 0
+                          ? "bg-white/70 dark:bg-emerald-900/40"
+                          : "bg-emerald-100/70 dark:bg-emerald-900/60"
+                      }`}
                     >
-                      <td className="px-4 py-3 font-medium">{b.amenity?.name}</td>
+                      <td className="px-4 py-3 font-medium">
+                        {b.amenity?.name}
+                      </td>
                       <td className="px-4 py-3">{b.amenity?.description}</td>
-                      <td className="px-4 py-3">{b.bookingDate?.substring(0, 10)}</td>
+                      <td className="px-4 py-3">
+                        {b.bookingDate?.substring(0, 10)}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -206,13 +233,18 @@ const Amenities = () => {
           {selectedAmenity && (
             <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50 p-4">
               <div className="bg-white dark:bg-emerald-900 rounded-xl p-6 w-full max-w-md">
-                <h3 className="text-2xl font-bold text-center mb-4">Book Amenity</h3>
+                <h3 className="text-2xl font-bold text-center mb-4">
+                  Book Amenity
+                </h3>
 
                 <p className="mb-2 font-medium">
-                  Amenity: <span className="font-bold">{selectedAmenity.name}</span>
+                  Amenity:{" "}
+                  <span className="font-bold">{selectedAmenity.name}</span>
                 </p>
 
-                <label className="block font-semibold mb-1">Booking Date:</label>
+                <label className="block font-semibold mb-1">
+                  Booking Date:
+                </label>
                 <input
                   type="date"
                   value={bookingDate}
