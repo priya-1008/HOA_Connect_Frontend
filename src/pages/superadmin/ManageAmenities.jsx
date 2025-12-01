@@ -13,8 +13,6 @@ const ManageAmenities = ({ darkMode }) => {
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    isActive: true,
-    maintenanceStatus: "",
   });
 
   const getAuthConfig = () => ({
@@ -45,11 +43,12 @@ const ManageAmenities = ({ darkMode }) => {
     fetchAmenities();
   }, []);
 
+  // On change
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      [name]: value,
     }));
   };
 
@@ -63,37 +62,28 @@ const ManageAmenities = ({ darkMode }) => {
         {
           name: formData.name,
           description: formData.description,
-          isActive: formData.isActive,
-          maintenanceStatus: formData.maintenanceStatus,
         },
         config
       );
       fetchAmenities();
-      setFormData({
-        name: "",
-        description: "",
-        isActive: true,
-        maintenanceStatus: "",
-      });
+      setFormData({ name: "", description: "" });
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Failed to add amenity");
     }
   };
 
-  // Start editing
+  // Edit
   const startEdit = (amenity) => {
     setIsEditing(true);
     setEditId(amenity._id);
     setFormData({
       name: amenity.name || "",
       description: amenity.description || "",
-      isActive: amenity.isActive ?? true,
-      maintenanceStatus: amenity.maintenanceStatus || "",
     });
   };
 
-  // Update amenity
+  // Update
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
@@ -103,27 +93,20 @@ const ManageAmenities = ({ darkMode }) => {
         {
           name: formData.name,
           description: formData.description,
-          isActive: formData.isActive,
-          maintenanceStatus: formData.maintenanceStatus,
         },
         config
       );
       fetchAmenities();
       setIsEditing(false);
       setEditId(null);
-      setFormData({
-        name: "",
-        description: "",
-        isActive: true,
-        maintenanceStatus: "",
-      });
+      setFormData({ name: "", description: "" });
     } catch (err) {
       console.error(err);
       setError("Failed to update amenity");
     }
   };
 
-  // Delete amenity
+  // Delete
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this amenity?")) return;
     try {
@@ -168,6 +151,7 @@ const ManageAmenities = ({ darkMode }) => {
           onSubmit={isEditing ? handleUpdate : handleCreate}
           className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8"
         >
+          {/* Amenity Name */}
           <input
             type="text"
             name="name"
@@ -177,56 +161,26 @@ const ManageAmenities = ({ darkMode }) => {
             className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
               ${
                 darkMode
-                  ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
-                  : "bg-white text-gray-900 placeholder-gray-750"
+                  ? "bg-slate-900 text-teal-100 border-teal-700"
+                  : "bg-white text-gray-900"
               }`}
           />
 
-          <select
-            name="maintenanceStatus"
-            value={formData.maintenanceStatus}
-            onChange={handleChange}
-            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
-              ${
-                darkMode
-                  ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
-                  : "bg-white text-gray-900 placeholder-gray-750"
-              }`}
-          >
-            <option value="">Select Maintenance Status</option>
-            <option value="available">Available</option>
-            <option value="under_maintenance">Under Maintenance</option>
-            <option value="closed">Closed</option>
-          </select>
-
+          {/* Amenity Description */}
           <textarea
             name="description"
             placeholder="Amenity Description"
             value={formData.description}
             onChange={handleChange}
-            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400 md:col-span-2
+            className={`p-3 border rounded-lg focus:ring-2 focus:ring-teal-400
               ${
                 darkMode
-                  ? "bg-slate-900 text-teal-100 border-teal-700 placeholder-teal-750"
-                  : "bg-white text-gray-900 placeholder-gray-750"
+                  ? "bg-slate-900 text-teal-100 border-teal-700"
+                  : "bg-white text-gray-900"
               }`}
           />
 
-          <label
-            className={`flex items-center gap-2 mt-2 md:col-span-2 ${
-              darkMode ? "text-teal-100" : "text-gray-900"
-            }`}
-          >
-            <input
-              type="checkbox"
-              name="isActive"
-              checked={formData.isActive}
-              onChange={handleChange}
-              className="w-4 h-4"
-            />
-            Active
-          </label>
-
+          {/* Buttons */}
           <div className="col-span-2 flex gap-3 mt-4 justify-center">
             <button
               type="submit"
@@ -234,18 +188,14 @@ const ManageAmenities = ({ darkMode }) => {
             >
               {isEditing ? "Update Amenity" : "Add Amenity"}
             </button>
+
             {isEditing && (
               <button
                 type="button"
                 onClick={() => {
                   setIsEditing(false);
                   setEditId(null);
-                  setFormData({
-                    name: "",
-                    description: "",
-                    isActive: true,
-                    maintenanceStatus: "",
-                  });
+                  setFormData({ name: "", description: "" });
                 }}
                 className="px-6 py-2 bg-teal-300 text-teal-900 rounded-lg hover:bg-teal-400 font-semibold"
               >
@@ -268,15 +218,14 @@ const ManageAmenities = ({ darkMode }) => {
               <tr>
                 <th className="px-4 py-2 border-b-2">Name</th>
                 <th className="px-4 py-2 border-b-2">Description</th>
-                <th className="px-4 py-2 border-b-2">Maintenance Status</th>
-                <th className="px-4 py-2 border-b-2">Active</th>
                 <th className="px-4 py-2 border-b-2">Actions</th>
               </tr>
             </thead>
+
             <tbody>
               {amenities.length === 0 ? (
                 <tr>
-                  <td colSpan="5" className="text-center py-4">
+                  <td colSpan="3" className="text-center py-4">
                     No amenities found.
                   </td>
                 </tr>
@@ -292,23 +241,19 @@ const ManageAmenities = ({ darkMode }) => {
                     <td className="px-4 py-2 border-b">
                       {amenity.description || "—"}
                     </td>
-                    <td className="px-4 py-2 border-b">
-                      {amenity.maintenanceStatus || "—"}
-                    </td>
-                    <td className="px-4 py-2 border-b">
-                      {amenity.isActive ? "Yes" : "No"}
-                    </td>
+
                     <td className="px-4 py-2 border-b flex justify-center gap-3">
                       <button
                         onClick={() => startEdit(amenity)}
-                        className="p-2 bg-teal-500 text-white rounded hover:bg-teal-600 flex items-center gap-1"
+                        className="p-2 bg-teal-500 text-white rounded hover:bg-teal-600"
                         title="Edit Amenity"
                       >
                         <PencilSquareIcon className="w-5 h-5" />
                       </button>
+
                       <button
                         onClick={() => handleDelete(amenity._id)}
-                        className="p-2 bg-red-600 text-white rounded hover:bg-red-700 flex items-center gap-1"
+                        className="p-2 bg-red-600 text-white rounded hover:bg-red-700"
                         title="Delete Amenity"
                       >
                         <TrashIcon className="w-5 h-5" />

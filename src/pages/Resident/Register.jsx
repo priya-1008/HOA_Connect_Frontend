@@ -11,7 +11,7 @@ const Register = () => {
     password: "",
     phoneNo: "",
     houseNumber: "",
-    role: "resident",   // UI only
+    role: "resident",
     communityId: "",
   });
 
@@ -20,14 +20,11 @@ const Register = () => {
   const [error, setError] = useState("");
   const [loadingCommunities, setLoadingCommunities] = useState(false);
 
-  // ---------- Fetch Communities ----------
   const fetchCommunities = async () => {
     try {
       setLoadingCommunities(true);
 
-      const res = await axios.get(
-        "http://localhost:5000/superadmin/getcommunities"
-      );
+      const res = await axios.get("http://localhost:5000/superadmin/getcommunities");
 
       const list = Array.isArray(res.data?.communities)
         ? res.data.communities
@@ -35,18 +32,16 @@ const Register = () => {
         ? res.data
         : [];
 
-      console.log("Communities list:", list);
       setCommunities(list);
 
       if (list.length > 0 && !form.communityId) {
         setForm((prev) => ({ ...prev, communityId: list[0]._id }));
       }
+
       setError("");
     } catch (err) {
-      console.error("fetchCommunities error:", err);
       setError(
-        err.response?.data?.message ||
-          "Failed to load communities. Please try again."
+        err.response?.data?.message || "Failed to load communities. Please try again."
       );
       setCommunities([]);
     } finally {
@@ -58,7 +53,6 @@ const Register = () => {
     fetchCommunities();
   }, []);
 
-  // Handle input/select change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({
@@ -74,7 +68,7 @@ const Register = () => {
     setError("");
 
     try {
-      const payload = {
+    const payload = {
         name: form.name,
         email: form.email,
         password: form.password,
@@ -94,160 +88,152 @@ const Register = () => {
         navigate("/login");
       }
     } catch (err) {
-      console.error("Registration failed:", err);
-      setError(
-        err.response?.data?.message || "Registration failed. Try again."
-      );
+      setError(err.response?.data?.message || "Registration failed. Try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center">
-      <img
-        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
-        alt="Homeowner Association"
-        className="absolute inset-0 w-full h-screen object-cover z-0"
-      />
+    <div className="min-h-screen w-full flex overflow-hidden">
 
-      <div className="absolute inset-0 w-full h-screen bg-blue-900 bg-opacity-40 z-10"></div>
+      {/* LEFT IMAGE */}
+      <div className="w-1/2 h-screen relative">
+        <img
+          src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
+          alt="HOA"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-blue-900 bg-opacity-40"></div>
+      </div>
 
-      <div className="relative z-20 w-full max-w-2xl mx-auto rounded-2xl border border-white/60 bg-white/100 backdrop-blur-md shadow-xl p-10 md:p-12">
-        <h1 className="text-4xl font-bold text-center text-gray-400 mb-8">
-          HOA CONNECT SYSTEM
-        </h1>
-        <h2 className="text-4xl font-bold text-center text-teal-700 mb-8">
-          Sign Up
-        </h2>
+      {/* RIGHT FORM - FULL WIDTH UTILIZED */}
+      <div className="w-1/2 h-screen flex items-center justify-center bg-white px-12">
 
-        <form onSubmit={handleRegister} className="space-y-6">
-          <div>
-            <label className="block text-lg font-medium mb-2">Full Name</label>
-            <input
-              type="text"
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border bg-transparent rounded-lg focus:ring-2 focus:ring-teal-300 focus:outline-none text-lg"
-              placeholder="Enter your name"
-            />
-          </div>
+        <div className="w-full">  {/* REMOVED max-width SO FULL WIDTH IS USED */}
+          
+          <h1 className="text-4xl font-bold text-center text-gray-400 mb-4">
+            HOA CONNECT SYSTEM
+          </h1>
 
-          <div>
-            <label className="block text-lg font-medium mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border bg-transparent rounded-lg focus:ring-2 focus:ring-teal-300 focus:outline-none text-lg"
-              placeholder="Enter your email"
-            />
-          </div>
+          <h2 className="text-4xl font-bold text-center text-teal-700 mb-10">
+            Sign Up
+          </h2>
 
-          <div>
-            <label className="block text-lg font-medium mb-2">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border bg-transparent rounded-lg focus:ring-2 focus:ring-teal-300 focus:outline-none text-lg"
-              placeholder="Enter your password"
-            />
-          </div>
+          <form onSubmit={handleRegister} className="space-y-6 w-full">
 
-          <div>
-            <label className="block text-lg font-medium mb-2">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              name="phoneNo"
-              value={form.phoneNo}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border bg-transparent rounded-lg focus:ring-2 focus:ring-teal-300 focus:outline-none text-lg"
-              placeholder="Enter your phone number"
-            />
-          </div>
+            <div>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                required
+                className="w-full px-5 py-4 border rounded-lg text-lg"
+                placeholder="Enter your name"
+              />
+            </div>
 
-          <div>
-            <label className="block text-lg font-medium mb-2">
-              House / Flat Number
-            </label>
-            <input
-              type="text"
-              name="houseNumber"
-              value={form.houseNumber}
-              onChange={handleChange}
-              required
-              className="w-full px-4 py-3 border bg-transparent rounded-lg focus:ring-2 focus:ring-teal-300 focus:outline-none text-lg"
-              placeholder="Enter your house / flat number"
-            />
-          </div>
+            <div>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                className="w-full px-5 py-4 border rounded-lg text-lg"
+                placeholder="Enter your email"
+              />
+            </div>
 
-          <div>
-            <label className="block text-lg font-medium mb-2">Role</label>
-            <input
-              type="text"
-              name="role"
-              value="resident"
-              readOnly
-              className="w-full px-4 py-3 border bg-transparent rounded-lg focus:outline-none text-lg"
-            />
-          </div>
+            <div>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                required
+                className="w-full px-5 py-4 border rounded-lg text-lg"
+                placeholder="Enter password"
+              />
+            </div>
 
-          <div>
-            <label className="block text-lg font-medium mb-2">Community</label>
-            <select
-              className="w-full px-4 py-3 border bg-transparent rounded-lg focus:outline-none text-lg"
-              name="communityId"
-              value={form.communityId}
-              onChange={handleChange}
-              required
+            <div>
+              <input
+                type="text"
+                name="phoneNo"
+                value={form.phoneNo}
+                onChange={handleChange}
+                required
+                className="w-full px-5 py-4 border rounded-lg text-lg"
+                placeholder="Enter phone number"
+              />
+            </div>
+
+            <div>
+              <input
+                type="text"
+                name="houseNumber"
+                value={form.houseNumber}
+                onChange={handleChange}
+                required
+                className="w-full px-5 py-4 border rounded-lg text-lg"
+                placeholder="Enter house / flat number"
+              />
+            </div>
+
+            <div>
+              <input
+                type="text"
+                value="resident"
+                readOnly
+                className="w-full px-5 py-4 border rounded-lg bg-gray-100 text-lg"
+              />
+            </div>
+
+            <div>
+              <select
+                name="communityId"
+                value={form.communityId}
+                onChange={handleChange}
+                required
+                className="w-full px-5 py-4 border rounded-lg text-lg"
+              >
+                <option value="" selected>Select community</option>
+                {communities.map((c) => (
+                  <option key={c._id} value={c._id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {error && (
+              <p className="text-red-600 text-md font-medium bg-red-100 px-4 py-3 rounded-lg text-center">
+                {error}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-teal-600 text-white py-3 rounded-lg font-semibold text-lg hover:bg-teal-700"
             >
-              <option value="">
-                {loadingCommunities ? "Loading..." : "Select community"}
-              </option>
-              {communities.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+              {loading ? "Registering..." : "Register"}
+            </button>
+          </form>
 
-          {error && (
-            <p className="bg-red-50/80 border border-red-400 text-red-700 px-4 py-2 rounded-lg text-md text-center">
-              {error}
-            </p>
-          )}
+          <p className="text-center text-md mt-6">
+            Already have an account?{" "}
+            <button
+              onClick={() => navigate("/login")}
+              className="text-blue-600 font-bold hover:underline"
+            >
+              Login Here
+            </button>
+          </p>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-teal-600/90 hover:bg-teal-700 text-white py-3 rounded-lg font-semibold transition duration-300 shadow-md text-lg"
-          >
-            {loading ? "Registering..." : "Register"}
-          </button>
-        </form>
-
-        <p className="text-md text-center mt-8">
-          Already have an account?{" "}
-          <button
-            onClick={() => navigate("/login")}
-            className="text-blue-600 font-bold hover:underline"
-          >
-            Login Here
-          </button>
-        </p>
+        </div>
       </div>
     </div>
   );
