@@ -1,45 +1,46 @@
 // export default AppRoutes;
-import React from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
-import PrivateRoute from './components/PrivateRoute';
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
 
 // Super Admin Pages
-import Login from './pages/Login';
-import Dashboard from './pages/superadmin/Dashboard';
-import ManageCommunities from './pages/superadmin/ManageCommunities';
-import ManageAmenities from './pages/superadmin/ManageAmenities';
-import SystemNotification from './pages/superadmin/Notifications';
-
+import Login from "./pages/Login";
+import Dashboard from "./pages/superadmin/Dashboard";
+import ManageCommunities from "./pages/superadmin/ManageCommunities";
+import ManageAmenities from "./pages/superadmin/ManageAmenities";
+import SystemNotification from "./pages/superadmin/Notifications";
 
 // HOA Admin Pages
-import HOAAdminDashboard from './pages/admin/AdminDashboard';
-import Payments from './pages/admin/TrackPayment';
-import Residents from './pages/admin/Residents';
-import Announcements from './pages/admin/Announcements';
-import Complaints from './pages/admin/Complaints';
-import Amenities from './pages/admin/Amenities';
-import Documents from './pages/admin/Documents';
-import Meetings from './pages/admin/Meetings';
-import Polls from './pages/admin/Polls';
-import Notification from './pages/admin/SendNotification';
+import HOAAdminDashboard from "./pages/admin/AdminDashboard";
+import Payments from "./pages/admin/TrackPayment";
+import Residents from "./pages/admin/Residents";
+import Announcements from "./pages/admin/Announcements";
+import Complaints from "./pages/admin/Complaints";
+import Amenities from "./pages/admin/Amenities";
+import Documents from "./pages/admin/Documents";
+import Meetings from "./pages/admin/Meetings";
+import Polls from "./pages/admin/Polls";
+import Notification from "./pages/admin/SendNotification";
 
-// Resident Pages 
-import ResidentDashboard from './pages/Resident/ResidentDashboard';
-import AddPayment from './pages/Resident/Payment';
-import DisplayAnnouncement from './pages/Resident/Announcements';
-import UseAmenities from './pages/Resident/Amenities';
-import AddComplaints  from './pages/Resident/Complaints';
-import AddDocuments  from './pages/Resident/Documents';
-import ViewPolls from './pages/Resident/Polls';
-import ViewNotifications from './pages/Resident/ViewNotification';
-import ResidentRegister from './pages/Resident/Register';
-import AttendMeetings from './pages/Resident/Meetings';
-import Profile from './pages/Resident/Profile';
+// Resident Pages
+import ResidentDashboard from "./pages/Resident/ResidentDashboard";
+import AddPayment from "./pages/Resident/Payment";
+import DisplayAnnouncement from "./pages/Resident/Announcements";
+import UseAmenities from "./pages/Resident/Amenities";
+import AddComplaints from "./pages/Resident/Complaints";
+import AddDocuments from "./pages/Resident/Documents";
+import ViewPolls from "./pages/Resident/Polls";
+import ViewNotifications from "./pages/Resident/ViewNotification";
+import ResidentRegister from "./pages/Resident/Register";
+import AttendMeetings from "./pages/Resident/Meetings";
+import Profile from "./pages/Resident/Profile";
+import Register from "./pages/Resident/Register";
 
 const AppRoutes = () => (
   <Routes>
     {/* Public Route */}
-    <Route path="/" element={<Login />} />
+    <Route path="/" element={<Register />} />
+    <Route path="/login" element={ <Login /> } />
 
     {/* Private Routes */}
     <Route
@@ -70,7 +71,7 @@ const AppRoutes = () => (
       path="/notifications"
       element={
         <PrivateRoute>
-         <SystemNotification />
+          <SystemNotification />
         </PrivateRoute>
       }
     />
@@ -156,21 +157,13 @@ const AppRoutes = () => (
         </PrivateRoute>
       }
     />
-  
-     {/*  HOA Resident Routes */}
+
+    {/*  HOA Resident Routes */}
     <Route
       path="/resident-dashboard"
       element={
         <PrivateRoute requiredRole="resident">
           <ResidentDashboard />
-        </PrivateRoute>
-      }
-    />
-    <Route
-      path="/register-resident"
-      element={
-        <PrivateRoute>
-          <ResidentRegister />
         </PrivateRoute>
       }
     />
@@ -238,7 +231,7 @@ const AppRoutes = () => (
         </PrivateRoute>
       }
     />
-    
+
     <Route
       path="/profile"
       element={
@@ -247,8 +240,6 @@ const AppRoutes = () => (
         </PrivateRoute>
       }
     />
-    
-  
 
     {/* Redirect any unknown route to login */}
     <Route path="*" element={<Navigate to="/" replace />} />

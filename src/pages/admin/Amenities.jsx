@@ -22,6 +22,7 @@ const Amenities = () => {
     const fetchAmenities = async () => {
       setLoading(true);
       setError("");
+
       try {
         const res = await axios.get(
           "http://localhost:5000/hoaadmin/getamenities",
@@ -30,11 +31,13 @@ const Amenities = () => {
           }
         );
 
-        const list = Array.isArray(res.data)
-          ? res.data
-          : Array.isArray(res.data?.amenities)
-          ? res.data.amenities
-          : [];
+        // ✅ FIX: Handle ANY response format safely
+        const list =
+          Array.isArray(res.data)
+            ? res.data
+            : Array.isArray(res.data?.amenities)
+            ? res.data.amenities
+            : [];
 
         setAmenities(list);
       } catch (err) {
@@ -52,19 +55,51 @@ const Amenities = () => {
     fetchAmenities();
   }, [navigate, token, success]);
 
+  // -----------------------------
+  // UPDATE MAINTENANCE STATUS
+  // -----------------------------
+  const handleChange = async (id, value) => {
+    try {
+      await axios.put(
+        `http://localhost:5000/hoaadmin/updateamenity/${id}`,
+        { maintenanceStatus: value },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      // update UI instantly
+      setAmenities((prev) =>
+        prev.map((item) =>
+          item._id === id ? { ...item, maintenanceStatus: value } : item
+        )
+      );
+
+      setSuccess("Maintenance status updated!");
+    } catch (err) {
+      console.error("Error updating amenity:", err);
+      setError("Failed to update status");
+    }
+  };
+
+  // -----------------------------
+  // DELETE AMENITY
+  // -----------------------------
   const handleDelete = async (id) => {
     if (!token) {
       navigate("/login");
       return;
     }
+
     setError("");
     setSuccess("");
     setDeletingId(id);
 
     try {
-      await axios.delete(`http://localhost:5000/hoaadmin/deleteamenity/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.delete(
+        `http://localhost:5000/hoaadmin/deleteamenity/${id}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       setAmenities((prev) => prev.filter((a) => a._id !== id));
       setSuccess("Amenity deleted successfully.");
@@ -87,7 +122,7 @@ const Amenities = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/70"></div>
 
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
           <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
@@ -107,7 +142,6 @@ const Amenities = () => {
               </div>
             )}
 
-            {/* TABLE */}
             <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">
               <table className="min-w-full text-sm md:text-base table-fixed">
                 <thead>
@@ -116,8 +150,8 @@ const Amenities = () => {
                     <th className="p-4 font-bold text-left w-5/12">
                       Description
                     </th>
-                    <th className="p-4 font-bold text-center w-2/12">
-                      Active
+                    <th className="p-4 font-bold text-left w-2/12">
+                      Maintenance Status
                     </th>
                     <th className="p-4 font-bold text-center w-2/12">
                       Actions
@@ -148,11 +182,11 @@ const Amenities = () => {
                     amenities.map((a, index) => (
                       <tr
                         key={a._id}
-                        className={`text-sm md:text-base transition-colors ${
+                        className={`transition-colors ${
                           index % 2 === 0
-                            ? "bg-white/100 dark:bg-emerald-900/40"
-                            : "bg-emerald-100/50 dark:bg-emerald-900/60"
-                        } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
+                            ? "bg-white dark:bg-emerald-900/40"
+                            : "bg-emerald-100 dark:bg-emerald-900/60"
+                        }`}
                       >
                         <td className="px-4 py-3 font-medium break-words">
                           {a.name}
@@ -162,21 +196,28 @@ const Amenities = () => {
                           {a.description}
                         </td>
 
-                        <td className="px-4 py-3 text-center font-bold">
-                          <span
-                            className={
-                              a.isActive ? "text-green-700" : "text-red-600"
+                        <td className="px-4 py-3">
+                          <select
+                            value={a.maintenanceStatus}
+                            onChange={(e) =>
+                              handleChange(a._id, e.target.value)
                             }
+                            className="p-2 border rounded-lg w-full"
                           >
-                            {a.isActive ? "Yes" : "No"}
-                          </span>
+                            <option value="">Select Maintenance Status</option>
+                            <option value="available">Available</option>
+                            <option value="under_maintenance">
+                              Under Maintenance
+                            </option>
+                            <option value="closed">Closed</option>
+                          </select>
                         </td>
 
                         <td className="px-4 py-3 text-center">
                           <button
                             onClick={() => handleDelete(a._id)}
                             disabled={deletingId === a._id}
-                            className="px-4 py-2 bg-green-900 hover:bg-red-700 text-white rounded-lg font-semibold disabled:cursor-not-allowed disabled:opacity-60"
+                            className="px-4 py-2 bg-green-900 hover:bg-red-700 text-white rounded-lg font-semibold disabled:opacity-60"
                           >
                             {deletingId === a._id ? "Deleting..." : "Delete"}
                           </button>
