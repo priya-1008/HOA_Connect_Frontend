@@ -92,16 +92,9 @@ const Amenities = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none transition-all duration-300" />
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section
-            className="
-              w-full mx-auto
-              bg-emerald-100/50 dark:bg-emerald-900/70
-              dark:border-emerald-800
-              backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8
-            "
-          >
+          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 dark:border-emerald-800 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Amenities
             </h2>
@@ -119,14 +112,15 @@ const Amenities = () => {
             )}
 
             {/* AMENITIES LIST */}
-            <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">
-              <table className="min-w-full text-sm md:text-base table-fixed">
+            <div className="w-full overflow-x-auto">
+              <div className="rounded-xl shadow-md border border-gray-300/60 dark:border-gray-700/70 overflow-hidden">
+              <table className="min-w-full table-auto bg-white/70 dark:bg-emerald-950/40">
                 <thead>
-                  <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-base md:text-lg">
-                    <th className="p-4 font-semibold text-left w-2/12">
+                  <tr className="bg-gray-800 text-white text-lg">
+                    <th className="p-4 font-semibold text-left">
                       Name
                     </th>
-                    <th className="p-4 font-semibold text-left w-4/12">
+                    <th className="p-4 font-semibold text-left">
                       Description
                     </th>
                     <th className="p-4 font-semibold text-center w-1/12">
@@ -150,8 +144,8 @@ const Amenities = () => {
                   ) : amenities.length === 0 ? (
                     <tr>
                       <td
-                        colSpan={5}
-                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
+                        colSpan={4}
+                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-lg"
                       >
                         No amenities found.
                       </td>
@@ -162,7 +156,7 @@ const Amenities = () => {
                         key={a._id}
                         className="transition hover:bg-emerald-200/50 dark:hover:bg-emerald-900/50 odd:bg-white/70 even:bg-emerald-100/70 dark:odd:bg-emerald-900/40 dark:even:bg-emerald-900/60 border-b border-gray-200/70 dark:border-gray-700/60"
                       >
-                        <td className="p-4 font-semibold text-emerald-900 dark:text-emerald-100 break-words">
+                        <td className="p-4 font-semibold text-emerald-900 dark:text-emerald-80 break-words">
                           {a.name}
                         </td>
                         <td className="p-4 text-emerald-800 dark:text-emerald-200 break-words whitespace-pre-wrap">
@@ -181,7 +175,7 @@ const Amenities = () => {
                           <button
                             onClick={() => handleDelete(a._id)}
                             disabled={deletingId === a._id}
-                            className="py-1 px-4 bg-red-600 hover:bg-red-800 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded font-bold transition"
+                            className="py-1 px-4 bg-green-800 hover:bg-green-900 disabled:opacity-60 disabled:cursor-not-allowed text-white rounded font-bold transition"
                           >
                             {deletingId === a._id ? "Deleting..." : "Delete"}
                           </button>
@@ -191,6 +185,7 @@ const Amenities = () => {
                   )}
                 </tbody>
               </table>
+              </div>
             </div>
           </section>
         </main>

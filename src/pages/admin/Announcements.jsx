@@ -93,16 +93,9 @@ const Announcement = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/70 pointer-events-none transition-all duration-300" />
+       <div className="absolute inset-0 bg-black/40 dark:bg-black/70 pointer-events-none transition-all duration-300" />
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section
-            className="
-              w-full mx-auto
-              bg-emerald-100/50 dark:bg-emerald-900/70
-              dark:border-emerald-800
-              backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8
-            "
-          >
+          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/70 dark:border-emerald-800 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
             <h2 className="text-4xl font-extrabold mb-7 text-emerald-900 dark:text-emerald-100 text-center tracking-wider">
               Announcements
             </h2>
