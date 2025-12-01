@@ -34,6 +34,7 @@ import ViewPolls from './pages/Resident/Polls';
 import ViewNotifications from './pages/Resident/ViewNotification';
 import ResidentRegister from './pages/Resident/Register';
 import AttendMeetings from './pages/Resident/Meetings';
+import Profile from './pages/Resident/Profile';
 
 const AppRoutes = () => (
   <Routes>
@@ -237,6 +238,16 @@ const AppRoutes = () => (
         </PrivateRoute>
       }
     />
+    
+    <Route
+      path="/profile"
+      element={
+        <PrivateRoute>
+          <Profile />
+        </PrivateRoute>
+      }
+    />
+    
   
 
     {/* Redirect any unknown route to login */}

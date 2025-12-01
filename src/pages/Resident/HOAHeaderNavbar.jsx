@@ -16,13 +16,13 @@ import {
   Bars3Icon,
   XMarkIcon,
   ChartBarIcon,
+  UserCircleIcon,
 } from "@heroicons/react/24/outline";
 
 const hoaAdminName = "RESIDENT";
 
 const NAV_LINKS = [
   { label: "Dashboard", icon: HomeIcon, path: "/resident-dashboard" },
-  // { label: "Residents", icon: UsersIcon, path: "/add-resident" },
   { label: "Announcements", icon: MegaphoneIcon, path: "/view-announcements" },
   { label: "Complaints", icon: ClipboardDocumentListIcon, path: "/add-complaints" },
   { label: "Amenities", icon: BuildingOffice2Icon, path: "/use-amenities" },
@@ -36,7 +36,7 @@ const NAV_LINKS = [
 const SidebarLink = ({ icon: Icon, label, path, isActive, collapsed, onClick, darkMode }) => (
   <button
     onClick={onClick}
-    className={` text-lg flex items-center gap-3 px-4 py-2 my-1 rounded-lg w-full font-semibold transition-colors
+    className={`text-lg flex items-center gap-3 px-4 py-2 my-1 rounded-lg w-full font-semibold transition-colors
       ${
         isActive
           ? darkMode
@@ -54,7 +54,7 @@ const SidebarLink = ({ icon: Icon, label, path, isActive, collapsed, onClick, da
   </button>
 );
 
-const HEADER_HEIGHT = 90; // px
+const HEADER_HEIGHT = 90;
 
 const HOAHeaderNavbar = ({ children }) => {
   const [darkMode, setDarkMode] = useState(localStorage.getItem("darkMode") === "true");
@@ -78,6 +78,7 @@ const HOAHeaderNavbar = ({ children }) => {
   }, []);
 
   const handleDarkModeToggle = () => setDarkMode((prev) => !prev);
+
   const handleLogout = () => {
     localStorage.clear();
     navigate("/login");
@@ -87,26 +88,27 @@ const HOAHeaderNavbar = ({ children }) => {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${darkMode ? "bg-slate-900 text-slate-100" : "bg-teal-50 text-slate-900"}`}
-      style={{ height: '100vh', overflow: 'hidden' }}
+      className={`min-h-screen transition-colors duration-300 ${
+        darkMode ? "bg-slate-900 text-slate-100" : "bg-teal-50 text-slate-900"
+      }`}
+      style={{ height: "100vh", overflow: "hidden" }}
     >
       {/* HEADER */}
       <header
-        className={`fixed top-0 left-0 right-0 z-40 flex items-center justify-between shadow-lg px-8
-          ${darkMode ? "bg-slate-700" : "bg-teal-700"}
-        `}
+        className={`fixed top-0 left-0 right-0 z-40 flex items-center justify-between shadow-lg px-8 ${
+          darkMode ? "bg-slate-700" : "bg-teal-700"
+        }`}
         style={{ height: HEADER_HEIGHT, color: "#fff" }}
       >
         <div className="flex items-center gap-3">
-          <span className="text-4xl font-extrabold text-white">
-            🏘️ HOA Connect System
-          </span>
+          <span className="text-4xl font-extrabold text-white">🏘️ HOA Connect System</span>
         </div>
-        {/* Right side - Welcome and Theme Toggle */}
+
+        {/* RIGHT SIDE */}
         <div className="flex items-center gap-6">
-          <span className="font-bold text-xl text-white">
-            Welcome! {hoaAdminName}
-          </span>
+          <span className="font-bold text-xl text-white">Welcome! {hoaAdminName}</span>
+
+          {/* Theme Toggle */}
           <button
             onClick={handleDarkModeToggle}
             className="flex items-center justify-center rounded-full p-2 hover:bg-white/20 transition"
@@ -119,38 +121,47 @@ const HOAHeaderNavbar = ({ children }) => {
               <MoonIcon className="w-8 h-8 text-white" />
             )}
           </button>
+
+          {/* PROFILE ICON */}
+          <button
+            onClick={() => navigate("/profile")}
+            className="flex items-center justify-center hover:scale-110 transition"
+            title="Profile"
+          >
+            <UserCircleIcon className="w-10 h-10 text-white" />
+          </button>
         </div>
       </header>
 
+      {/* LAYOUT */}
       <div className="flex" style={{ marginTop: HEADER_HEIGHT, height: `calc(100vh - ${HEADER_HEIGHT}px)` }}>
         {/* SIDEBAR */}
         <aside
-          className={`flex flex-col justify-between shadow-lg transition-all duration-300
-            ${darkMode ? "bg-slate-800 border-r border-slate-700" : "bg-teal-10 border-r border-teal-700"}
-          `}
-          style={{
-            width: sidebarWidth,
-            height: '100%',
-            minHeight: '100%',
-          }}
+          className={`flex flex-col justify-between shadow-lg transition-all duration-300 ${
+            darkMode ? "bg-slate-800 border-r border-slate-700" : "bg-teal-10 border-r border-teal-700"
+          }`}
+          style={{ width: sidebarWidth, height: "100%" }}
         >
           <div>
             <div className="flex flex-col items-center py-2">
               <button
                 onClick={() => setSidebarCollapsed((prev) => !prev)}
                 className={`mb-1 p-2 rounded-full ${
-                  darkMode ? "bg-slate-700 text-white hover:bg-slate-600" : "bg-slate-500 text-teal-900 hover:bg-teal-700 text-white" 
+                  darkMode
+                    ? "bg-slate-700 text-white hover:bg-slate-600"
+                    : "bg-slate-500 text-teal-900 hover:bg-teal-700 text-white"
                 } shadow-lg transition-colors`}
                 aria-label="Toggle Sidebar"
               >
                 {sidebarCollapsed ? <Bars3Icon className="w-6 h-6" /> : <XMarkIcon className="w-6 h-6" />}
               </button>
             </div>
+
             <nav className="px-4 py-4">
-              {NAV_LINKS.map(({ label, icon: Icon, path }) => (
+              {NAV_LINKS.map(({ label, icon, path }) => (
                 <SidebarLink
                   key={path}
-                  icon={Icon}
+                  icon={icon}
                   label={label}
                   path={path}
                   isActive={location.pathname === path}
@@ -161,24 +172,30 @@ const HOAHeaderNavbar = ({ children }) => {
               ))}
             </nav>
           </div>
+
+          {/* LOGOUT */}
           <div className="px-2 pb-4">
             <button
               onClick={handleLogout}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold shadow justify-center w-full 
-                ${darkMode ? "bg-slate-700 text-white hover:bg-slate-600" : "bg-slate-700 text-white hover:bg-teal-800"}`}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold shadow justify-center w-full ${
+                darkMode ? "bg-slate-700 text-white hover:bg-slate-600" : "bg-slate-700 text-white hover:bg-teal-800"
+              }`}
             >
               <ArrowRightOnRectangleIcon className="w-8 h-8" />
               {!sidebarCollapsed && <span>Logout</span>}
             </button>
           </div>
         </aside>
-        {/* MAIN: only this scrolls */}
-        <main style={{
-          marginLeft: 0,
-          width: "100%",
-          height: '100%',
-          overflowY: "auto"
-        }}>
+
+        {/* MAIN */}
+        <main
+          style={{
+            marginLeft: 0,
+            width: "100%",
+            height: "100%",
+            overflowY: "auto",
+          }}
+        >
           <div className="min-h-[calc(100vh-4rem)] w-full transition-colors duration-300">
             {children}
           </div>

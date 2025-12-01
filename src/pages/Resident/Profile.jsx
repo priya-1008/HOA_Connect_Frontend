@@ -1,14 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import HOAHeaderNavbar from "./HOAHeaderNavbar";
 
 const Profile = () => {
   const navigate = useNavigate();
+
   const [profile, setProfile] = useState(null);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phoneNo: "",
+    houseNumber: "",
+  });
+
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
 
+  // ===================== DYNAMIC AVATAR ==========================
+  const avatarUrl = useMemo(() => {
+    if (!form.name) return "/avatar.png";
+    return `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(
+      form.name
+    )}&radius=50&scale=100`;
+  }, [form.name]);
+
+  // ===================== FETCH PROFILE ==========================
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return navigate("/login");
@@ -16,14 +35,24 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         setLoading(true);
-        setError("");
-        const res = await axios.get("http://localhost:5000/auth/me", {
-          headers: { Authorization: `Bearer ${token}` },
+        const res = await axios.get(
+          "http://localhost:5000/resident/getmyprofile",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+
+        const data = res.data.profile;
+        setProfile(data);
+
+        setForm({
+          name: data.name || "",
+          email: data.email || "",
+          phoneNo: data.phoneNo || "",
+          houseNumber: data.houseNumber || "",
         });
-        setProfile(res.data?.data || res.data);
       } catch (err) {
-        console.error("Could not load profile:", err);
-        setError("Could not load profile details.");
+        setError("Unable to fetch profile details.");
       } finally {
         setLoading(false);
       }
@@ -31,6 +60,43 @@ const Profile = () => {
 
     fetchProfile();
   }, [navigate]);
+
+  // ===================== UPDATE PROFILE ==========================
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    const token = localStorage.getItem("token");
+
+    try {
+      setSaving(true);
+      setError("");
+      setSuccess("");
+
+      const res = await axios.put(
+        "http://localhost:5000/resident/updateprofile",
+        {
+          name: form.name,
+          email: form.email,
+          phone: form.phoneNo,
+          house: form.houseNumber,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      setSuccess("Profile updated successfully!");
+      setProfile(res.data.updateProfile);
+    } catch (err) {
+      setError("Failed to update profile.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // ===================== HANDLE INPUT CHANGE ==========================
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
 
   return (
     <HOAHeaderNavbar>
@@ -40,87 +106,138 @@ const Profile = () => {
           backgroundImage: "url('/Society.jpg')",
           backgroundSize: "cover",
           backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/10 dark:bg-black/50 " />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/60" />
 
-        <main className="relative z-10 p-5 flex flex-col items-center w-full">
+        <main className="relative z-10 p-10 flex flex-col items-center w-full">
           <section
-            className="
-              w-full max-w-5xl
-              bg-emerald-100/50 dark:bg-emerald-900/70 backdrop-blur-xl
-              rounded-2xl shadow-2xl p-8 mt-10
-            "
+            className="w-full max-w-4xl bg-emerald-100/40 dark:bg-emerald-900/70 dark:bg-gray-900/70
+            backdrop-blur-xl rounded-2xl shadow-2xl p-10 mt-10"
           >
-            <h2 className="text-4xl font-extrabold mb-10 text-emerald-900 dark:text-emerald-100 text-center">
-              Profile Details
+            {/* Heading */}
+            <h2 className="text-4xl font-extrabold mb-10 text-center text-emerald-900 dark:text-emerald-200 drop-shadow">
+              My Profile
             </h2>
 
+            {/* Status Messages */}
             {loading && (
-              <div className="text-center pb-3 font-semibold text-lg text-emerald-700 dark:text-emerald-200">
+              <p className="text-center text-lg text-emerald-600 pb-4">
                 Loading profile...
-              </div>
+              </p>
             )}
 
-            {error && !loading && (
-              <div className="text-center pb-3 font-semibold text-lg text-red-600">
-                {error}
-              </div>
+            {error && (
+              <p className="text-center text-lg text-red-600 pb-4">{error}</p>
             )}
 
-            {!loading && !error && profile && (
+            {success && (
+              <p className="text-center text-lg text-green-600 pb-4">
+                {success}
+              </p>
+            )}
+
+            {/* PROFILE INFO */}
+            {!loading && profile && (
               <>
-                {/* ==== Profile Card Upper section ===== */}
-                <div className="flex items-center gap-6 bg-white/60 dark:bg-emerald-800/50 p-6 rounded-xl shadow-md mb-10">
+                {/* Avatar + Basic Info */}
+                <div className="flex items-center gap-6 bg-white/70 dark:bg-emerald-800/40 p-6 rounded-xl shadow-xl mb-10">
                   <img
-                    src="/avatar.png"
-                    alt="Profile"
-                    className="w-24 h-24 rounded-full object-cover border-4 border-emerald-600"
+                    src={avatarUrl}
+                    alt="Profile Avatar"
+                    className="w-20 h-20 rounded-full border-4 border-emerald-600 shadow-lg bg-white"
                   />
+
                   <div>
-                    <h3 className="text-2xl font-bold text-emerald-900 dark:text-white">
+                    <h3 className="text-3xl font-bold text-emerald-900 dark:text-white capitalize">
                       {profile.name}
                     </h3>
-                    <p className="text-lg text-emerald-700 dark:text-emerald-200 capitalize">
-                      {profile.role || "Resident"}
-                    </p>
-                    <p className="text-sm text-gray-700 dark:text-gray-300">
-                      Joined:{" "}
-                      {profile.createdAt
-                        ? new Date(profile.createdAt).toLocaleDateString()
-                        : "-"}
-                    </p>
-                  </div>
-                </div>
 
-                {/* ========= Personal Information Card ========= */}
-                <div className="bg-white/60 dark:bg-emerald-800/50 rounded-xl shadow-lg p-6 mb-8">
-                  <h3 className="text-xl font-bold mb-5 text-emerald-900 dark:text-white">
-                    Personal Information
-                  </h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-lg">
-                    <p>
-                      <span className="font-semibold">Full Name: </span>
-                      {profile.name}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Email: </span>
-                      {profile.email}
-                    </p>
-                    <p>
-                      <span className="font-semibold">Role: </span>
+                    <p className="text-lg text-emerald-700 dark:text-emerald-200 capitalize">
                       {profile.role}
                     </p>
+
+                    <p className="text-sm text-gray-700 dark:text-gray-300">
+                      Joined: {new Date(profile.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
                 </div>
-              </>
-            )}
 
-            {!loading && !error && !profile && (
-              <div className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl">
-                No profile details found.
-              </div>
+                {/* PROFILE UPDATE FORM */}
+                <form
+                  onSubmit={handleUpdate}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-6 bg-white/70 dark:bg-emerald-800/40 p-6 rounded-xl shadow-xl"
+                >
+                  {/* NAME */}
+                  <div>
+                    <label className="font-semibold text-gray-900 dark:text-gray-200">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      className="w-full mt-2 p-3 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+
+                  {/* EMAIL */}
+                  <div>
+                    <label className="font-semibold text-gray-900 dark:text-gray-200">
+                      Email
+                    </label>
+                    <input
+                      type="email"
+                      name="email"
+                      value={form.email}
+                      onChange={handleChange}
+                      className="w-full mt-2 p-3 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+
+                  {/* PHONE */}
+                  <div>
+                    <label className="font-semibold text-gray-900 dark:text-gray-200">
+                      Phone Number
+                    </label>
+                    <input
+                      type="text"
+                      name="phoneNo"
+                      value={form.phoneNo}
+                      onChange={handleChange}
+                      className="w-full mt-2 p-3 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+
+                  {/* HOUSE NUMBER */}
+                  <div>
+                    <label className="font-semibold text-gray-900 dark:text-gray-200">
+                      House Number
+                    </label>
+                    <input
+                      type="text"
+                      name="houseNumber"
+                      value={form.houseNumber}
+                      onChange={handleChange}
+                      className="w-full mt-2 p-3 rounded-lg bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600"
+                    />
+                  </div>
+
+                  {/* SAVE BUTTON */}
+                  <div className="md:col-span-2 flex justify-center mt-4">
+                    <button
+                      disabled={saving}
+                      className="px-10 py-3 rounded-xl text-white bg-emerald-700 
+                      hover:bg-emerald-800 dark:bg-emerald-600 
+                      dark:hover:bg-emerald-500 transition shadow-md 
+                      text-lg font-semibold"
+                    >
+                      {saving ? "Saving..." : "Save Changes"}
+                    </button>
+                  </div>
+                </form>
+              </>
             )}
           </section>
         </main>
