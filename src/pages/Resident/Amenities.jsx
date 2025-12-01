@@ -6,6 +6,7 @@ import HOAHeaderNavbar from "./HOAHeaderNavbar";
 const Amenities = () => {
   const navigate = useNavigate();
   const [amenities, setAmenities] = useState([]);
+  const [myBookings, setMyBookings] = useState([]); // <-- ADDED
   const [selectedAmenity, setSelectedAmenity] = useState(null);
   const [bookingDate, setBookingDate] = useState("");
   const [error, setError] = useState("");
@@ -29,6 +30,21 @@ const Amenities = () => {
       .catch(() => setError("Failed to load amenities"))
       .finally(() => setLoading(false));
   }, [navigate, success]);
+
+  // 🔥 NEW USE EFFECT TO LOAD USER BOOKINGS
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    axios
+      .get("http://localhost:5000/resident/getmybookamenity", {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      .then((res) => {
+        setMyBookings(res.data.booking || []);
+      })
+      .catch(() => console.log("Failed to load my bookings"));
+  }, [success]);
 
   const handleBookAmenity = async () => {
     if (!selectedAmenity) return;
@@ -140,6 +156,46 @@ const Amenities = () => {
                           {a.maintenanceStatus === "available" ? "Book" : "Unavailable"}
                         </button>
                       </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          {/* ★★★★★ NEW SECTION: SHOW MY BOOKINGS TABLE ★★★★★ */}
+          <section className="w-full mx-auto bg-white/70 dark:bg-emerald-900/70 backdrop-blur-lg rounded-2xl shadow-xl p-8 mb-10">
+            <h3 className="text-3xl font-bold text-center text-emerald-900 dark:text-emerald-100 mb-5">
+              My Booked Amenities
+            </h3>
+
+            <div className="w-full overflow-x-auto">
+              <table className="min-w-full bg-white/60 dark:bg-emerald-950/40 rounded-xl shadow-md">
+                <thead>
+                  <tr className="bg-gray-800 text-white text-lg">
+                    <th className="p-4 text-left">Amenity</th>
+                    <th className="p-4 text-left">Description</th>
+                    <th className="p-4 text-left">Booking Date</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {myBookings.length === 0 && (
+                    <tr>
+                      <td colSpan={3} className="text-center py-6 italic font-semibold">
+                        No booked amenities found.
+                      </td>
+                    </tr>
+                  )}
+
+                  {myBookings.map((b, i) => (
+                    <tr
+                      key={b._id}
+                      className={`${i % 2 === 0 ? "bg-white/70 dark:bg-emerald-900/40" : "bg-emerald-100/70 dark:bg-emerald-900/60"}`}
+                    >
+                      <td className="px-4 py-3 font-medium">{b.amenity?.name}</td>
+                      <td className="px-4 py-3">{b.amenity?.description}</td>
+                      <td className="px-4 py-3">{b.bookingDate?.substring(0, 10)}</td>
                     </tr>
                   ))}
                 </tbody>
