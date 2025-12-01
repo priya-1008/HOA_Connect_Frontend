@@ -158,10 +158,10 @@ const Notifications = () => {
               <table className="min-w-full rounded-xl shadow-md overflow-hidden">
                 <thead>
                   <tr className="bg-gray-800/80 dark:bg-gray-800/80 text-white text-xl">
-                    <th className="p-5 font-semibold">Title</th>
-                    <th className="p-5 font-semibold">Message</th>
-                    <th className="p-5 font-semibold">Created By</th>
-                    <th className="p-5 font-semibold">Date & Time</th>
+                    <th className="p-4 y-3 text-left font-semibold">Title</th>
+                    <th className="p-4 y-3 text-left font-semibold">Message</th>
+                    <th className="p-4 y-3 text-left font-semibold">Created By</th>
+                    <th className="p-4 y-3 text-left font-semibold">Date & Time</th>
                   </tr>
                 </thead>
                 <tbody>

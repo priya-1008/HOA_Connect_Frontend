@@ -8,7 +8,6 @@ import Login from './pages/Login';
 import Dashboard from './pages/superadmin/Dashboard';
 import ManageCommunities from './pages/superadmin/ManageCommunities';
 import ManageAmenities from './pages/superadmin/ManageAmenities';
-import PaymentsReport from './pages/superadmin/PaymentsReport';
 import SystemNotification from './pages/superadmin/Notifications';
 
 
@@ -63,14 +62,6 @@ const AppRoutes = () => (
       element={
         <PrivateRoute>
           <ManageAmenities />
-        </PrivateRoute>
-      }
-    />
-    <Route
-      path="/payments"
-      element={
-        <PrivateRoute>
-          <PaymentsReport />
         </PrivateRoute>
       }
     />

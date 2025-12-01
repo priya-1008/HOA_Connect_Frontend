@@ -54,7 +54,7 @@ const Dashboard = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-white/0 dark:bg-gray-700/85 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-gray-700/85 pointer-events-none" />
 
         <main className="relative z-10">
           <div className="h-56 flex items-center text-white relative">
