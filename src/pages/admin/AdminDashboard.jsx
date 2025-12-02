@@ -26,7 +26,7 @@ const StatCard = ({ title, value, color, icon: Icon }) => (
 const Dashboard = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
-    communities: 0,
+    notifications: 0,
     residents: 0,
     hoaAdmins: 0,
     complaints: 0,
@@ -70,10 +70,10 @@ const Dashboard = () => {
           </div>
           <section className="p-10 grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6 -mt-10 z-20 relative">
             <StatCard
-              title="Total Communities"
-              value={data.communities}
+              title="Total Notifications"
+              value={data.notifications}
               color="text-blue-600"
-              icon={BuildingOffice2Icon}
+              icon={BellIcon}
             />
             <StatCard
               title="Total Residents"
@@ -106,16 +106,7 @@ const Dashboard = () => {
               icon={CurrencyDollarIcon}
             />
           </section>
-          <section className="px-8 pb-12">
-            <div className="bg-white/60 border border-gray-200 shadow-md rounded-2xl p-5">
-              <h2 className="text-4xl font-bold mb-4 flex items-center justify-center">
-                Global Analytics Overview
-              </h2>
-              <div className="h-40 border-2 font-semibold border-dashed border-gray-400 rounded-xl flex items-center justify-center text-gray-900 italic">
-                [Chart.js / Recharts Placeholder]
-              </div>
-            </div>
-          </section>
+          
         </main>
       </div>
     </HOAHeaderNavbar>
