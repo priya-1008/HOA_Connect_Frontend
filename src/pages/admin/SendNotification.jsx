@@ -32,38 +32,6 @@ const Notifications = () => {
       .finally(() => setLoading(false));
   }, [navigate, success]);
 
-  // Handle Input Change
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    setError("");
-    setSuccess("");
-  };
-
-  // Submit Notification
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const token = localStorage.getItem("token");
-
-    setLoading(true);
-    try {
-      await axios.post(
-        "http://localhost:5000/hoaadmin/sendnotification",
-        {
-          title: form.title,
-          message: form.message,
-        },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-
-      setSuccess("Notification sent successfully!");
-      setForm({ title: "", message: "" });
-    } catch (err) {
-      setError(err?.response?.data?.message || "Could not send notification.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <HOAHeaderNavbar>
       <div
@@ -97,44 +65,6 @@ const Notifications = () => {
                 {error || success}
               </div>
             )}
-
-            {/* FORM */}
-            <form onSubmit={handleSubmit} className="mb-8 w-full">
-              <div className="flex flex-col md:flex-row gap-4 w-full">
-                <input
-                  type="text"
-                  name="title"
-                  maxLength={80}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg font-semibold bg-white dark:bg-emerald-950/40 dark:text-emerald-100 shadow"
-                  placeholder="Notification Title"
-                  onChange={handleChange}
-                  value={form.title}
-                />
-
-                <input
-                  type="text"
-                  name="message"
-                  maxLength={300}
-                  required
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/40 dark:text-emerald-100 shadow"
-                  placeholder="Notification Message"
-                  onChange={handleChange}
-                  value={form.message}
-                />
-              </div>
-
-              {/* SUBMIT BUTTON */}
-              <div className="flex justify-center mt-6">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="text-xl py-3 px-6 bg-teal-700 hover:bg-teal-800 text-white rounded-lg font-bold transition disabled:opacity-70"
-                >
-                  {loading ? "Sending..." : "SEND NOTIFICATION"}
-                </button>
-              </div>
-            </form>
 
             {/* NOTIFICATIONS TABLE */}
             <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">

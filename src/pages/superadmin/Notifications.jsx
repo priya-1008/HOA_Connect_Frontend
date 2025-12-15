@@ -87,7 +87,7 @@ const SystemNotification = () => {
       const body = {
         title,
         message,
-        community: selectedCommunity || null,
+        communityId: selectedCommunity || null,
       };
 
       await api.post(
