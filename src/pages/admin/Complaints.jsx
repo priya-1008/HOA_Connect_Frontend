@@ -120,6 +120,9 @@ const Complaints = () => {
                     <th className="p-4 font-bold text-left w-5/12">
                       Description
                     </th>
+                    <th className="p-4 font-bold text-center w-2/12">
+                      Raised By
+                    </th>
                     <th className="p-4 font-bold text-center w-2/12">Status</th>
                     <th className="p-4 font-bold text-center w-3/12">Date</th>
                   </tr>
@@ -153,9 +156,14 @@ const Complaints = () => {
                             : "bg-emerald-100/50 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="px-4 py-3 font-medium text-left">{c.subject}</td>
+                        <td className="px-4 py-3 font-medium text-left">
+                          {c.subject}
+                        </td>
                         <td className="px-4 py-3 font-medium break-words">
                           {c.description}
+                        </td>
+                        <td className="px-4 py-3 font-medium break-words">
+                          {c.user?.name || "N/A"}
                         </td>
                         <td className="px-4 py-3 font-medium text-left">
                           <select
@@ -166,7 +174,8 @@ const Complaints = () => {
                             disabled={updatingId === c._id}
                             className="w-full max-w-xs bg-white dark:bg-emerald-950/40 px-4 py-3 font-medium
                               border border-gray-300 dark:border-gray-60 rounded-lg px-3 py-2 text-sm md:text-base
-                              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer" >
+                              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer"
+                          >
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Resolved">Resolved</option>
