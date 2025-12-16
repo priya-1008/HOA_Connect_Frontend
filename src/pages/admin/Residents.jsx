@@ -66,11 +66,11 @@ const Residents = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/hoaadmin/sendnotification",
+        "http://localhost:5000/hoaadmin/createnotification",
         {
           title: form.title,
           message: form.message,
-          residents: selectedResidents,
+          recipients: selectedResidents,
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
