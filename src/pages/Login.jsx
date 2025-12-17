@@ -5,15 +5,23 @@ import { AuthContext } from "../context/AuthContext";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  const [showForgot, setShowForgot] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  /* ================= LOGIN ================= */
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    setSuccess("");
 
     try {
       const res = await fetch("http://localhost:5000/auth/login", {
@@ -29,22 +37,46 @@ const Login = () => {
         localStorage.setItem("role", data.role);
         setUser({ token: data.token, role: data.role });
 
-        // Role-based navigation
-        if (data.role === "superadmin") {
-          navigate("/dashboard");
-        } else if (data.role === "admin") {
-          navigate("/admin-dashboard");
-        } else if (data.role === "resident") {
-          navigate("/resident-dashboard");
-        } else {
-          setError("Unknown role!");
-        }
+        if (data.role === "superadmin") navigate("/dashboard");
+        else if (data.role === "admin") navigate("/admin-dashboard");
+        else if (data.role === "resident") navigate("/resident-dashboard");
       } else {
         setError(data.message || "Invalid email or password");
       }
-    } catch (err) {
-      console.error(err);
+    } catch {
       setError("Server error! Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= FORGOT PASSWORD ================= */
+  const handleForgotPassword = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        "http://localhost:5000/auth/forgot-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: forgotEmail }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setSuccess("Password reset link sent to your email.");
+        setForgotEmail("");
+      } else {
+        setError(data.message || "Email not found");
+      }
+    } catch {
+      setError("Failed to send reset email.");
     } finally {
       setLoading(false);
     }
@@ -52,74 +84,112 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center">
-      {/* Full-page Background Image */}
       <img
-        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
-        alt="Homeowner Association"
-        className="absolute inset-0 w-full h-screen object-cover z-0"
+        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+        alt="HOA"
+        className="absolute inset-0 w-full h-full object-cover"
       />
-      {/* Overlay */}
-      <div className="absolute inset-0 w-full h-screen bg-blue-900 bg-opacity-50 z-10"></div>
-      {/* Sign In Card */}
-      <div className="relative z-20 w-full max-w-xl min-h-[600px] mx-auto bg-white rounded-2xl shadow-xl p-12 border border-gray-100 flex flex-col justify-center">
-        <h1 className="text-4xl font-bold text-center text-gray-400 mb-8">
+      <div className="absolute inset-0 bg-blue-900/50"></div>
+
+      <div className="relative z-10 w-full max-w-xl bg-white rounded-2xl shadow-xl p-12">
+        <h1 className="text-4xl font-bold text-center text-teal-700 mb-6">
           HOA CONNECT SYSTEM
         </h1>
-        <h2 className="text-4xl font-bold text-center text-teal-700 mb-8">
-          Sign In 
-        </h2>
 
+        {/* ERROR / SUCCESS */}
         {error && (
-          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-2 mb-4 rounded-lg text-md text-center">
+          <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
             {error}
           </div>
         )}
-
-        <form onSubmit={handleLogin} className="space-y-7">
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
-            <input
-              type="email"
-              placeholder="admin@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none text-lg"
-              required
-            />
+        {success && (
+          <div className="bg-green-100 text-green-700 p-3 rounded mb-4 text-center">
+            {success}
           </div>
+        )}
 
-          <div>
-            <label className="block text-lg font-medium text-gray-700 mb-2">
-              Password
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-600 focus:outline-none text-lg"
-              required
-            />
-          </div>
+        {/* ================= LOGIN FORM ================= */}
+        {!showForgot && (
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div>
+              <label className="block text-lg font-medium mb-2">
+                Email Address
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+            </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-teal-700 text-white py-3 rounded-lg font-semibold hover:bg-teal-800 transition duration-300 shadow-md text-lg"
-          >
-            {loading ? "Signing in..." : "Login"}
-          </button>
-        </form>
+            <div>
+              <label className="block text-lg font-medium mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+            </div>
 
-        <p className="text-md text-center text-gray-500 mt-8">
-          Don’t have an account?{" "}
-          <button
-            onClick={() => navigate("/")}
-            className="text-blue-600 font-bold hover:underline"
-          >Register Here </button>
-        </p>
+            <div className="text-right">
+              <button
+                type="button"
+                onClick={() => setShowForgot(true)}
+                className="text-blue-600 font-semibold hover:underline"
+              >
+                Forgot Password?
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-teal-700 text-white py-3 rounded-lg font-bold"
+            >
+              {loading ? "Signing in..." : "Login"}
+            </button>
+          </form>
+        )}
+
+        {/* ================= FORGOT PASSWORD FORM ================= */}
+        {showForgot && (
+          <form onSubmit={handleForgotPassword} className="space-y-6">
+            <div>
+              <label className="block text-lg font-medium mb-2">
+                Enter your registered email
+              </label>
+              <input
+                type="email"
+                value={forgotEmail}
+                onChange={(e) => setForgotEmail(e.target.value)}
+                required
+                className="w-full px-4 py-3 border rounded-lg"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-700 text-white py-3 rounded-lg font-bold"
+            >
+              {loading ? "Sending..." : "Send Reset Link"}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setShowForgot(false)}
+              className="w-full text-gray-600 font-semibold hover:underline"
+            >
+              Back to Login
+            </button>
+          </form>
+        )}
       </div>
     </div>
   );
