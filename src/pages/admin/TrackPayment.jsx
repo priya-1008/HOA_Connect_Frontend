@@ -98,42 +98,42 @@ const Payments = () => {
             <div className="w-full mb-8 flex flex-wrap justify-center gap-4">
               {/* Resident Name */}
               <div className="flex flex-col">
-                <label className="text-emerald-900 dark:text-emerald-100 text-sm font-bold mb-1 ml-1">Resident Name</label>
+                <label className="text-emerald-900 dark:text-emerald-100 text-xl text-black font-bold mb-1 ml-1">Resident Name</label>
                 <input
                   type="text"
                   placeholder="Search Name..."
                   value={searchName}
                   onChange={(e) => setSearchName(e.target.value)}
-                  className="w-full md:w-64 py-2 px-4 rounded-lg border border-gray-300 shadow bg-white dark:bg-emerald-950/40 dark:text-emerald-100 focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full md:w-64 py-3 px-4 rounded-lg border border-gray-300 shadow bg-white dark:bg-emerald-950/40 dark:text-emerald-100 focus:ring-2 focus:ring-emerald-500 outline-none"
                 />
               </div>
 
               {/* From Date */}
               <div className="flex flex-col">
-                <label className="text-emerald-900 dark:text-emerald-100 text-sm font-bold mb-1 ml-1">From Date</label>
+                <label className="text-emerald-900 dark:text-emerald-100 text-xl font-bold mb-1 ml-1">From Date</label>
                 <input
                   type="date"
                   value={fromDate}
                   onChange={(e) => setFromDate(e.target.value)}
-                  className="w-full md:w-48 py-2 px-4 rounded-lg border border-gray-300 shadow bg-white dark:bg-emerald-950/40 dark:text-emerald-100 focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full md:w-48 text-black py-3 px-4 rounded-lg border border-gray-300 shadow bg-white dark:bg-emerald-950/40 dark:text-emerald-100 focus:ring-2 focus:ring-emerald-500 outline-none"
                 />
               </div>
 
               {/* To Date */}
               <div className="flex flex-col">
-                <label className="text-emerald-900 dark:text-emerald-100 text-sm font-bold mb-1 ml-1">To Date</label>
+                <label className="text-emerald-900 dark:text-emerald-100 text-xl font-bold mb-1 ml-1">To Date</label>
                 <input
                   type="date"
                   value={toDate}
                   onChange={(e) => setToDate(e.target.value)}
-                  className="w-full md:w-48 py-2 px-4 rounded-lg border border-gray-300 shadow bg-white dark:bg-emerald-950/40 dark:text-emerald-100 focus:ring-2 focus:ring-emerald-500 outline-none"
+                  className="w-full md:w-48 py-3 px-4 text-black rounded-lg border border-gray-300 shadow bg-white dark:bg-emerald-950/40 dark:text-emerald-100 focus:ring-2 focus:ring-emerald-500 outline-none"
                 />
               </div>
 
               {/* Reset Button */}
               <button 
                 onClick={() => { setSearchName(""); setFromDate(""); setToDate(""); }}
-                className="mt-6 px-4 py-2 bg-teal-800 hover:bg-teal-900 text-white rounded-lg font-bold shadow-md self-center transition-all"
+                className="mt-6 px-4 py-3 bg-teal-800 hover:bg-teal-900 text-white rounded-lg font-bold shadow-md self-center transition-all"
               >
                 Reset
               </button>
@@ -159,7 +159,7 @@ const Payments = () => {
                     </tr>
                   ) : filteredPayments.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl">
+                      <td colSpan={5} className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-black text-xl">
                         No payments found for this selection.
                       </td>
                     </tr>
@@ -173,11 +173,11 @@ const Payments = () => {
                             : "bg-emerald-100/50 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="px-4 py-3 font-medium">{payment.user?.name}</td>
-                        <td className="px-4 py-3">{payment.user?.email}</td>
-                        <td className="px-4 py-3">{payment.billType}</td>
-                        <td className="px-4 py-3 font-semibold text-emerald-700 dark:text-emerald-300">₹{payment.amount}</td>
-                        <td className="px-4 py-3 font-semibold text-center">{formatDate(payment.transactionDate)}</td>
+                        <td className="px-4 py-3 text-black font-medium">{payment.user?.name}</td>
+                        <td className="px-4 py-3 text-black">{payment.user?.email}</td>
+                        <td className="px-4 py-3 text-black">{payment.billType}</td>
+                        <td className="px-4 py-3 text-black font-semibold text-emerald-700 dark:text-emerald-300">₹{payment.amount}</td>
+                        <td className="px-4 py-3 font-semibold text-black text-center">{formatDate(payment.transactionDate)}</td>
                       </tr>
                     ))
                   )}

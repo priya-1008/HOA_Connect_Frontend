@@ -196,14 +196,14 @@ const Complaints = () => {
                             : "bg-emerald-100/60 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="px-4 py-3 font-medium">{c.subject}</td>
-                        <td className="px-4 py-3 font-medium">
+                        <td className="px-4 py-3 text-black font-medium">{c.subject}</td>
+                        <td className="px-4 py-3 text-black font-medium">
                           {c.description}
                         </td>
-                        <td className="px-4 py-3 font-medium">
+                        <td className="px-4 py-3 text-black font-medium">
                           {c.status || "Pending"}
                         </td>
-                        <td className="px-4 py-3 font-medium">
+                        <td className="px-4 py-3 text-black font-medium">
                           {formatDateTime(c.createdAt)}
                         </td>
                       </tr>

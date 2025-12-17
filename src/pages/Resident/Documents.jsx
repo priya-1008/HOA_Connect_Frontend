@@ -154,8 +154,8 @@ const Documents = () => {
                             : "bg-emerald-100/70 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70 transition-colors`}
                       >
-                        <td className="text-center px-4 py-3 font-medium">{doc.title}</td>
-                        <td className="text-center px-4 py-3 font-medium">
+                        <td className="text-center px-4 py-3 text-black font-medium">{doc.title}</td>
+                        <td className="text-center px-4 py-3 text-black font-medium">
                           {doc.description}
                         </td>
                         <td className="px-4 py-3 text-center">

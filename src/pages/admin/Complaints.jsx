@@ -163,7 +163,7 @@ const Complaints = () => {
                   <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-base md:text-lg">
                     <th className="p-4 font-bold text-left w-2/12">Subject</th>
                     <th className="p-4 font-bold text-left w-4/12">Description</th>
-                    <th className="p-4 font-bold text-center w-2/12">Raised By</th>
+                    <th className="p-4 font-bold text-left w-2/12">Raised By</th>
                     <th className="p-4 font-bold text-center w-2/12">Status</th>
                     <th className="p-4 font-bold text-center w-2/12">Date</th>
                   </tr>
@@ -191,22 +191,22 @@ const Complaints = () => {
                             : "bg-emerald-100/50 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="px-4 py-3 font-medium text-left">{c.subject}</td>
-                        <td className="px-4 py-3 font-medium break-words">{c.description}</td>
-                        <td className="px-4 py-3 font-medium text-center">{c.user?.name}</td>
-                        <td className="px-4 py-3 font-medium text-center">
+                        <td className="px-4 py-3 font-medium text-black  text-left">{c.subject}</td>
+                        <td className="px-4 py-3 font-medium text-black break-words">{c.description}</td>
+                        <td className="px-4 py-3 font-medium text-black text-left">{c.user?.name}</td>
+                        <td className="px-4 py-3 font-mediumtext-black text-center">
                           <select
                             value={c.status || "Pending"}
                             onChange={(e) => handleStatusChange(c._id, e.target.value)}
                             disabled={updatingId === c._id}
-                            className="w-full bg-white dark:bg-emerald-950/40 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
+                            className="w-full bg-white dark:bg-emerald-950/40 text-black border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                           >
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Resolved">Resolved</option>
                           </select>
                         </td>
-                        <td className="p-4 py-3 font-medium text-center">
+                        <td className="p-4 py-3 text-black font-medium text-center">
                           {c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ""}
                         </td>
                       </tr>

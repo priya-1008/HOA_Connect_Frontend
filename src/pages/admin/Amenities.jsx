@@ -170,7 +170,7 @@ const Amenities = () => {
                     <tr>
                       <td
                         colSpan={4}
-                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
+                        className="text-center text-black font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
                       >
                         No amenities found.
                       </td>
@@ -185,21 +185,21 @@ const Amenities = () => {
                             : "bg-emerald-100 dark:bg-emerald-900/60"
                         }`}
                       >
-                        <td className="px-4 py-3 font-medium break-words">
+                        <td className="px-4 py-3 text-black font-medium break-words">
                           {a.name}
                         </td>
 
-                        <td className="px-4 py-3 font-medium break-words whitespace-pre-wrap">
+                        <td className="px-4 py-3 font-medium text-black break-words whitespace-pre-wrap">
                           {a.description}
                         </td>
 
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 text-black">
                           <select
                             value={a.maintenanceStatus}
                             onChange={(e) =>
                               handleChange(a._id, e.target.value)
                             }
-                            className="p-2 border rounded-lg w-full"
+                            className="p-2 border text-black rounded-lg w-full"
                           >
                             <option value="">Select Maintenance Status</option>
                             <option value="available">Available</option>

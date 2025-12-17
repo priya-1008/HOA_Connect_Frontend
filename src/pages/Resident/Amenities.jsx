@@ -147,13 +147,13 @@ const Amenities = () => {
                           : "bg-emerald-100/70 dark:bg-emerald-900/60"
                       } hover:bg-emerald-200/60`}
                     >
-                      <td className="px-4 py-3 font-medium">{a.name}</td>
-                      <td className="px-4 py-3 font-medium">{a.description}</td>
-                      <td className="px-4 py-3 font-medium capitalize">
+                      <td className="px-4 py-3 text-black font-medium">{a.name}</td>
+                      <td className="px-4 py-3 text-black font-medium">{a.description}</td>
+                      <td className="px-4 py-3 text-black font-medium capitalize">
                         {a.maintenanceStatus || "available"}
                       </td>
 
-                      <td className="px-4 py-3 text-center">
+                      <td className="px-4 py-3 text-black text-center">
                         <button
                           onClick={() => {
                             setSelectedAmenity(a);
@@ -200,7 +200,7 @@ const Amenities = () => {
                     <tr>
                       <td
                         colSpan={3}
-                        className="text-center py-6 italic font-semibold"
+                        className="text-center py-6 italic text-black font-semibold"
                       >
                         No booked amenities found.
                       </td>
@@ -216,11 +216,11 @@ const Amenities = () => {
                           : "bg-emerald-100/70 dark:bg-emerald-900/60"
                       }`}
                     >
-                      <td className="px-4 py-3 font-medium">
+                      <td className="px-4 py-3 text-black font-medium">
                         {b.amenity?.name}
                       </td>
-                      <td className="px-4 py-3">{b.amenity?.description}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 text-black font-medium">{b.amenity?.description}</td>
+                      <td className="px-4 py-3 text-black font-medium">
                         {b.bookingDate?.substring(0, 10)}
                       </td>
                     </tr>
