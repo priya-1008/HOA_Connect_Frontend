@@ -131,6 +131,21 @@ const ResidentPayment = () => {
       alert("Failed to download receipt");
     }
   };
+   
+  const cancelPayemnt = async () =>{
+    try{
+      await axios.put(
+      "http://localhost:5000/resident/payment/${transaction.paymentId}/cancel",
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    setShowGateway(false);
+    setSuccess("Payment cancelled");
+    fetchPayments();
+  } catch {
+    setError("Failed to cancel payment");
+  }
+  };
 
   if (loading) return <h2 className="text-center mt-20">Loading...</h2>;
 

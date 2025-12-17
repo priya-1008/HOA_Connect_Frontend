@@ -6,10 +6,15 @@ import HOAHeaderNavbar from "./HOAHeaderNavbar";
 const Complaints = () => {
   const navigate = useNavigate();
   const [complaints, setComplaints] = useState([]);
+  const [filteredComplaints, setFilteredComplaints] = useState([]); // State for filtered results
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
+
+  // Search States
+  const [searchStatus, setSearchStatus] = useState("");
+  const [searchName, setSearchName] = useState("");
 
   const token = localStorage.getItem("token");
 
@@ -26,7 +31,9 @@ const Complaints = () => {
         "http://localhost:5000/hoaadmin/getcomplaints",
         authConfig
       );
-      setComplaints(Array.isArray(res.data) ? res.data : []);
+      const data = Array.isArray(res.data) ? res.data : [];
+      setComplaints(data);
+      setFilteredComplaints(data); // Initialize filtered data
     } catch (err) {
       console.error(err);
       setError("Could not load complaints.");
@@ -43,6 +50,23 @@ const Complaints = () => {
     }
     fetchComplaints();
   }, [token, navigate, fetchComplaints]);
+
+  // 🔍 Real-time Search Logic
+  useEffect(() => {
+    let results = complaints;
+
+    if (searchStatus) {
+      results = results.filter((c) => c.status === searchStatus);
+    }
+
+    if (searchName) {
+      results = results.filter((c) =>
+        c.user?.name?.toLowerCase().includes(searchName.toLowerCase())
+      );
+    }
+
+    setFilteredComplaints(results);
+  }, [searchStatus, searchName, complaints]);
 
   const handleStatusChange = async (complaintId, newStatus) => {
     if (!token) return navigate("/login");
@@ -111,43 +135,54 @@ const Complaints = () => {
               </div>
             )}
 
+            {/* 🔍 SEARCH INPUTS */}
+            <div className="flex flex-col md:flex-row gap-4 mb-6 justify-center">
+              <input
+                type="text"
+                placeholder="Search by Resident Name..."
+                className="w-full md:w-80 bg-white dark:bg-emerald-950/40 px-4 py-3 font-medium border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 text-emerald-900 dark:text-emerald-100"
+                value={searchName}
+                onChange={(e) => setSearchName(e.target.value)}
+              />
+              <select
+                className="w-full md:w-64 bg-white dark:bg-emerald-950/40 px-4 py-3 font-medium border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-emerald-500 text-emerald-900 dark:text-emerald-100 cursor-pointer"
+                value={searchStatus}
+                onChange={(e) => setSearchStatus(e.target.value)}
+              >
+                <option value="">All Statuses</option>
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Resolved">Resolved</option>
+              </select>
+            </div>
+
             {/* TABLE */}
             <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200/70 dark:border-gray-700/70">
               <table className="min-w-full text-sm md:text-base table-fixed">
                 <thead>
                   <tr className="bg-gray-800/90 dark:bg-gray-900 text-white text-base md:text-lg">
                     <th className="p-4 font-bold text-left w-2/12">Subject</th>
-                    <th className="p-4 font-bold text-left w-5/12">
-                      Description
-                    </th>
-                    <th className="p-4 font-bold text-center w-2/12">
-                      Raised By
-                    </th>
+                    <th className="p-4 font-bold text-left w-4/12">Description</th>
+                    <th className="p-4 font-bold text-center w-2/12">Raised By</th>
                     <th className="p-4 font-bold text-center w-2/12">Status</th>
-                    <th className="p-4 font-bold text-center w-3/12">Date</th>
+                    <th className="p-4 font-bold text-center w-2/12">Date</th>
                   </tr>
                 </thead>
                 <tbody className="align-top">
                   {loading ? (
                     <tr>
-                      <td
-                        colSpan={4}
-                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
-                      >
+                      <td colSpan={5} className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl">
                         Loading...
                       </td>
                     </tr>
-                  ) : complaints.length === 0 ? (
+                  ) : filteredComplaints.length === 0 ? (
                     <tr>
-                      <td
-                        colSpan={4}
-                        className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
-                      >
+                      <td colSpan={5} className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl">
                         No complaints found.
                       </td>
                     </tr>
                   ) : (
-                    complaints.map((c, index) => (
+                    filteredComplaints.map((c, index) => (
                       <tr
                         key={c._id}
                         className={`text-sm md:text-base transition-colors ${
@@ -156,36 +191,23 @@ const Complaints = () => {
                             : "bg-emerald-100/50 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="px-4 py-3 font-medium text-left">
-                          {c.subject}
-                        </td>
-                        <td className="px-4 py-3 font-medium break-words">
-                          {c.description}
-                        </td>
-                        <td className="px-4 py-3 font-medium break-words">
-                          {c.user?.name}
-                        </td>
-                        <td className="px-4 py-3 font-medium text-left">
+                        <td className="px-4 py-3 font-medium text-left">{c.subject}</td>
+                        <td className="px-4 py-3 font-medium break-words">{c.description}</td>
+                        <td className="px-4 py-3 font-medium text-center">{c.user?.name}</td>
+                        <td className="px-4 py-3 font-medium text-center">
                           <select
                             value={c.status || "Pending"}
-                            onChange={(e) =>
-                              handleStatusChange(c._id, e.target.value)
-                            }
+                            onChange={(e) => handleStatusChange(c._id, e.target.value)}
                             disabled={updatingId === c._id}
-                            className="w-full max-w-xs bg-white dark:bg-emerald-950/40 px-4 py-3 font-medium
-                              border border-gray-300 dark:border-gray-60 rounded-lg px-3 py-2 text-sm md:text-base
-                              focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 cursor-pointer"
+                            className="w-full bg-white dark:bg-emerald-950/40 border border-gray-300 dark:border-gray-600 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer"
                           >
                             <option value="Pending">Pending</option>
                             <option value="In Progress">In Progress</option>
                             <option value="Resolved">Resolved</option>
                           </select>
                         </td>
-
-                        <td className="p-4 y-3 font-medium text-center">
-                          {c.createdAt
-                            ? new Date(c.createdAt).toLocaleString()
-                            : ""}
+                        <td className="p-4 py-3 font-medium text-center">
+                          {c.createdAt ? new Date(c.createdAt).toLocaleDateString() : ""}
                         </td>
                       </tr>
                     ))
