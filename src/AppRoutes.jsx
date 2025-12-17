@@ -35,12 +35,14 @@ import ResidentRegister from "./pages/Resident/Register";
 import AttendMeetings from "./pages/Resident/Meetings";
 import Profile from "./pages/Resident/Profile";
 import Register from "./pages/Resident/Register";
+import ChangePaasword from "./pages/ChangePassword";
 
 const AppRoutes = () => (
   <Routes>
     {/* Public Route */}
     <Route path="/" element={<Register />} />
-    <Route path="/login" element={ <Login /> } />
+    <Route path="/login" element={<Login />} />
+    <Route path="/forgot-password" element={<ChangePaasword />} />
 
     {/* Private Routes */}
     <Route

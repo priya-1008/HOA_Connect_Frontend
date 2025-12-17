@@ -1,27 +1,22 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { Eye, EyeOff } from "lucide-react"; // 👁️ icon
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [showPassword, setShowPassword] = useState(false); // 👁️ toggle
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const [showForgot, setShowForgot] = useState(false);
-  const [forgotEmail, setForgotEmail] = useState("");
 
   const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  /* ================= LOGIN ================= */
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setSuccess("");
 
     try {
       const res = await fetch("http://localhost:5000/auth/login", {
@@ -37,46 +32,22 @@ const Login = () => {
         localStorage.setItem("role", data.role);
         setUser({ token: data.token, role: data.role });
 
-        if (data.role === "superadmin") navigate("/dashboard");
-        else if (data.role === "admin") navigate("/admin-dashboard");
-        else if (data.role === "resident") navigate("/resident-dashboard");
+        // Role-based navigation
+        if (data.role === "superadmin") {
+          navigate("/dashboard");
+        } else if (data.role === "admin") {
+          navigate("/admin-dashboard");
+        } else if (data.role === "resident") {
+          navigate("/resident-dashboard");
+        } else {
+          setError("Unknown role!");
+        }
       } else {
         setError(data.message || "Invalid email or password");
       }
-    } catch {
+    } catch (err) {
+      console.error(err);
       setError("Server error! Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /* ================= FORGOT PASSWORD ================= */
-  const handleForgotPassword = async (e) => {
-    e.preventDefault();
-    setError("");
-    setSuccess("");
-    setLoading(true);
-
-    try {
-      const res = await fetch(
-        "http://localhost:5000/auth/forgot-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email: forgotEmail }),
-        }
-      );
-
-      const data = await res.json();
-
-      if (res.ok) {
-        setSuccess("Password reset link sent to your email.");
-        setForgotEmail("");
-      } else {
-        setError(data.message || "Email not found");
-      }
-    } catch {
-      setError("Failed to send reset email.");
     } finally {
       setLoading(false);
     }
@@ -84,112 +55,102 @@ const Login = () => {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center">
+      {/* Background Image */}
       <img
-        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c"
+        src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=80"
         alt="HOA"
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-screen object-cover z-0"
       />
-      <div className="absolute inset-0 bg-blue-900/50"></div>
 
-      <div className="relative z-10 w-full max-w-xl bg-white rounded-2xl shadow-xl p-12">
-        <h1 className="text-4xl font-bold text-center text-teal-700 mb-6">
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-blue-900 bg-opacity-50 z-10"></div>
+
+      {/* Card */}
+      <div className="relative z-20 w-full max-w-xl min-h-[600px] bg-white rounded-2xl shadow-xl p-12 border flex flex-col justify-center">
+        <h1 className="text-4xl font-bold text-center text-gray-400 mb-6">
           HOA CONNECT SYSTEM
         </h1>
+        <h2 className="text-4xl font-bold text-center text-teal-700 mb-8">
+          Sign In
+        </h2>
 
-        {/* ERROR / SUCCESS */}
         {error && (
-          <div className="bg-red-100 text-red-700 p-3 rounded mb-4 text-center">
+          <div className="bg-red-50 border border-red-400 text-red-700 px-4 py-2 mb-4 rounded-lg text-center">
             {error}
           </div>
         )}
-        {success && (
-          <div className="bg-green-100 text-green-700 p-3 rounded mb-4 text-center">
-            {success}
+
+        <form onSubmit={handleLogin} className="space-y-7">
+          {/* Email */}
+          <div>
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Email Address
+            </label>
+            <input
+              type="email"
+              placeholder="admin@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600 text-lg"
+              required
+            />
           </div>
-        )}
 
-        {/* ================= LOGIN FORM ================= */}
-        {!showForgot && (
-          <form onSubmit={handleLogin} className="space-y-6">
-            <div>
-              <label className="block text-lg font-medium mb-2">
-                Email Address
-              </label>
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border rounded-lg"
-              />
-            </div>
+          {/* Password with Eye Icon */}
+          <div className="relative">
+            <label className="block text-lg font-medium text-gray-700 mb-2">
+              Password
+            </label>
 
-            <div>
-              <label className="block text-lg font-medium mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full px-4 py-3 border rounded-lg"
-              />
-            </div>
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-600 text-lg pr-12"
+              required
+            />
 
-            <div className="text-right">
-              <button
-                type="button"
-                onClick={() => setShowForgot(true)}
-                className="text-blue-600 font-semibold hover:underline"
-              >
-                Forgot Password?
-              </button>
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-teal-700 text-white py-3 rounded-lg font-bold"
+            {/* Eye Icon */}
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-4 top-[52px] cursor-pointer text-gray-500 hover:text-gray-700"
             >
-              {loading ? "Signing in..." : "Login"}
-            </button>
-          </form>
-        )}
+              {showPassword ? <EyeOff size={22} /> : <Eye size={22} />}
+            </span>
+          </div>
 
-        {/* ================= FORGOT PASSWORD FORM ================= */}
-        {showForgot && (
-          <form onSubmit={handleForgotPassword} className="space-y-6">
-            <div>
-              <label className="block text-lg font-medium mb-2">
-                Enter your registered email
-              </label>
-              <input
-                type="email"
-                value={forgotEmail}
-                onChange={(e) => setForgotEmail(e.target.value)}
-                required
-                className="w-full px-4 py-3 border rounded-lg"
-              />
-            </div>
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-blue-700 text-white py-3 rounded-lg font-bold"
-            >
-              {loading ? "Sending..." : "Send Reset Link"}
-            </button>
-
+          {/* Forgot Password */}
+          <div className="text-right">
             <button
               type="button"
-              onClick={() => setShowForgot(false)}
-              className="w-full text-gray-600 font-semibold hover:underline"
+              onClick={() => navigate("/forgot-password")}
+              className="text-sm text-teal-700 font-semibold hover:underline"
             >
-              Back to Login
+              Forgot Password?
             </button>
-          </form>
-        )}
+          </div>
+
+          {/* Login Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-teal-700 text-white py-3 rounded-lg font-semibold hover:bg-teal-800 transition shadow-md text-lg"
+          >
+            {loading ? "Signing in..." : "Login"}
+          </button>
+        </form>
+
+        {/* Register */}
+        <p className="text-md text-center text-gray-500 mt-8">
+          Don’t have an account?{" "}
+          <button
+            onClick={() => navigate("/")}
+            className="text-blue-600 font-bold hover:underline"
+          >
+            Register Here
+          </button>
+        </p>
       </div>
     </div>
   );
