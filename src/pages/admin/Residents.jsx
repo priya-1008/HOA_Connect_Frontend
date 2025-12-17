@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react"; 
 import HOAHeaderNavbar from "./HOAHeaderNavbar";
 
 const Residents = () => {
@@ -12,6 +13,9 @@ const Residents = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  
+  // 🔍 Search State
+  const [searchTerm, setSearchTerm] = useState("");
 
   /* ================= FETCH RESIDENTS ================= */
   const fetchResidents = () => {
@@ -30,6 +34,13 @@ const Residents = () => {
     fetchResidents();
   }, [navigate]);
 
+  /* ================= 🔍 SEARCH FILTER LOGIC ================= */
+  const filteredResidents = useMemo(() => {
+    return residents.filter((r) =>
+      r.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm, residents]);
+
   /* ================= CHECKBOX LOGIC ================= */
   const handleCheckboxChange = (id) => {
     setSelectedResidents((prev) =>
@@ -41,7 +52,7 @@ const Residents = () => {
 
   const handleSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedResidents(residents.map((r) => r._id));
+      setSelectedResidents(filteredResidents.map((r) => r._id));
     } else {
       setSelectedResidents([]);
     }
@@ -56,7 +67,6 @@ const Residents = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (selectedResidents.length === 0) {
       return setError("Please select at least one resident.");
     }
@@ -96,13 +106,13 @@ const Residents = () => {
           backgroundRepeat: "no-repeat",
         }}
       >
-        <div className="absolute inset-0 bg-black/40 pointer-events-none" />
+        <div className="absolute inset-0 bg-black/40 dark:bg-black/60 pointer-events-none" />
 
         <main className="relative z-10 p-4 min-h-screen w-full flex flex-col items-center">
-          <section className="w-full mx-auto bg-emerald-100/50 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
+          <section className="w-full mx-auto bg-emerald-100/50 dark:bg-emerald-900/60 backdrop-blur-lg rounded-2xl shadow-xl p-8 my-8">
 
             {/* ================= NOTIFICATION ================= */}
-            <h2 className="text-4xl font-extrabold mb-8 text-center">
+            <h2 className="text-4xl font-extrabold text-emerald-900 dark:text-emerald-100 mb-8 text-center">
               Notification Details
             </h2>
 
@@ -115,7 +125,7 @@ const Residents = () => {
                   value={form.title}
                   onChange={handleChange}
                   placeholder="Notification Title"
-                  className="flex-1 rounded-lg border py-3 px-4 text-lg"
+                  className="flex-1 rounded-lg border py-3 px-4 text-lg bg-white dark:bg-emerald-950/50 dark:text-white outline-none focus:ring-2 focus:ring-teal-600"
                 />
                 <input
                   type="text"
@@ -124,7 +134,7 @@ const Residents = () => {
                   value={form.message}
                   onChange={handleChange}
                   placeholder="Notification Message"
-                  className="flex-1 rounded-lg border py-3 px-4 text-lg"
+                  className="flex-1 rounded-lg border py-3 px-4 text-lg bg-white dark:bg-emerald-950/50 dark:text-white outline-none focus:ring-2 focus:ring-teal-600"
                 />
               </div>
 
@@ -139,20 +149,35 @@ const Residents = () => {
               </div>
             </form>
 
-            {error && <div className="text-center text-red-600 text-lg">{error}</div>}
-            {success && (
-              <div className="text-center text-green-700 text-lg">{success}</div>
-            )}
+            {error && <div className="text-center text-red-600 dark:text-red-400 text-lg mb-4">{error}</div>}
+            {success && <div className="text-center text-green-700 dark:text-green-400 text-lg mb-4">{success}</div>}
+
+            {/* ================= HEADER ROW: LEFT (Details) & RIGHT (Search) ================= */}
+            <div className="flex flex-col md:flex-row justify-between items-center my-8 gap-4">
+              <h2 className="text-4xl font-extrabold text-emerald-900 dark:text-emerald-100">
+                Resident Details
+              </h2>
+              
+              {/* Search Bar on Right Side */}
+              <div className="relative w-full md:w-80">
+                <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Search className="h-5 w-5 text-gray-500" />
+                </span>
+                <input
+                  type="text"
+                  placeholder="Search by name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-white dark:bg-emerald-950/50 dark:text-white text-lg shadow-sm outline-none focus:ring-2 focus:ring-teal-600"
+                />
+              </div>
+            </div>
 
             {/* ================= RESIDENT TABLE ================= */}
-            <h2 className="text-4xl font-extrabold my-8 text-center">
-              Resident Details
-            </h2>
-
-            <div className="w-full overflow-x-auto rounded-xl shadow-md">
-              <table className="min-w-full table-auto bg-white/80">
+            <div className="w-full overflow-x-auto rounded-xl shadow-md border border-gray-200 dark:border-emerald-800">
+              <table className="min-w-full table-auto bg-white/80 dark:bg-transparent">
                 <thead>
-                  <tr className="bg-gray-800 text-white text-lg">
+                  <tr className="bg-gray-800 dark:bg-gray-950 text-white text-lg">
                     <th className="p-4 text-left">Name</th>
                     <th className="p-4 text-left">Email</th>
                     <th className="p-4 text-left">Phone</th>
@@ -163,8 +188,8 @@ const Residents = () => {
                           type="checkbox"
                           onChange={handleSelectAll}
                           checked={
-                            residents.length > 0 &&
-                            selectedResidents.length === residents.length
+                            filteredResidents.length > 0 &&
+                            selectedResidents.length === filteredResidents.length
                           }
                           className="w-5 h-5 scale-125 cursor-pointer"
                         />
@@ -175,27 +200,35 @@ const Residents = () => {
                 </thead>
 
                 <tbody>
-                  {residents.map((r, idx) => (
-                    <tr
-                      key={r._id}
-                      className={`transition ${
-                        idx % 2 === 0 ? "bg-white" : "bg-emerald-50"
-                      } hover:bg-emerald-200/60`}
-                    >
-                      <td className="px-4 py-3 text-lg">{r.name}</td>
-                      <td className="px-4 py-3 text-lg">{r.email}</td>
-                      <td className="px-4 py-3 text-lg">{r.phoneNo}</td>
-                      <td className="px-4 py-3 text-lg">{r.houseNumber}</td>
-                      <td className="px-4 py-3 text-center">
-                        <input
-                          type="checkbox"
-                          checked={selectedResidents.includes(r._id)}
-                          onChange={() => handleCheckboxChange(r._id)}
-                          className="w-5 h-5 scale-125 cursor-pointer"
-                        />
+                  {filteredResidents.length > 0 ? (
+                    filteredResidents.map((r, idx) => (
+                      <tr
+                        key={r._id}
+                        className={`transition ${
+                          idx % 2 === 0 ? "bg-white dark:bg-emerald-900/40" : "bg-emerald-50 dark:bg-emerald-900/60"
+                        } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/80`}
+                      >
+                        <td className="px-4 py-3 text-black dark:text-white text-lg">{r.name}</td>
+                        <td className="px-4 py-3 text-black dark:text-white text-lg">{r.email}</td>
+                        <td className="px-4 py-3 text-black dark:text-white text-lg">{r.phoneNo}</td>
+                        <td className="px-4 py-3 text-black dark:text-white text-lg">{r.houseNumber}</td>
+                        <td className="px-4 py-3 text-center">
+                          <input
+                            type="checkbox"
+                            checked={selectedResidents.includes(r._id)}
+                            onChange={() => handleCheckboxChange(r._id)}
+                            className="w-5 h-5 scale-125 cursor-pointer"
+                          />
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="5" className="px-4 py-10 text-center text-gray-500 dark:text-emerald-200 text-xl italic font-semibold">
+                        No residents found matching "{searchTerm}"
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
