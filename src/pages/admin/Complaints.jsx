@@ -163,7 +163,7 @@ const Complaints = () => {
                           {c.description}
                         </td>
                         <td className="px-4 py-3 font-medium break-words">
-                          {c.user?.name || "N/A"}
+                          {c.user?.name}
                         </td>
                         <td className="px-4 py-3 font-medium text-left">
                           <select

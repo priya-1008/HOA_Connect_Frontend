@@ -153,9 +153,6 @@ const Amenities = () => {
                     <th className="p-4 font-bold text-left w-2/12">
                       Maintenance Status
                     </th>
-                    <th className="p-4 font-bold text-center w-2/12">
-                      Actions
-                    </th>
                   </tr>
                 </thead>
 
@@ -211,16 +208,6 @@ const Amenities = () => {
                             </option>
                             <option value="closed">Closed</option>
                           </select>
-                        </td>
-
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => handleDelete(a._id)}
-                            disabled={deletingId === a._id}
-                            className="px-4 py-2 bg-green-900 hover:bg-red-700 text-white rounded-lg font-semibold disabled:opacity-60"
-                          >
-                            {deletingId === a._id ? "Deleting..." : "Delete"}
-                          </button>
                         </td>
                       </tr>
                     ))

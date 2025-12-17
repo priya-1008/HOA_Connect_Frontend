@@ -189,11 +189,7 @@ const ResidentPayment = () => {
                   className="w-full py-4 px-4 rounded-lg border bg-white shadow"
                 >
                   <option value="UPI">UPI</option>
-                  <option value="Credit card">Credit card</option>
-                  <option value="Debit Card">Debit Card</option>
-                  <option value="Cash">Cash</option>
-                </select>
-
+              </select>
                 <button
                   onClick={initiatePayment}
                   className="w-full py-3 text-xl bg-teal-700 hover:bg-teal-800 text-white font-bold rounded-lg"
