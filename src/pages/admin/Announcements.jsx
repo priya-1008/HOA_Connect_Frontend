@@ -184,14 +184,14 @@ const Announcement = () => {
                               : "bg-emerald-100/60 dark:bg-emerald-900/60"
                           } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                         >
-                          <td className="px-4 py-3 font-medium">{a.title}</td>
-                          <td className="px-4 py-3 font-medium">{a.description}</td>
-                          <td className="px-4 py-3 font-medium">
+                          <td className="px-4 py-3 text-black font-medium">{a.title}</td>
+                          <td className="px-4 py-3 text-black font-medium">{a.description}</td>
+                          <td className="px-4 py-3 text-black font-medium">
                             {a.createdBy
                               ? `${a.createdBy.name} (${a.createdBy.email})`
                               : "N/A"}
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3 text-black">
                             {a.createdAt
                               ? new Date(a.createdAt).toLocaleString()
                               : ""}

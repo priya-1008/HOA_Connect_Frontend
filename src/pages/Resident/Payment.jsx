@@ -131,21 +131,6 @@ const ResidentPayment = () => {
       alert("Failed to download receipt");
     }
   };
-   
-  const cancelPayemnt = async () =>{
-    try{
-      await axios.put(
-      "http://localhost:5000/resident/payment/${transaction.paymentId}/cancel",
-      {},
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-    setShowGateway(false);
-    setSuccess("Payment cancelled");
-    fetchPayments();
-  } catch {
-    setError("Failed to cancel payment");
-  }
-  };
 
   if (loading) return <h2 className="text-center mt-20">Loading...</h2>;
 
@@ -180,14 +165,14 @@ const ResidentPayment = () => {
                   placeholder="Enter Amount"
                   value={form.amount}
                   onChange={handleChange}
-                  className="w-full py-4 px-4 rounded-lg border bg-white shadow"
+                  className="w-full py-4 px-4 text-black rounded-lg border bg-white shadow"
                 />
 
                 <select
                   name="billType"
                   value={form.billType}
                   onChange={handleChange}
-                  className="w-full py-4 px-4 rounded-lg border bg-white shadow"
+                  className="w-full py-4 px-4 text-black rounded-lg border bg-white shadow"
                 >
                   <option value="">Select Bill Type</option>
                   <option value="maintenance">Maintenance</option>
@@ -201,7 +186,7 @@ const ResidentPayment = () => {
                   name="method"
                   value={form.method}
                   onChange={handleChange}
-                  className="w-full py-4 px-4 rounded-lg border bg-white shadow"
+                  className="w-full py-4 px-4 text-black rounded-lg border bg-white shadow"
                 >
                   <option value="UPI">UPI</option>
               </select>
@@ -290,7 +275,7 @@ const ResidentPayment = () => {
                 <tbody>
                   {payments.length === 0 && (
                     <tr>
-                      <td colSpan="6" className="p-6 text-center italic">
+                      <td colSpan="6" className="p-6 text-black text-center italic">
                         No payments found.
                       </td>
                     </tr>
@@ -301,11 +286,11 @@ const ResidentPayment = () => {
                       key={p._id}
                       className="odd:bg-white even:bg-emerald-100/40"
                     >
-                      <td className="px-4 py-3">{p.transactionId}</td>
-                      <td className="px-4 py-3">₹{p.amount}</td>
-                      <td className="px-4 py-3">{p.billType}</td>
-                      <td className="px-4 py-3">{p.status}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 text-black py-3">{p.transactionId}</td>
+                      <td className="px-4 text-black py-3">₹{p.amount}</td>
+                      <td className="px-4 text-black py-3">{p.billType}</td>
+                      <td className="px-4 text-black py-3">{p.status}</td>
+                      <td className="px-4 text-black py-3">
                         {formatDateTime(p.transactionDate)}
                       </td>
                       <td className="px-4 py-3 text-center">

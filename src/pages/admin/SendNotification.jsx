@@ -102,12 +102,12 @@ const Notifications = () => {
                             : "bg-emerald-100/50 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="px-4 py-3 font-medium">{n.title}</td>
-                        <td className="px-4 py-3 font-medium">{n.message}</td>
-                        <td className="px-4 py-3 font-medium">
+                        <td className="px-4 py-3 text-black font-medium">{n.title}</td>
+                        <td className="px-4 py-3 text-black font-medium">{n.message}</td>
+                        <td className="px-4 py-3 text-black font-medium">
                           {n.createdBy?.name || n.createdBy?.email || "-"}
                         </td>
-                        <td className="px-4 py-3 font-medium">
+                        <td className="px-4 py-3 text-black font-medium">
                           {n.createdAt
                             ? new Date(n.createdAt).toLocaleString()
                             : "-"}

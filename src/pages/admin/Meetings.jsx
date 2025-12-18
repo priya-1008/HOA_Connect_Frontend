@@ -145,7 +145,7 @@ const Meetings = () => {
                   required
                   value={form.meetingDate}
                   onChange={handleChange}
-                  className="flex-1 rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
+                  className="flex-1 text-black rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
                 />
               </div>
 
@@ -189,7 +189,7 @@ const Meetings = () => {
                       <tr>
                         <td
                           colSpan={4}
-                          className="text-center font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
+                          className="text-center text-black font-bold py-6 text-emerald-900/80 dark:text-emerald-100/80 italic text-xl"
                         >
                           No meetings found.
                         </td>
@@ -204,16 +204,16 @@ const Meetings = () => {
                               : "bg-emerald-100/50 dark:bg-emerald-900/60"
                           } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                         >
-                          <td className="px-4 py-3 font-medium">
+                          <td className="px-4 py-3 text-black font-medium">
                             {meeting.title}
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3 text-black">
                             {meeting.agenda || meeting.description}
                           </td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3 text-black">
                             {meeting.location}
                           </td>
-                          <td className="px-4 py-3 whitespace-nowrap">
+                          <td className="px-4 py-3 text-black whitespace-nowrap">
                             {meeting.meetingDate
                               ? new Date(meeting.meetingDate).toLocaleString()
                               : ""}

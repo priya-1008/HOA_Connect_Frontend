@@ -167,7 +167,7 @@ const Documents = () => {
                 accept=".pdf,.doc,.docx,.png,.jpg,.jpeg"
                 required
                 onChange={handleChange}
-                className="rounded-lg border border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
+                className="rounded-lg border text-black border-gray-300 py-3 px-4 text-lg bg-white dark:bg-emerald-950/30 dark:text-emerald-100 shadow"
               />
 
               <div className="flex justify-center">
@@ -224,13 +224,13 @@ const Documents = () => {
                               : "bg-emerald-100/50 dark:bg-emerald-900/60"
                           } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                         >
-                          <td className="px-4 py-3 font-medium">{doc.title}</td>
-                          <td className="px-4 py-3">{doc.description}</td>
-                          <td className="px-4 py-3">{doc.fileType}</td>
-                          <td className="px-4 py-3">
+                          <td className="px-4 py-3 text-black font-medium">{doc.title}</td>
+                          <td className="px-4 py-3 text-black font-medium">{doc.description}</td>
+                          <td className="px-4 py-3 text-black font-medium">{doc.fileType}</td>
+                          <td className="px-4 py-3 text-black font-medium">
                             {doc.user?.name} ({doc.user?.email})
                           </td>
-                          <td className="px-4 py-3 text-center">
+                          <td className="px-4 py-3 text-center text-black font-medium">
                             <button
                               onClick={() => handleDelete(doc._id)}
                               className="px-4 py-2 bg-green-900 hover:bg-red-700 text-white rounded-lg font-semibold"

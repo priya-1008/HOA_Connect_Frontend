@@ -107,7 +107,7 @@ const Polls = () => {
             {/* ERROR / SUCCESS */}
             {(error || success) && (
               <div
-                className={`text-center pb-3 font-semibold text-lg ${
+                className={`text-center pb-3 text-black font-semibold text-lg ${
                   error ? "text-red-600" : "text-emerald-700 dark:text-emerald-200"
                 }`}
               >
@@ -217,11 +217,11 @@ const Polls = () => {
                             : "bg-emerald-100/50 dark:bg-emerald-900/60"
                         } hover:bg-emerald-200/60 dark:hover:bg-emerald-800/70`}
                       >
-                        <td className="px-4 py-3 font-semibold">
+                        <td className="px-4 py-3 text-black font-semibold">
                           {poll.question}
                         </td>
 
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 text-black">
                           <ul className="list-disc list-inside space-y-1">
                             {poll.options?.map((opt) => (
                               <li key={opt._id}>
@@ -234,7 +234,7 @@ const Polls = () => {
                           </ul>
                         </td>
 
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3 text-black">
                           {poll.createdAt
                             ? new Date(poll.createdAt).toLocaleString()
                             : "-"}
